@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NeMo Evaluation Run — CLI Input",
+  "description": "Documents the three inputs the external CLI passes to run_eval.py. Judge LLM configuration lives in the pipeline YAML, not here.",
+  "type": "object",
+  "required": ["endpoint", "pipeline"],
+  "properties": {
+    "endpoint": {
+      "type": "string",
+      "description": "Base URL of the agent's OpenAI-compatible API, e.g. http://localhost:8080/v1"
+    },
+    "pipeline": {
+      "type": "string",
+      "description": "Filename of a NeMo pipeline YAML in pipelines/, e.g. custom_qa_judge.yaml"
+    },
+    "dataset": {
+      "type": "string",
+      "description": "Path to a test case JSON file. Defaults to datasets/sample_cases.json if omitted."
+    }
+  },
+  "x-env-vars": {
+    "description": "Passed as environment variables — present in the execution environment automatically. Model names follow LiteLLM format (same as NAT).",
+    "AGENT_API_KEY":      "API key for the agent endpoint",
+    "AGENT_MODEL_NAME":   "LiteLLM model name the agent endpoint expects (e.g. openai/gpt-4o)",
+    "LITELLM_PROXY_URL":  "URL of the LiteLLM proxy — judge calls are routed through this. Present in the environment at execution time.",
+    "MAX_CONCURRENCY":    "Optional. Parallel requests to the agent (default: 4)"
+  },
+  "x-pipeline-model-names": {
+    "description": "Model names in pipeline YAMLs (judge.model) use LiteLLM format — the same convention NAT uses. Examples: openai/gpt-4o-mini, anthropic/claude-haiku-4-5-20251001, nvidia_nim/meta/llama-3.1-70b-instruct"
+  }
+}
