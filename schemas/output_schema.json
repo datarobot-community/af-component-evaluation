@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NeMo Evaluation Run Output",
+  "description": "Normalized output from a completed evaluation run. Written to <output_dir>/eval_results.json",
+  "type": "object",
+  "properties": {
+    "run_id":       { "type": "string", "description": "Unique ID for this eval run (timestamp-based)" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "agent_endpoint": { "type": "string", "description": "The agent URL that was evaluated" },
+    "total_cases":  { "type": "integer" },
+    "summary": {
+      "type": "object",
+      "description": "Aggregate scores across all cases",
+      "properties": {
+        "mean_quality_score": { "type": "number", "description": "Average LLM judge score across all cases (0-1)" },
+        "pass_rate":          { "type": "number", "description": "Fraction of cases scoring >= 0.5" },
+        "good_case_pass_rate":{ "type": "number", "description": "Pass rate on expected_behavior=good cases only" },
+        "bad_case_pass_rate": { "type": "number", "description": "Pass rate on expected_behavior=bad cases only" }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id":                 { "type": "string" },
+          "input":              { "type": "string" },
+          "expected_behavior":  { "type": "string", "enum": ["good", "bad"] },
+          "agent_response":     { "type": "string", "description": "Raw response from the agent" },
+          "quality_score":      { "type": "number", "description": "LLM judge score 0-1" },
+          "judge_reason":       { "type": "string", "description": "One-sentence explanation from the judge" },
+          "passed":             { "type": "boolean", "description": "score >= 0.5" },
+          "answer_match_score": { "type": ["number", "null"], "description": "ROUGE-L score vs ideal_response, null if no ideal_response" },
+          "notes":              { "type": "string" },
+          "source":             { "type": "string", "enum": ["collected", "synthetic"] }
+        }
+      }
+    }
+  }
+}
