@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Eval output (generated at runtime — never commit)
+output/eval_status.json
+output/eval_results.json
+output/raw/
+
+# Claude-generated test cases (review before committing)
+datasets/generated_cases.json
