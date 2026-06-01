@@ -12,9 +12,7 @@ vars:
 tasks:
   install:
     desc: 🛠️ Install dependencies
-    cmds:
-      - echo "Installing af-component-evaluation dependencies"
-      - '{{.UV_CMD}} sync --extra dev'
+    cmds: [echo "Installing af-component-evaluation dependencies", '{{.UV_CMD}} sync --extra dev']
     aliases: [req]
   update:
     cmds: ['{{.UV_CMD}} sync --extra dev -U']
@@ -42,9 +40,7 @@ tasks:
     silent: true
   test:
     desc: 🧪 Run tests
-    cmds:
-      - echo "Running pytest"
-      - '{{.UV_CMD}} run python -m pytest -vv ./tests/'
+    cmds: [echo "Running pytest", '{{.UV_CMD}} run python -m pytest -vv ./tests/']
     silent: true
   test-coverage:
     desc: 🧪 Run tests with coverage report
@@ -54,16 +50,13 @@ tasks:
     silent: true
   generate:
     desc: 🤖 Generate synthetic test cases (pass args with --)
-    cmds:
-      - '{{.UV_CMD}} run python generate.py {{.CLI_ARGS}}'
+    cmds: ['{{.UV_CMD}} run python generate.py {{.CLI_ARGS}}']
     silent: true
   eval:
     desc: 🔬 Run a batch evaluation (pass --endpoint, --pipeline, --dataset)
-    cmds:
-      - '{{.UV_CMD}} run python run.py {{.CLI_ARGS}}'
+    cmds: ['{{.UV_CMD}} run python run.py {{.CLI_ARGS}}']
     silent: true
   summarize:
     desc: 📊 Pretty-print latest eval results
-    cmds:
-      - '{{.UV_CMD}} run python summarize.py output/'
+    cmds: ['{{.UV_CMD}} run python summarize.py output/']
     silent: true
