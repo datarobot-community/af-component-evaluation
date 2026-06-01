@@ -10,7 +10,7 @@ inputs:
   dependency-files:
     description: 'Files to hash for UV cache key'
     required: false
-    default: 'template/{{evaluation_app_name}}/pyproject.toml.jinja fixtures/**/*.toml'
+    default: 'template/**/pyproject.toml fixtures/**/*.toml'
 runs:
   using: 'composite'
   steps:

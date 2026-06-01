@@ -5,11 +5,15 @@ on:
     branches: ["main"]
     paths:
       - "template/**"
+      - "copier.yml"
+      - "Taskfile.yml"
       - ".github/workflows/afcomponentevaluation-test.yaml"
   pull_request:
     branches: ["main"]
     paths:
       - "template/**"
+      - "copier.yml"
+      - "Taskfile.yml"
       - ".github/workflows/afcomponentevaluation-test.yaml"
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -27,9 +31,21 @@ jobs:
     steps:
       - name: Checkout
         uses: "actions/checkout@v4"
+      # CI tests the COPIED (rendered) instance — i.e. what a user actually gets —
+      # rather than the source `template/` tree. Local development still runs
+      # directly against `template/[[ evaluation_app_name ]]/` via the root
+      # Taskfile (no render needed); see copier.yml for the rationale.
+      - name: Render copier instance
+        shell: sh
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends git
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          uvx copier copy --vcs-ref=HEAD --defaults . ./rendered
+        env:
+          UV_CACHE_DIR: /.uv_cache
       - name: Install dependencies
         shell: sh
-        working-directory: ./template
+        working-directory: ./rendered/evaluations
         run: uvx --from go-task-bin task install
         env:
           UV_CACHE_DIR: /.uv_cache
@@ -40,13 +56,13 @@ jobs:
           config: .github/.licenserc.yaml
       - name: Lint check
         shell: sh
-        working-directory: ./template
+        working-directory: ./rendered/evaluations
         run: uvx --from go-task-bin task lint-check
         env:
           UV_CACHE_DIR: /.uv_cache
       - name: Run tests with coverage
         shell: sh
-        working-directory: ./template
+        working-directory: ./rendered/evaluations
         run: uvx --from go-task-bin task test-coverage
         env:
           UV_CACHE_DIR: /.uv_cache
