@@ -1,0 +1,57 @@
+import json
+from pathlib import Path
+from typing import Any
+
+
+class ResultsSummarizer:
+    def __init__(self, path: Path) -> None:
+        self.results_path = self._resolve(path)
+        self.data: dict[str, Any] = json.loads(self.results_path.read_text())
+
+    @staticmethod
+    def _resolve(path: Path) -> Path:
+        if path.is_file():
+            return path
+        candidate = path / "eval_results.json"
+        if candidate.exists():
+            return candidate
+        raise FileNotFoundError(f"No eval_results.json found in {path}")
+
+    def print_summary(self) -> None:
+        data = self.data
+
+        print(f"\nRun ID:    {data.get('run_id', '?')}")
+        print(f"Completed: {data.get('completed_at', '?')}")
+        print(f"Agent:     {data.get('agent_endpoint', '?')}")
+        print(f"Pipeline:  {data.get('pipeline', '?')}")
+        print(f"Cases:     {data.get('total_cases', '?')}")
+
+        s: dict[str, Any] = data.get("summary", {})
+        print(f"\nSummary")
+        print(f"  Mean quality score : {s.get('mean_quality_score')}")
+        print(f"  Pass rate          : {s.get('pass_rate')}")
+        print(f"  Good case pass     : {s.get('good_case_pass_rate')}")
+        print(f"  Bad case pass      : {s.get('bad_case_pass_rate')}")
+
+        nemo_agg: dict[str, Any] = s.get("nemo_aggregate", {})
+        if nemo_agg:
+            print(f"\nNeMo Aggregate Metrics")
+            for key, value in nemo_agg.items():
+                print(f"  {key}: {value}")
+
+        cases: list[dict[str, Any]] = data.get("cases", [])
+        if cases:
+            print(f"\nPer-case Results")
+            print(f"  {'ID':<15} {'Expect':<8} {'Score':<7} {'Pass':<6} Reason")
+            print(f"  {'-'*15} {'-'*8} {'-'*7} {'-'*6} {'-'*45}")
+            for c in cases:
+                score = c.get("quality_score")
+                score_str = f"{score:.2f}" if isinstance(score, float) else str(score)
+                passed = "✓" if c.get("passed") else ("✗" if c.get("passed") is False else "?")
+                reason = (c.get("judge_reason") or "")[:50]
+                print(
+                    f"  {c['id']:<15} {c.get('expected_behavior','?'):<8} "
+                    f"{score_str:<7} {passed:<6} {reason}"
+                )
+
+        print()

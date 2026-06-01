@@ -1,7 +1,7 @@
 # Pipeline Configs
 
 YAML files here describe an evaluation run in **our own simple schema** (not
-NeMo's Hydra format). `run_eval.py` reads the selected pipeline, exports the
+NeMo's Hydra format). `run.py` reads the selected pipeline, exports the
 judge config to the benchmark, and invokes the NeMo **BYOB** runner in-process.
 
 > Historical note: an earlier design used `nemo-evaluator-launcher` with Hydra
