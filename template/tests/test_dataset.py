@@ -1,0 +1,74 @@
+import json
+from pathlib import Path
+from typing import Any
+
+from evaluator.dataset import load_dataset, to_byob_jsonl
+
+
+# ---------------------------------------------------------------------------
+# load_dataset
+# ---------------------------------------------------------------------------
+
+
+def test_load_dataset_json(tmp_path: Path, minimal_cases: list[dict[str, Any]]) -> None:
+    p = tmp_path / "cases.json"
+    p.write_text(json.dumps(minimal_cases))
+    loaded = load_dataset(str(p))
+    assert len(loaded) == len(minimal_cases)
+    assert loaded[0]["id"] == "good-001"
+
+
+def test_load_dataset_jsonl(tmp_path: Path, minimal_cases: list[dict[str, Any]]) -> None:
+    p = tmp_path / "cases.jsonl"
+    p.write_text("\n".join(json.dumps(c) for c in minimal_cases))
+    loaded = load_dataset(str(p))
+    assert len(loaded) == len(minimal_cases)
+    assert loaded[1]["id"] == "bad-001"
+
+
+def test_load_dataset_jsonl_ignores_blank_lines(tmp_path: Path) -> None:
+    p = tmp_path / "cases.jsonl"
+    p.write_text('{"id": "a"}\n\n{"id": "b"}\n')
+    loaded = load_dataset(str(p))
+    assert len(loaded) == 2
+
+
+# ---------------------------------------------------------------------------
+# to_byob_jsonl
+# ---------------------------------------------------------------------------
+
+
+def test_to_byob_jsonl_writes_one_line_per_case(
+    tmp_path: Path, minimal_cases: list[dict[str, Any]]
+) -> None:
+    out = tmp_path / "out.jsonl"
+    to_byob_jsonl(minimal_cases, str(out))
+    lines = [l for l in out.read_text().splitlines() if l.strip()]
+    assert len(lines) == len(minimal_cases)
+
+
+def test_to_byob_jsonl_required_fields(
+    tmp_path: Path, minimal_cases: list[dict[str, Any]]
+) -> None:
+    out = tmp_path / "out.jsonl"
+    to_byob_jsonl(minimal_cases, str(out))
+    row = json.loads(out.read_text().splitlines()[0])
+    assert set(row.keys()) == {"id", "input", "ideal_response", "expected_behavior", "notes", "source"}
+
+
+def test_to_byob_jsonl_defaults_missing_fields(tmp_path: Path) -> None:
+    cases = [{"id": "x", "input": "hello"}]
+    out = tmp_path / "out.jsonl"
+    to_byob_jsonl(cases, str(out))
+    row = json.loads(out.read_text())
+    assert row["expected_behavior"] == "good"
+    assert row["notes"] == ""
+    assert row["source"] == ""
+
+
+def test_to_byob_jsonl_preserves_null_ideal_response(tmp_path: Path) -> None:
+    cases = [{"id": "x", "input": "hi", "ideal_response": None}]
+    out = tmp_path / "out.jsonl"
+    to_byob_jsonl(cases, str(out))
+    row = json.loads(out.read_text())
+    assert row["ideal_response"] is None

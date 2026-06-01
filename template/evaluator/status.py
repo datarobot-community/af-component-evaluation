@@ -11,7 +11,7 @@ def write_status(
     output_dir: Path,
     error: str | None = None,
 ) -> None:
-    output_dir.mkdir(exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
     payload = {
         "status": status,  # running | complete | failed
         "run_id": run_id,
