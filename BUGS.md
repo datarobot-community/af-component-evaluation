@@ -1,0 +1,84 @@
+# Known Issues / Weirdness Tracker
+
+A running log of things that are broken, surprising, or worked around. Not
+polished — just enough to remember *what* and *why* so we don't rediscover it.
+
+---
+
+## 1. Bedrock (Claude) judge rejects `temperature` + `top_p` together
+
+**Status:** worked around (avoid Bedrock models as judge for now)
+**Discovered:** 2026-06-01
+
+NeMo Evaluator's built-in judge client
+(`nemo_evaluator.contrib.byob.judge.judge_call`) **always** sends both
+`temperature` and `top_p` in the chat-completions payload. The DataRobot LLM
+gateway's **Bedrock** models (e.g. `bedrock/anthropic.claude-sonnet-4-6`)
+reject that combination:
+
+```
+400 Bad Request
+"`temperature` and `top_p` cannot both be specified for this model.
+ Please use only one."
+```
+
+Reproduce:
+
+```bash
+curl -sS -X POST "https://app.datarobot.com/api/v2/genai/llmgw/chat/completions" \
+  -H "Authorization: Bearer $DATAROBOT_API_TOKEN" -H "Content-Type: application/json" \
+  -d '{"model":"bedrock/anthropic.claude-sonnet-4-6","messages":[{"role":"user","content":"hi"}],"temperature":0,"top_p":1}'
+# -> 400, temperature+top_p error
+# (sending only ONE of temperature/top_p -> 200 OK)
+```
+
+**Why it matters:** we originally wanted `claude-sonnet-4-6` as the judge.
+`judge_call` gives no knob to omit `top_p`, so a Claude judge can't use the
+stock path.
+
+**Current workaround:** use an **Azure** judge model
+(`azure/gpt-4o-2024-11-20`) — Azure/OpenAI models accept both params, so the
+stock `judge_call` works unmodified. Set via `JUDGE_MODEL_ID` env var; default
+lives in `benchmarks/agent_quality_safety.py`.
+
+**Future fix options (if we want Claude as judge):**
+- Write a small custom judge call in the scorer (BYOB scorers are arbitrary
+  Python) that sends only `temperature`. Can still reuse NeMo's
+  `judge_templates` + `parse_grade`.
+- Or upstream a fix to NeMo so `judge_call` can omit `top_p` when unset.
+
+---
+
+## 2. NeMo standalone evaluator does not speak LiteLLM natively
+
+**Status:** noted, likely won't fix (not a real problem for us)
+**Discovered:** 2026-06-01
+
+We had assumed (per early design notes) that the evaluator would route judge /
+target calls through **LiteLLM**, using LiteLLM-style model names like
+`datarobot/bedrock/anthropic.claude-sonnet-4-6`. It does not.
+
+The standalone NeMo Evaluator (both the target-model client and the
+`byob.judge` client) makes **plain OpenAI-compatible HTTP calls**:
+
+```
+POST {url}/chat/completions
+Authorization: Bearer <api_key>
+{"model": <model_id>, "messages": [...], ...}
+```
+
+There is no LiteLLM layer. The `datarobot/...` prefix is purely a LiteLLM
+provider-routing convention — it only works if you put a LiteLLM proxy in the
+middle. Whatever endpoint you name receives the `model` string verbatim.
+
+**Consequence for model naming:**
+- Judge/target model names must match **whatever the named endpoint expects**,
+  not a universal LiteLLM format.
+- Against the DR LLM gateway directly, that means the **gateway catalog name**
+  with no `datarobot/` prefix — e.g. `bedrock/anthropic.claude-sonnet-4-6` or
+  `azure/gpt-4o-2024-11-20` (verify via
+  `GET https://app.datarobot.com/api/v2/genai/llmgw/models`).
+
+**If we ever DO want LiteLLM routing:** stand up a LiteLLM proxy and point the
+judge/target `url` at it; then the `datarobot/`-prefixed names work. We may
+never need this — the gateway is already OpenAI-compatible.
