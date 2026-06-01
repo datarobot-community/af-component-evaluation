@@ -1,22 +1,82 @@
-# Python-generated files
+# Python version pinning
+.python-version
+
+# Python bytecode / caches
 __pycache__/
 *.py[oc]
+*.pyo
+.pyc
+
+# Distribution / packaging
 build/
 dist/
 wheels/
-*.egg-info
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+sdist/
+develop-eggs/
+lib/
+lib64/
+parts/
+var/
 
 # Virtual environments
-.venv
+.venv/
+venv/
+env/
+ENV/
+.env/
 
 # Environment / secrets
 .env
 .env.*
+!.env.example
+
+# uv
+.uv/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# Testing
+.pytest_cache/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+nosetests.xml
+
+# Linting / formatting
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Eval output (generated at runtime — never commit)
-output/eval_status.json
-output/eval_results.json
-output/raw/
+template/output/eval_status.json
+template/output/eval_results.json
+template/output/raw/
 
 # Claude-generated test cases (review before committing)
-datasets/generated_cases.json
+template/datasets/generated_cases.json
