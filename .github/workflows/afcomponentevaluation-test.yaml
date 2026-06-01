@@ -1,0 +1,47 @@
+---
+name: af-component-evaluation
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "template/**"
+      - ".github/workflows/afcomponentevaluation-test.yaml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "template/**"
+      - ".github/workflows/afcomponentevaluation-test.yaml"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    name: "Test (python${{ matrix.python }})"
+    runs-on: "ubuntu-latest"
+    container:
+      image: ghcr.io/astral-sh/uv:python${{ matrix.python }}-bookworm
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - name: Checkout
+        uses: "actions/checkout@v4"
+      - name: Install dependencies
+        shell: sh
+        working-directory: ./template
+        run: uvx --from go-task-bin task install
+        env:
+          UV_CACHE_DIR: /.uv_cache
+      - name: Lint check
+        shell: sh
+        working-directory: ./template
+        run: uvx --from go-task-bin task lint-check
+        env:
+          UV_CACHE_DIR: /.uv_cache
+      - name: Run tests with coverage
+        shell: sh
+        working-directory: ./template
+        run: uvx --from go-task-bin task test-coverage
+        env:
+          UV_CACHE_DIR: /.uv_cache
