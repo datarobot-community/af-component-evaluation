@@ -1,3 +1,16 @@
+# Copyright 2026 DataRobot, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import json
 import os
 import sys
@@ -57,7 +70,7 @@ class EvalRunner:
             print("\nDry run — all inputs valid. Would run BYOB benchmark:")
             print(f"  module:  {cfg['benchmark']['module']}")
             print(f"  judge:   {cfg['judge']['model_id']} @ {cfg['judge']['url']}")
-            print(f"  output → output/eval_results.json")
+            print("  output → output/eval_results.json")
             return 0
 
         # 2. Mark as running
@@ -82,7 +95,12 @@ class EvalRunner:
             run_byob(cfg, self.endpoint, dataset_jsonl, nemo_output_dir, self.repo_root)
         except RuntimeError as e:
             write_status(
-                "failed", run_id, self.pipeline, self.endpoint, self.output_dir, error=str(e)
+                "failed",
+                run_id,
+                self.pipeline,
+                self.endpoint,
+                self.output_dir,
+                error=str(e),
             )
             print(f"ERROR: {e}", file=sys.stderr)
             return 2
@@ -109,7 +127,9 @@ class EvalRunner:
 
         # 6. Write to fixed output locations (external CLI relies on these paths)
         self.output_dir.mkdir(exist_ok=True)
-        (self.output_dir / "eval_results.json").write_text(json.dumps(normalized, indent=2))
+        (self.output_dir / "eval_results.json").write_text(
+            json.dumps(normalized, indent=2)
+        )
         write_status("complete", run_id, self.pipeline, self.endpoint, self.output_dir)
 
         s = normalized["summary"]

@@ -1,4 +1,29 @@
-# af-component-evaluation
+<p align="center">
+  <a href="https://github.com/datarobot-community/af-component-evaluation">
+    <img src="https://af.datarobot.com/img/datarobot_logo.avif" width="600px" alt="DataRobot Logo"/>
+  </a>
+</p>
+<p align="center">
+    <span style="font-size: 1.5em; font-weight: bold; display: block;">af-component-evaluation</span>
+</p>
+
+<p align="center">
+  <a href="https://datarobot.com">Homepage</a>
+  ·
+  <a href="https://af.datarobot.com">Documentation</a>
+  ·
+  <a href="https://docs.datarobot.com/en/docs/get-started/troubleshooting/general-help.html">Support</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/datarobot-community/af-component-evaluation/tags">
+    <img src="https://img.shields.io/github/v/tag/datarobot-community/af-component-evaluation?label=version" alt="Latest Release">
+  </a>
+  <a href="/LICENSE">
+    <img src="https://img.shields.io/github/license/datarobot-community/af-component-evaluation" alt="License">
+  </a>
+</p>
+
 
 Batch evaluation component for DataRobot agents using the [NeMo Evaluator](https://github.com/NVIDIA-NeMo/evaluator) **BYOB** (Bring Your Own Benchmark) framework.
 

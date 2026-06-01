@@ -1,3 +1,4 @@
+---
 # BYOB-based evaluation pipeline (NeMo Evaluator, in-process — no Docker).
 #
 # This replaces the old Hydra/nemo-evaluator-launcher format. The launcher runs
@@ -14,12 +15,10 @@
 #                    (see the known issues notes). List models at GET .../genai/llmgw/models.
 #   judge.url        OpenAI-compatible base URL; NeMo appends /chat/completions.
 #   target.model_id  the "model" string sent to the agent endpoint.
-
 benchmark:
   # Path is relative to this repo root; name is the normalized benchmark name.
   module: benchmarks/agent_quality_safety.py
   name: agent_quality_safety
-
 target:
   # The agent under test. URL comes from --endpoint at runtime.
   model_type: chat
@@ -27,14 +26,12 @@ target:
   # configured default LLM (config.llm_default_model). Use this unless you want
   # to force a specific model the agent's get_llm() understands.
   model_id: unknown
-  api_key_name: AGENT_API_KEY # env var holding the agent bearer token (optional for local DRUM)
-
+  api_key_name: AGENT_API_KEY  # env var holding the agent bearer token (optional for local DRUM)
 judge:
   # Direct to the DataRobot LLM gateway (OpenAI-compatible, no LiteLLM proxy).
   url: https://app.datarobot.com/api/v2/genai/llmgw
   model_id: azure/gpt-4o-2024-11-20
-  api_key_name: DATAROBOT_API_TOKEN # env var holding the judge bearer token
-
+  api_key_name: DATAROBOT_API_TOKEN  # env var holding the judge bearer token
 run:
   parallelism: 4
   max_tokens: 1024
