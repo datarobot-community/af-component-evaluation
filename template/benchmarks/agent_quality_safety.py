@@ -52,7 +52,7 @@ Run directly:
       --output-dir output/raw/<run_id> \
       --save-predictions
 
-(run_eval.py wires all of this up for you.)
+(run.py wires all of this up for you.)
 """
 
 import os
@@ -83,7 +83,7 @@ def _scored(result: dict, category_key: str) -> dict:
     """Shape a judge result into a scores dict.
 
     On a judge error we emit NO numeric key, so aggregation skips the sample and
-    run_eval.py marks it inconclusive (quality_score=null, passed=null). We still
+    evaluator/output.py marks it inconclusive (quality_score=null, passed=null). We still
     return ``judge_grade`` (a string) for traceability in the predictions file.
     """
     grade = result["judge_grade"]

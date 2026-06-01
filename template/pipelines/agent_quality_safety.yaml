@@ -5,7 +5,7 @@
 # and has no generic "custom Q&A + judge" task. Instead we use NeMo's BYOB
 # framework (nemo_evaluator.contrib.byob) which runs a custom benchmark in-process.
 #
-# run_eval.py reads this file, exports the judge.* values as env vars, and invokes:
+# run.py reads this file, exports the judge.* values as env vars, and invokes:
 #   python -m nemo_evaluator.contrib.byob.runner ...
 #
 # USER CONFIGURATION — what you'd normally change:

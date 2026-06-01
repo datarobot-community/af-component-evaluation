@@ -22,7 +22,8 @@ dev = [
 
 [project.scripts]
 run-eval = "run:main"
-generate-cases = "evaluator.generate.generate_test_cases:main"
+generate-cases = "generate:main"
+summarize = "summarize:main"
 
 # -----------------------------------------------------------------------
 # af-component marker — detected by the core CLI to discover this

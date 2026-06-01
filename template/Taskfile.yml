@@ -48,7 +48,7 @@ tasks:
   generate:
     desc: 🤖 Generate synthetic test cases (pass args with --)
     cmds:
-      - '{{.UV_CMD}} run python evaluator/generate/generate_test_cases.py {{.CLI_ARGS}}'
+      - '{{.UV_CMD}} run python generate.py {{.CLI_ARGS}}'
     silent: true
   eval:
     desc: 🔬 Run a batch evaluation (pass --endpoint, --pipeline, --dataset)
@@ -58,5 +58,5 @@ tasks:
   summarize:
     desc: 📊 Pretty-print latest eval results
     cmds:
-      - '{{.UV_CMD}} run python evaluator/scripts/summarize_results.py output/'
+      - '{{.UV_CMD}} run python summarize.py output/'
     silent: true
