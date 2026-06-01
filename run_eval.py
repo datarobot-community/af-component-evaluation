@@ -267,11 +267,17 @@ def normalize_output(
             grade = scores.get("judge_grade", "")
             status = pred.get("status", "")
 
-            passed = (
-                quality_score >= PASS_THRESHOLD
-                if isinstance(quality_score, (int, float))
-                else None
-            )
+            scored_ok = isinstance(quality_score, (int, float))
+            passed = quality_score >= PASS_THRESHOLD if scored_ok else None
+
+            # A sample is "inconclusive" when the agent answered but the judge
+            # call failed (no numeric score). See BUGS.md #3.
+            if scored_ok:
+                judge_reason = f"judge grade: {grade}"
+            elif status == "scored":
+                judge_reason = f"inconclusive — judge {grade or 'returned no score'}"
+            else:
+                judge_reason = f"inconclusive — agent {status}"
 
             cases.append(
                 {
@@ -282,11 +288,7 @@ def normalize_output(
                     ),
                     "agent_response": pred.get("response") or "",
                     "quality_score": quality_score,
-                    "judge_reason": (
-                        f"judge grade: {grade}"
-                        if status == "scored"
-                        else f"status: {status}"
-                    ),
+                    "judge_reason": judge_reason,
                     "passed": passed,
                     "answer_match_score": None,
                     "notes": original.get("notes", meta.get("notes", "")),
@@ -306,6 +308,7 @@ def normalize_output(
                     )
 
     scored = [c for c in cases if isinstance(c["quality_score"], (int, float))]
+    inconclusive = len(cases) - len(scored)
     mean_score = sum(c["quality_score"] for c in scored) / len(scored) if scored else None
     pass_rate = sum(1 for c in scored if c["passed"]) / len(scored) if scored else None
     good = [c for c in scored if c["expected_behavior"] == "good"]
@@ -318,6 +321,8 @@ def normalize_output(
         "pipeline": pipeline,
         "total_cases": len(dataset),
         "summary": {
+            "scored_cases": len(scored),
+            "inconclusive_cases": inconclusive,
             "mean_quality_score": round(mean_score, 4) if mean_score is not None else None,
             "pass_rate": round(pass_rate, 4) if pass_rate is not None else None,
             "good_case_pass_rate": (
@@ -442,6 +447,7 @@ def main() -> None:
     print("\nStatus: complete")
     print("Results: output/eval_results.json")
     print(f"  Total cases:        {normalized['total_cases']}")
+    print(f"  Scored / inconcl.:  {s['scored_cases']} / {s['inconclusive_cases']}")
     print(f"  Mean quality score: {s['mean_quality_score']}")
     print(f"  Pass rate:          {s['pass_rate']}")
     print(f"  Good case pass:     {s['good_case_pass_rate']}")
