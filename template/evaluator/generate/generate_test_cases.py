@@ -3,10 +3,10 @@
 Generate synthetic evaluation test cases using Claude.
 
 Usage:
-    python generate/generate_test_cases.py \
+    python evaluator/generate/generate_test_cases.py \
         --agent-description "A content planner and writer agent that researches topics and writes articles" \
         --n 10 \
-        --output datasets/generated_cases.json
+        --output user_user_datasets/generated_cases.json
 
 Review and edit the output before using it in evaluations.
 """
@@ -117,8 +117,8 @@ def main():
     )
     parser.add_argument(
         "--output",
-        default="datasets/generated_cases.json",
-        help="Output file path (default: datasets/generated_cases.json)",
+        default="user_datasets/generated_cases.json",
+        help="Output file path (default: user_datasets/generated_cases.json)",
     )
     parser.add_argument(
         "--append",

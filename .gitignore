@@ -79,4 +79,4 @@ template/output/eval_results.json
 template/output/raw/
 
 # Claude-generated test cases (review before committing)
-template/datasets/generated_cases.json
+template/user_datasets/generated_cases.json

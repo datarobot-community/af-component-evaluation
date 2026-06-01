@@ -5,7 +5,7 @@ NeMo Evaluator batch evaluation CLI (BYOB / in-process — no Docker).
 The external CLI passes three things:
   --endpoint   Base URL of the agent's OpenAI-compatible API
   --pipeline   Filename of a pipeline YAML in pipelines/
-  --dataset    Path to a test case JSON file (defaults to datasets/sample_cases.json)
+  --dataset    Path to a test case JSON file (defaults to user_datasets/sample_cases.json)
 
 This script:
   1. Validates that the endpoint is reachable, pipeline exists, dataset exists
@@ -13,7 +13,7 @@ This script:
   3. Converts dataset to the BYOB JSONL format
   4. Reads the pipeline YAML (benchmark module + judge config + run params)
   5. Runs the NeMo BYOB runner in-process as a subprocess
-  6. Normalizes raw output into output/eval_results.json  (schema: schemas/output_schema.json)
+  6. Normalizes raw output into output/eval_results.json  (schema: evaluator/schemas/output_schema.json)
   7. Updates output/eval_status.json  →  {"status": "complete"} or {"status": "failed"}
 
 Why BYOB (and not nemo-evaluator-launcher):
@@ -49,7 +49,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).parent
 PIPELINES_DIR = REPO_ROOT / "pipelines"
-DATASETS_DIR = REPO_ROOT / "datasets"
+DATASETS_DIR = REPO_ROOT / "user_datasets"
 OUTPUT_DIR = REPO_ROOT / "output"
 DEFAULT_DATASET = DATASETS_DIR / "sample_cases.json"
 

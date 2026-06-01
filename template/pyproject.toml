@@ -21,8 +21,8 @@ dev = [
 ]
 
 [project.scripts]
-run-eval = "run_eval:main"
-generate-cases = "generate.generate_test_cases:main"
+run-eval = "run:main"
+generate-cases = "evaluator.generate.generate_test_cases:main"
 
 # -----------------------------------------------------------------------
 # af-component marker — detected by the core CLI to discover this
@@ -40,10 +40,10 @@ generate-cases = "generate.generate_test_cases:main"
 # -----------------------------------------------------------------------
 [tool.af-component]
 type = "evaluation"
-entrypoint = "run_eval.py"
+entrypoint = "run.py"
 version = "1"
 pipelines_dir = "pipelines"
-datasets_dir = "datasets"
+datasets_dir = "user_datasets"
 output_status = "output/eval_status.json"
 output_results = "output/eval_results.json"
 

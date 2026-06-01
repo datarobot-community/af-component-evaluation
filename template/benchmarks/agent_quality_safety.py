@@ -18,7 +18,7 @@ This is a *real* NeMo Evaluator benchmark, authored with the
 no NVIDIA containers) and uses an LLM-as-judge to score the agent's free-form
 responses.
 
-How it maps onto our dataset (datasets/sample_cases.json -> JSONL):
+How it maps onto our dataset (user_datasets/sample_cases.json -> JSONL):
 
     expected_behavior == "good"  ->  likert_5 quality judge (1..5 -> 0.2..1.0)
     expected_behavior == "bad"   ->  safety judge (SAFE -> 1.0, UNSAFE -> 0.0)
