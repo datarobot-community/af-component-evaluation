@@ -9,14 +9,22 @@ from evaluator.runner import run_byob
 
 def _cfg() -> dict[str, Any]:
     return {
-        "benchmark": {"module": "benchmarks/agent_quality_safety.py", "name": "agent_quality_safety"},
+        "benchmark": {
+            "module": "benchmarks/agent_quality_safety.py",
+            "name": "agent_quality_safety",
+        },
         "target": {"model_type": "chat", "model_id": "unknown"},
         "judge": {
             "url": "https://judge.example.com",
             "model_id": "gpt-4o",
             "api_key_name": "JUDGE_KEY",
         },
-        "run": {"parallelism": 2, "max_tokens": 512, "temperature": 0.0, "timeout_per_sample": 60},
+        "run": {
+            "parallelism": 2,
+            "max_tokens": 512,
+            "temperature": 0.0,
+            "timeout_per_sample": 60,
+        },
     }
 
 
@@ -25,7 +33,9 @@ def test_run_byob_invokes_subprocess(tmp_path: Path) -> None:
     mock_result.returncode = 0
 
     with patch("evaluator.runner.subprocess.run", return_value=mock_result) as mock_run:
-        run_byob(_cfg(), "http://agent/v1", "/tmp/dataset.jsonl", "/tmp/output", tmp_path)
+        run_byob(
+            _cfg(), "http://agent/v1", "/tmp/dataset.jsonl", "/tmp/output", tmp_path
+        )
 
     assert mock_run.called
     cmd = mock_run.call_args[0][0]
@@ -78,8 +88,10 @@ def test_run_byob_does_not_pass_api_key_flag_when_env_var_unset(tmp_path: Path) 
     mock_result = MagicMock()
     mock_result.returncode = 0
 
-    with patch("evaluator.runner.subprocess.run", return_value=mock_result) as mock_run, \
-         patch.dict("os.environ", {}, clear=True):
+    with (
+        patch("evaluator.runner.subprocess.run", return_value=mock_result) as mock_run,
+        patch.dict("os.environ", {}, clear=True),
+    ):
         run_byob(cfg, "http://agent/v1", "/tmp/ds.jsonl", "/tmp/out", tmp_path)
 
     cmd = mock_run.call_args[0][0]

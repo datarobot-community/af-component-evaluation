@@ -77,7 +77,9 @@ def test_resolve_raises_when_not_found(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_print_summary_shows_run_metadata(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_print_summary_shows_run_metadata(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     _write_results(tmp_path / "eval_results.json", _minimal_results(run_id="run-42"))
     ResultsSummarizer(tmp_path).print_summary()
     out = capsys.readouterr().out
@@ -86,7 +88,9 @@ def test_print_summary_shows_run_metadata(tmp_path: Path, capsys: pytest.Capture
     assert "test.yaml" in out
 
 
-def test_print_summary_shows_scores(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_print_summary_shows_scores(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     _write_results(tmp_path / "eval_results.json", _minimal_results())
     ResultsSummarizer(tmp_path).print_summary()
     out = capsys.readouterr().out
@@ -94,7 +98,9 @@ def test_print_summary_shows_scores(tmp_path: Path, capsys: pytest.CaptureFixtur
     assert "Pass rate" in out
 
 
-def test_print_summary_shows_per_case_table(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_print_summary_shows_per_case_table(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     _write_results(tmp_path / "eval_results.json", _minimal_results())
     ResultsSummarizer(tmp_path).print_summary()
     out = capsys.readouterr().out
@@ -102,7 +108,9 @@ def test_print_summary_shows_per_case_table(tmp_path: Path, capsys: pytest.Captu
     assert "Per-case" in out
 
 
-def test_print_summary_shows_nemo_aggregate(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_print_summary_shows_nemo_aggregate(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     data = _minimal_results()
     data["summary"]["nemo_aggregate"] = {"agent_quality_safety.pass@1.quality": 0.95}
     _write_results(tmp_path / "eval_results.json", data)
@@ -112,7 +120,9 @@ def test_print_summary_shows_nemo_aggregate(tmp_path: Path, capsys: pytest.Captu
     assert "0.95" in out
 
 
-def test_print_summary_no_nemo_section_when_empty(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_print_summary_no_nemo_section_when_empty(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     _write_results(tmp_path / "eval_results.json", _minimal_results())
     ResultsSummarizer(tmp_path).print_summary()
     out = capsys.readouterr().out

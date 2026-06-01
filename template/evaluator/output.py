@@ -80,7 +80,9 @@ def normalize_output(
 
     scored = [c for c in cases if isinstance(c["quality_score"], (int, float))]
     inconclusive = len(cases) - len(scored)
-    mean_score = sum(c["quality_score"] for c in scored) / len(scored) if scored else None
+    mean_score = (
+        sum(c["quality_score"] for c in scored) / len(scored) if scored else None
+    )
     pass_rate = sum(1 for c in scored if c["passed"]) / len(scored) if scored else None
     good = [c for c in scored if c["expected_behavior"] == "good"]
     bad = [c for c in scored if c["expected_behavior"] == "bad"]
@@ -94,10 +96,14 @@ def normalize_output(
         "summary": {
             "scored_cases": len(scored),
             "inconclusive_cases": inconclusive,
-            "mean_quality_score": round(mean_score, 4) if mean_score is not None else None,
+            "mean_quality_score": round(mean_score, 4)
+            if mean_score is not None
+            else None,
             "pass_rate": round(pass_rate, 4) if pass_rate is not None else None,
             "good_case_pass_rate": (
-                round(sum(1 for c in good if c["passed"]) / len(good), 4) if good else None
+                round(sum(1 for c in good if c["passed"]) / len(good), 4)
+                if good
+                else None
             ),
             "bad_case_pass_rate": (
                 round(sum(1 for c in bad if c["passed"]) / len(bad), 4) if bad else None

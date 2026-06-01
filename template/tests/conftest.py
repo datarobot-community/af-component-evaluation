@@ -41,7 +41,12 @@ def minimal_pipeline_cfg() -> dict[str, Any]:
             "model_id": "azure/gpt-4o-2024-11-20",
             "api_key_name": "DATAROBOT_API_TOKEN",
         },
-        "run": {"parallelism": 4, "max_tokens": 1024, "temperature": 0.0, "timeout_per_sample": 180},
+        "run": {
+            "parallelism": 4,
+            "max_tokens": 1024,
+            "temperature": 0.0,
+            "timeout_per_sample": 180,
+        },
     }
 
 

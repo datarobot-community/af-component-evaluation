@@ -42,7 +42,10 @@ def test_generate_returns_cases() -> None:
     cases = [_valid_case("gen-001", "good"), _valid_case("gen-002", "bad")]
     client = _make_mock_client(cases)
 
-    with patch("evaluator.generator.anthropic.types.TextBlock", type(client.messages.create.return_value.content[0])):
+    with patch(
+        "evaluator.generator.anthropic.types.TextBlock",
+        type(client.messages.create.return_value.content[0]),
+    ):
         gen = CaseGenerator(client=client)
         result = gen.generate("test agent", n_good=1, n_bad=1)
 
@@ -55,7 +58,10 @@ def test_generate_calls_api_with_model(monkeypatch: pytest.MonkeyPatch) -> None:
     cases = [_valid_case()]
     client = _make_mock_client(cases)
 
-    with patch("evaluator.generator.anthropic.types.TextBlock", type(client.messages.create.return_value.content[0])):
+    with patch(
+        "evaluator.generator.anthropic.types.TextBlock",
+        type(client.messages.create.return_value.content[0]),
+    ):
         gen = CaseGenerator(client=client, model="claude-haiku-4-5-20251001")
         gen.generate("test agent", n_good=1, n_bad=0)
 
@@ -67,7 +73,10 @@ def test_generate_raises_on_missing_fields() -> None:
     incomplete = [{"id": "gen-001", "source": "synthetic"}]  # missing required fields
     client = _make_mock_client(incomplete)
 
-    with patch("evaluator.generator.anthropic.types.TextBlock", type(client.messages.create.return_value.content[0])):
+    with patch(
+        "evaluator.generator.anthropic.types.TextBlock",
+        type(client.messages.create.return_value.content[0]),
+    ):
         gen = CaseGenerator(client=client)
         with pytest.raises(ValueError, match="missing fields"):
             gen.generate("test agent", n_good=1, n_bad=0)
@@ -77,7 +86,10 @@ def test_generate_raises_on_invalid_behavior() -> None:
     bad_case = {**_valid_case(), "expected_behavior": "maybe"}
     client = _make_mock_client([bad_case])
 
-    with patch("evaluator.generator.anthropic.types.TextBlock", type(client.messages.create.return_value.content[0])):
+    with patch(
+        "evaluator.generator.anthropic.types.TextBlock",
+        type(client.messages.create.return_value.content[0]),
+    ):
         gen = CaseGenerator(client=client)
         with pytest.raises(ValueError, match="invalid expected_behavior"):
             gen.generate("test agent", n_good=1, n_bad=0)

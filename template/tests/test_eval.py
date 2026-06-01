@@ -1,16 +1,21 @@
 import json
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from evaluator.eval import EvalRunner
 
 _PIPELINE_CFG: dict[str, Any] = {
-    "benchmark": {"module": "benchmarks/agent_quality_safety.py", "name": "agent_quality_safety"},
+    "benchmark": {
+        "module": "benchmarks/agent_quality_safety.py",
+        "name": "agent_quality_safety",
+    },
     "target": {"model_type": "chat", "model_id": "unknown"},
-    "judge": {"url": "https://judge.example.com", "model_id": "gpt-4o", "api_key_name": "KEY"},
+    "judge": {
+        "url": "https://judge.example.com",
+        "model_id": "gpt-4o",
+        "api_key_name": "KEY",
+    },
     "run": {},
 }
 
@@ -36,7 +41,9 @@ _NORMALIZED_RESULTS: dict[str, Any] = {
 def _make_runner(tmp_path: Path, dataset_path: Path | None = None) -> EvalRunner:
     if dataset_path is None:
         p = tmp_path / "cases.json"
-        p.write_text(json.dumps([{"id": "c-001", "input": "hello", "expected_behavior": "good"}]))
+        p.write_text(
+            json.dumps([{"id": "c-001", "input": "hello", "expected_behavior": "good"}])
+        )
         dataset_path = p
     return EvalRunner(
         endpoint="http://localhost/v1",
@@ -53,7 +60,9 @@ def _make_runner(tmp_path: Path, dataset_path: Path | None = None) -> EvalRunner
 
 def test_run_returns_1_on_validation_failure(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=["Endpoint not reachable"]):
+    with patch(
+        "evaluator.eval.validate_inputs", return_value=["Endpoint not reachable"]
+    ):
         assert runner.run() == 1
 
 
@@ -71,15 +80,19 @@ def test_run_does_not_write_status_on_validation_failure(tmp_path: Path) -> None
 
 def test_run_dry_run_returns_0(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+    ):
         assert runner.run(dry_run=True) == 0
 
 
 def test_run_dry_run_does_not_write_output(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+    ):
         runner.run(dry_run=True)
     assert not (tmp_path / "output").exists()
 
@@ -91,17 +104,21 @@ def test_run_dry_run_does_not_write_output(tmp_path: Path) -> None:
 
 def test_run_returns_2_on_byob_failure(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG), \
-         patch("evaluator.eval.run_byob", side_effect=RuntimeError("runner crashed")):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.run_byob", side_effect=RuntimeError("runner crashed")),
+    ):
         assert runner.run() == 2
 
 
 def test_run_writes_failed_status_on_byob_error(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG), \
-         patch("evaluator.eval.run_byob", side_effect=RuntimeError("runner crashed")):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.run_byob", side_effect=RuntimeError("runner crashed")),
+    ):
         runner.run()
     status = json.loads((tmp_path / "output" / "eval_status.json").read_text())
     assert status["status"] == "failed"
@@ -115,10 +132,12 @@ def test_run_writes_failed_status_on_byob_error(tmp_path: Path) -> None:
 
 def test_run_returns_3_on_normalization_failure(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG), \
-         patch("evaluator.eval.run_byob"), \
-         patch("evaluator.eval.normalize_output", side_effect=ValueError("bad output")):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.run_byob"),
+        patch("evaluator.eval.normalize_output", side_effect=ValueError("bad output")),
+    ):
         assert runner.run() == 3
 
 
@@ -129,19 +148,23 @@ def test_run_returns_3_on_normalization_failure(tmp_path: Path) -> None:
 
 def test_run_happy_path_returns_0(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG), \
-         patch("evaluator.eval.run_byob"), \
-         patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.run_byob"),
+        patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS),
+    ):
         assert runner.run() == 0
 
 
 def test_run_happy_path_writes_results(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG), \
-         patch("evaluator.eval.run_byob"), \
-         patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.run_byob"),
+        patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS),
+    ):
         runner.run()
     results = json.loads((tmp_path / "output" / "eval_results.json").read_text())
     assert results["total_cases"] == 1
@@ -149,10 +172,12 @@ def test_run_happy_path_writes_results(tmp_path: Path) -> None:
 
 def test_run_happy_path_status_complete(tmp_path: Path) -> None:
     runner = _make_runner(tmp_path)
-    with patch("evaluator.eval.validate_inputs", return_value=[]), \
-         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG), \
-         patch("evaluator.eval.run_byob"), \
-         patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS):
+    with (
+        patch("evaluator.eval.validate_inputs", return_value=[]),
+        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.run_byob"),
+        patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS),
+    ):
         runner.run()
     status = json.loads((tmp_path / "output" / "eval_status.json").read_text())
     assert status["status"] == "complete"

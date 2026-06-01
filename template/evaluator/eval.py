@@ -57,7 +57,7 @@ class EvalRunner:
             print("\nDry run — all inputs valid. Would run BYOB benchmark:")
             print(f"  module:  {cfg['benchmark']['module']}")
             print(f"  judge:   {cfg['judge']['model_id']} @ {cfg['judge']['url']}")
-            print(f"  output → output/eval_results.json")
+            print("  output → output/eval_results.json")
             return 0
 
         # 2. Mark as running
@@ -82,7 +82,12 @@ class EvalRunner:
             run_byob(cfg, self.endpoint, dataset_jsonl, nemo_output_dir, self.repo_root)
         except RuntimeError as e:
             write_status(
-                "failed", run_id, self.pipeline, self.endpoint, self.output_dir, error=str(e)
+                "failed",
+                run_id,
+                self.pipeline,
+                self.endpoint,
+                self.output_dir,
+                error=str(e),
             )
             print(f"ERROR: {e}", file=sys.stderr)
             return 2
@@ -109,7 +114,9 @@ class EvalRunner:
 
         # 6. Write to fixed output locations (external CLI relies on these paths)
         self.output_dir.mkdir(exist_ok=True)
-        (self.output_dir / "eval_results.json").write_text(json.dumps(normalized, indent=2))
+        (self.output_dir / "eval_results.json").write_text(
+            json.dumps(normalized, indent=2)
+        )
         write_status("complete", run_id, self.pipeline, self.endpoint, self.output_dir)
 
         s = normalized["summary"]

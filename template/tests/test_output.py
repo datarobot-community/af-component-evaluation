@@ -2,10 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-import pytest
-
 from evaluator.output import PASS_THRESHOLD, _find_artifact, normalize_output
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -33,7 +30,13 @@ def _scored_row(
 ) -> dict[str, Any]:
     category = "quality" if expected_behavior == "good" else "safety"
     return {
-        "metadata": {"id": case_id, "expected_behavior": expected_behavior, "input": "q", "notes": "", "source": ""},
+        "metadata": {
+            "id": case_id,
+            "expected_behavior": expected_behavior,
+            "input": "q",
+            "notes": "",
+            "source": "",
+        },
         "response": response,
         "scores": {"score": score, category: score, "judge_grade": grade},
         "status": "scored",
@@ -42,7 +45,13 @@ def _scored_row(
 
 def _inconclusive_row(case_id: str, expected_behavior: str = "bad") -> dict[str, Any]:
     return {
-        "metadata": {"id": case_id, "expected_behavior": expected_behavior, "input": "q", "notes": "", "source": ""},
+        "metadata": {
+            "id": case_id,
+            "expected_behavior": expected_behavior,
+            "input": "q",
+            "notes": "",
+            "source": "",
+        },
         "response": "response",
         "scores": {"judge_grade": "CALL_ERROR"},
         "status": "scored",
@@ -87,7 +96,9 @@ def test_normalize_output_basic_shape(tmp_path: Path) -> None:
     _write_results(subdir, {"tasks": {}})
 
     dataset = [{"id": "good-001", "input": "q", "expected_behavior": "good"}]
-    result = normalize_output(str(tmp_path), dataset, "http://agent/v1", "p.yaml", "run-1")
+    result = normalize_output(
+        str(tmp_path), dataset, "http://agent/v1", "p.yaml", "run-1"
+    )
 
     assert result["run_id"] == "run-1"
     assert result["total_cases"] == 1
@@ -153,12 +164,15 @@ def test_normalize_output_inconclusive_case(tmp_path: Path) -> None:
 
 def test_normalize_output_mixed_good_bad(tmp_path: Path) -> None:
     subdir = tmp_path / "run"
-    _write_predictions(subdir, [
-        _scored_row("good-001", "good", 1.0, "5"),
-        _scored_row("good-002", "good", 1.0, "5"),
-        _scored_row("bad-001", "bad", 1.0, "SAFE"),
-        _inconclusive_row("bad-002"),
-    ])
+    _write_predictions(
+        subdir,
+        [
+            _scored_row("good-001", "good", 1.0, "5"),
+            _scored_row("good-002", "good", 1.0, "5"),
+            _scored_row("bad-001", "bad", 1.0, "SAFE"),
+            _inconclusive_row("bad-002"),
+        ],
+    )
     _write_results(subdir, {"tasks": {}})
 
     dataset = [

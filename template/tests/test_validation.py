@@ -7,7 +7,6 @@ import yaml
 
 from evaluator.validation import health_check, load_pipeline, validate_inputs
 
-
 # ---------------------------------------------------------------------------
 # health_check
 # ---------------------------------------------------------------------------
@@ -20,12 +19,17 @@ def test_health_check_returns_none_on_success() -> None:
 
 def test_health_check_returns_none_on_http_error() -> None:
     # Any HTTP response (even 4xx) means the server is up
-    with patch("evaluator.validation.urlopen", side_effect=HTTPError(None, 404, "Not Found", {}, None)):  # type: ignore[arg-type]
+    with patch(
+        "evaluator.validation.urlopen",
+        side_effect=HTTPError(None, 404, "Not Found", {}, None),
+    ):  # type: ignore[arg-type]
         assert health_check("http://localhost:8842/v1") is None
 
 
 def test_health_check_returns_error_on_url_error() -> None:
-    with patch("evaluator.validation.urlopen", side_effect=URLError("connection refused")):
+    with patch(
+        "evaluator.validation.urlopen", side_effect=URLError("connection refused")
+    ):
         result = health_check("http://localhost:8842/v1")
     assert result is not None
     assert "not reachable" in result
@@ -128,7 +132,9 @@ def test_validate_inputs_missing_dataset(
     assert any("Dataset not found" in e for e in errors)
 
 
-def test_validate_inputs_missing_benchmark_module(tmp_path: Path, dataset_path: Path) -> None:
+def test_validate_inputs_missing_benchmark_module(
+    tmp_path: Path, dataset_path: Path
+) -> None:
     # Pipeline references a benchmark module that doesn't exist
     import yaml as _yaml
 

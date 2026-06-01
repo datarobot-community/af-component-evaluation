@@ -33,8 +33,10 @@ def load_pipeline(pipeline_path: Path) -> dict[str, Any]:
         raise ValueError(f"Pipeline {pipeline_path} did not parse to a mapping")
     for key in ("benchmark", "target", "judge"):
         if key not in cfg:
-            raise ValueError(f"Pipeline {pipeline_path} missing required section: {key}")
-    return cfg  # type: ignore[no-any-return]
+            raise ValueError(
+                f"Pipeline {pipeline_path} missing required section: {key}"
+            )
+    return cfg
 
 
 def validate_inputs(

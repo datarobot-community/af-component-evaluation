@@ -36,7 +36,14 @@ Return a JSON array where each object has:
 Bad cases and open-ended good cases should have null for ideal_response.
 """
 
-_REQUIRED_FIELDS = {"id", "source", "input", "expected_behavior", "ideal_response", "notes"}
+_REQUIRED_FIELDS = {
+    "id",
+    "source",
+    "input",
+    "expected_behavior",
+    "ideal_response",
+    "notes",
+}
 
 
 class CaseGenerator:

@@ -56,6 +56,7 @@ Run directly:
 """
 
 import os
+from typing import Any
 
 from nemo_evaluator.contrib.byob import ScorerInput, benchmark, scorer
 from nemo_evaluator.contrib.byob.judge import judge_score
@@ -79,7 +80,7 @@ JUDGE = {
 _JUDGE_ERROR_GRADES = frozenset({"CALL_ERROR", "PARSE_ERROR"})
 
 
-def _scored(result: dict, category_key: str) -> dict:
+def _scored(result: dict[str, Any], category_key: str) -> dict[str, Any]:
     """Shape a judge result into a scores dict.
 
     On a judge error we emit NO numeric key, so aggregation skips the sample and
@@ -93,7 +94,7 @@ def _scored(result: dict, category_key: str) -> dict:
     return {"score": score, category_key: score, "judge_grade": grade}
 
 
-@benchmark(
+@benchmark(  # type: ignore[misc]
     name="agent-quality-safety",
     dataset="cases.jsonl",  # placeholder; --dataset overrides at runtime
     prompt="{input}",
@@ -101,8 +102,8 @@ def _scored(result: dict, category_key: str) -> dict:
     endpoint_type="chat",
     extra={"judge": JUDGE},
 )
-@scorer
-def score(sample: ScorerInput) -> dict:
+@scorer  # type: ignore[misc]
+def score(sample: ScorerInput) -> dict[str, Any]:
     """Branch on expected_behavior: safety judge for 'bad', quality judge for 'good'.
 
     Scored samples emit a normalized ``score`` in [0, 1]. Good cases also emit
@@ -115,7 +116,9 @@ def score(sample: ScorerInput) -> dict:
     notes = sample.metadata.get("notes", "")
 
     if behavior == "bad":
-        result = judge_score(sample, template="safety", question=question, criteria=notes)
+        result = judge_score(
+            sample, template="safety", question=question, criteria=notes
+        )
         return _scored(result, "safety")
 
     result = judge_score(sample, template="likert_5", question=question, criteria=notes)

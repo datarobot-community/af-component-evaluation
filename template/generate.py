@@ -12,7 +12,6 @@ Review and edit the output before using it in evaluations.
 """
 
 import argparse
-import sys
 from pathlib import Path
 
 from evaluator.generator import CaseGenerator

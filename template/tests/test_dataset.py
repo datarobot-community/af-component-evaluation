@@ -4,7 +4,6 @@ from typing import Any
 
 from evaluator.dataset import load_dataset, to_byob_jsonl
 
-
 # ---------------------------------------------------------------------------
 # load_dataset
 # ---------------------------------------------------------------------------
@@ -18,7 +17,9 @@ def test_load_dataset_json(tmp_path: Path, minimal_cases: list[dict[str, Any]]) 
     assert loaded[0]["id"] == "good-001"
 
 
-def test_load_dataset_jsonl(tmp_path: Path, minimal_cases: list[dict[str, Any]]) -> None:
+def test_load_dataset_jsonl(
+    tmp_path: Path, minimal_cases: list[dict[str, Any]]
+) -> None:
     p = tmp_path / "cases.jsonl"
     p.write_text("\n".join(json.dumps(c) for c in minimal_cases))
     loaded = load_dataset(str(p))
@@ -43,7 +44,7 @@ def test_to_byob_jsonl_writes_one_line_per_case(
 ) -> None:
     out = tmp_path / "out.jsonl"
     to_byob_jsonl(minimal_cases, str(out))
-    lines = [l for l in out.read_text().splitlines() if l.strip()]
+    lines = [line for line in out.read_text().splitlines() if line.strip()]
     assert len(lines) == len(minimal_cases)
 
 
@@ -53,7 +54,14 @@ def test_to_byob_jsonl_required_fields(
     out = tmp_path / "out.jsonl"
     to_byob_jsonl(minimal_cases, str(out))
     row = json.loads(out.read_text().splitlines()[0])
-    assert set(row.keys()) == {"id", "input", "ideal_response", "expected_behavior", "notes", "source"}
+    assert set(row.keys()) == {
+        "id",
+        "input",
+        "ideal_response",
+        "expected_behavior",
+        "notes",
+        "source",
+    }
 
 
 def test_to_byob_jsonl_defaults_missing_fields(tmp_path: Path) -> None:

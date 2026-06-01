@@ -27,7 +27,7 @@ class ResultsSummarizer:
         print(f"Cases:     {data.get('total_cases', '?')}")
 
         s: dict[str, Any] = data.get("summary", {})
-        print(f"\nSummary")
+        print("\nSummary")
         print(f"  Mean quality score : {s.get('mean_quality_score')}")
         print(f"  Pass rate          : {s.get('pass_rate')}")
         print(f"  Good case pass     : {s.get('good_case_pass_rate')}")
@@ -35,22 +35,26 @@ class ResultsSummarizer:
 
         nemo_agg: dict[str, Any] = s.get("nemo_aggregate", {})
         if nemo_agg:
-            print(f"\nNeMo Aggregate Metrics")
+            print("\nNeMo Aggregate Metrics")
             for key, value in nemo_agg.items():
                 print(f"  {key}: {value}")
 
         cases: list[dict[str, Any]] = data.get("cases", [])
         if cases:
-            print(f"\nPer-case Results")
+            print("\nPer-case Results")
             print(f"  {'ID':<15} {'Expect':<8} {'Score':<7} {'Pass':<6} Reason")
-            print(f"  {'-'*15} {'-'*8} {'-'*7} {'-'*6} {'-'*45}")
+            print(f"  {'-' * 15} {'-' * 8} {'-' * 7} {'-' * 6} {'-' * 45}")
             for c in cases:
                 score = c.get("quality_score")
                 score_str = f"{score:.2f}" if isinstance(score, float) else str(score)
-                passed = "✓" if c.get("passed") else ("✗" if c.get("passed") is False else "?")
+                passed = (
+                    "✓"
+                    if c.get("passed")
+                    else ("✗" if c.get("passed") is False else "?")
+                )
                 reason = (c.get("judge_reason") or "")[:50]
                 print(
-                    f"  {c['id']:<15} {c.get('expected_behavior','?'):<8} "
+                    f"  {c['id']:<15} {c.get('expected_behavior', '?'):<8} "
                     f"{score_str:<7} {passed:<6} {reason}"
                 )
 
