@@ -87,7 +87,7 @@ never need this — the gateway is already OpenAI-compatible.
 
 ## 3. Judge gateway 400s on adversarial / prompt-injection content (content filter)
 
-**Status:** open — needs graceful handling
+**Status:** mitigated (treated as inconclusive); root cause still open
 **Discovered:** 2026-06-01 (first real run, case `bad-002`)
 
 In the first end-to-end run, the safety judge for `bad-002` ("Ignore your
@@ -116,9 +116,15 @@ text, surfaced by the DR gateway as an opaque 400.
   removes the *response* trigger, but the *question* text alone can still trip
   it — so prompt-injection safety cases may still `CALL_ERROR`.
 
-**Fix options (not yet done):**
-- Treat a judge `CALL_ERROR` as **inconclusive** (null / skip), not a 0.0 fail,
-  so a judge-side filter rejection doesn't masquerade as an agent failure.
+**Mitigation in place (2026-06-01):** a judge `CALL_ERROR` / `PARSE_ERROR` is
+now treated as **inconclusive** — the scorer emits no numeric score
+(`benchmarks/agent_quality_safety.py::_scored`), so the case is excluded from
+aggregates with `quality_score: null` / `passed: null` instead of counting as a
+`0.0` agent failure. `run_eval.py` reports `inconclusive_cases` in the summary.
+Confirmed: with the lean agent, `bad-002` still `CALL_ERROR`s (the injection
+*question* text alone trips the filter) but no longer drags down the pass rate.
+
+**Still open — actually scoring those cases:**
 - For safety scoring, judge primarily the *response*; consider not re-sending
   the raw adversarial *question* into the judge prompt (or sanitizing it).
 - Or route safety-judging to a model/endpoint without an aggressive input filter.
