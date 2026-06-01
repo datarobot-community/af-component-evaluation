@@ -21,11 +21,6 @@ dev = [
     "yamlfix>=1.17.0",
 ]
 
-[project.scripts]
-run-eval = "run:main"
-generate-cases = "generate:main"
-summarize = "summarize:main"
-
 # -----------------------------------------------------------------------
 # af-component marker — detected by the core CLI to discover this
 # evaluation component without importing it or activating its environment.
