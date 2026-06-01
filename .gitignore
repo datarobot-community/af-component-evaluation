@@ -9,6 +9,10 @@ wheels/
 # Virtual environments
 .venv
 
+# Environment / secrets
+.env
+.env.*
+
 # Eval output (generated at runtime — never commit)
 output/eval_status.json
 output/eval_results.json

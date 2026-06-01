@@ -1,0 +1,42 @@
+# BYOB-based evaluation pipeline (NeMo Evaluator, in-process — no Docker).
+#
+# This replaces the old Hydra/nemo-evaluator-launcher format. The launcher runs
+# every task in an nvcr.io Docker container with --gpus all (unusable on a Mac),
+# and has no generic "custom Q&A + judge" task. Instead we use NeMo's BYOB
+# framework (nemo_evaluator.contrib.byob) which runs a custom benchmark in-process.
+#
+# run_eval.py reads this file, exports the judge.* values as env vars, and invokes:
+#   python -m nemo_evaluator.contrib.byob.runner ...
+#
+# USER CONFIGURATION — what you'd normally change:
+#   judge.model_id   gateway catalog model name (NOT litellm-prefixed). Azure GPT
+#                    models work with NeMo's stock judge; Bedrock/Claude do not
+#                    (see the known issues notes). List models at GET .../genai/llmgw/models.
+#   judge.url        OpenAI-compatible base URL; NeMo appends /chat/completions.
+#   target.model_id  the "model" string sent to the agent endpoint.
+
+benchmark:
+  # Path is relative to this repo root; name is the normalized benchmark name.
+  module: benchmarks/agent_quality_safety.py
+  name: agent_quality_safety
+
+target:
+  # The agent under test. URL comes from --endpoint at runtime.
+  model_type: chat
+  # "unknown" is myagent.py's placeholder sentinel -> the agent uses its own
+  # configured default LLM (config.llm_default_model). Use this unless you want
+  # to force a specific model the agent's get_llm() understands.
+  model_id: unknown
+  api_key_name: AGENT_API_KEY # env var holding the agent bearer token (optional for local DRUM)
+
+judge:
+  # Direct to the DataRobot LLM gateway (OpenAI-compatible, no LiteLLM proxy).
+  url: https://app.datarobot.com/api/v2/genai/llmgw
+  model_id: azure/gpt-4o-2024-11-20
+  api_key_name: DATAROBOT_API_TOKEN # env var holding the judge bearer token
+
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180
