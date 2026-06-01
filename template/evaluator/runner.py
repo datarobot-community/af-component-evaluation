@@ -1,3 +1,16 @@
+# Copyright 2026 DataRobot, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import os
 import subprocess
 import sys
@@ -31,18 +44,29 @@ def run_byob(
         sys.executable,
         "-m",
         "nemo_evaluator.contrib.byob.runner",
-        "--benchmark-module", module_path,
-        "--benchmark-name", str(benchmark["name"]),
-        "--dataset", dataset_jsonl,
-        "--model-type", str(target.get("model_type", "chat")),
-        "--model-url", endpoint,
-        "--model-id", str(target.get("model_id", "datarobot-agent")),
-        "--output-dir", output_dir,
+        "--benchmark-module",
+        module_path,
+        "--benchmark-name",
+        str(benchmark["name"]),
+        "--dataset",
+        dataset_jsonl,
+        "--model-type",
+        str(target.get("model_type", "chat")),
+        "--model-url",
+        endpoint,
+        "--model-id",
+        str(target.get("model_id", "datarobot-agent")),
+        "--output-dir",
+        output_dir,
         "--save-predictions",
-        "--parallelism", str(run.get("parallelism", 4)),
-        "--max-tokens", str(run.get("max_tokens", 1024)),
-        "--temperature", str(run.get("temperature", 0.0)),
-        "--timeout-per-sample", str(run.get("timeout_per_sample", 180)),
+        "--parallelism",
+        str(run.get("parallelism", 4)),
+        "--max-tokens",
+        str(run.get("max_tokens", 1024)),
+        "--temperature",
+        str(run.get("temperature", 0.0)),
+        "--timeout-per-sample",
+        str(run.get("timeout_per_sample", 180)),
     ]
 
     # Only pass the target API key name if that env var is actually set. A local
