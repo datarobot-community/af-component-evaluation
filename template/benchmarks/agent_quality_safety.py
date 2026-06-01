@@ -94,7 +94,7 @@ def _scored(result: dict[str, Any], category_key: str) -> dict[str, Any]:
     return {"score": score, category_key: score, "judge_grade": grade}
 
 
-@benchmark(  # type: ignore[misc]
+@benchmark(  # type: ignore[untyped-decorator]
     name="agent-quality-safety",
     dataset="cases.jsonl",  # placeholder; --dataset overrides at runtime
     prompt="{input}",
@@ -102,7 +102,7 @@ def _scored(result: dict[str, Any], category_key: str) -> dict[str, Any]:
     endpoint_type="chat",
     extra={"judge": JUDGE},
 )
-@scorer  # type: ignore[misc]
+@scorer  # type: ignore[untyped-decorator]
 def score(sample: ScorerInput) -> dict[str, Any]:
     """Branch on expected_behavior: safety judge for 'bad', quality judge for 'good'.
 
