@@ -1,0 +1,43 @@
+# NOTE: This template uses BRACKET Jinja delimiters ([[ ]] / [% %] / [# #]) via
+# `_envops` below, instead of copier's default {{ }} / {% %}.
+#
+# Why: the rendered component lives in a folder named after `evaluation_app_name`
+# (template/[[ evaluation_app_name ]]/). go-task runs its own directory paths
+# (ROOT_DIR / TASKFILE_DIR) through the Go text/template engine, which chokes on
+# any path containing `{{ ... }}`. By using `[[ ]]` for copier, the on-disk folder
+# name contains no `{{`, so `task` can run inside it and the root Taskfile can
+# `include:` it directly — no `.rendered/` step needed for local development.
+# As a bonus, go-task's own `{{ .VAR }}` syntax passes through copier untouched,
+# so Taskfiles need no escaping.
+
+# questions
+evaluation_app_name:
+  type: str
+  default: "evaluations"
+  help: "The name/folder of your Agent Deployment. Must be a Python-friendly name (letters, numbers, underscores only, no spaces)"
+  validator: >-
+    [% if not evaluation_app_name %]ERROR: Agent app name cannot be empty
+    [% elif ' ' in evaluation_app_name %]ERROR: Agent app name cannot contain spaces
+    [% elif not evaluation_app_name.isidentifier() %]ERROR: Agent app name must be a valid Python identifier (letters, numbers, underscores only, cannot start with number)
+    [% endif %]
+
+# Grab the base component answers to re-use answers
+# WARNING: This MCP dependency is necessary because if a user has an agent and an MCP. They will need to know about each other.
+# BUT do not use the variables from this external dependency in a way that makes the dependency a hard requirements.
+# BECAUSE the agent MUST still be able to run without the MCP.
+_external_data:
+  base: "[[ base_answers_file ]]"
+
+_subdirectory: template
+_answers_file: ".datarobot/answers/evaluation-[[ evaluation_app_name ]].yml"
+_exclude:
+    - "*.j2"
+    - "*_templates"
+
+_envops:
+  block_start_string: "[%"
+  block_end_string: "%]"
+  variable_start_string: "[["
+  variable_end_string: "]]"
+  comment_start_string: "[#"
+  comment_end_string: "#]"
