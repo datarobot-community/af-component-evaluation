@@ -33,6 +33,11 @@ jobs:
         run: uvx --from go-task-bin task install
         env:
           UV_CACHE_DIR: /.uv_cache
+      - name: License header check
+        if: matrix.python == '3.11'
+        uses: apache/skywalking-eyes/header@main
+        with:
+          config: .github/.licenserc.yaml
       - name: Lint check
         shell: sh
         working-directory: ./template
