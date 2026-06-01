@@ -31,6 +31,7 @@ tasks:
     silent: true
   lint-check:
     desc: 🧹 Check linting without fixing
+    aliases: [check-lint]
     cmds:
       - task: req
       - echo "Checking linting"
@@ -43,7 +44,13 @@ tasks:
     desc: 🧪 Run tests
     cmds:
       - echo "Running pytest"
-      - '{{.UV_CMD}} run pytest -vv ./tests/'
+      - '{{.UV_CMD}} run python -m pytest -vv ./tests/'
+    silent: true
+  test-coverage:
+    desc: 🧪 Run tests with coverage report
+    cmds:
+      - task: req
+      - '{{.UV_CMD}} run python -m pytest --cov=evaluator --cov-report=term-missing --cov-report=html ./tests/'
     silent: true
   generate:
     desc: 🤖 Generate synthetic test cases (pass args with --)
