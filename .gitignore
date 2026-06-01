@@ -73,10 +73,14 @@ nosetests.xml
 .DS_Store
 Thumbs.db
 
-# Eval output (generated at runtime — never commit)
-template/output/eval_status.json
-template/output/eval_results.json
-template/output/raw/
+# Eval output (generated at runtime — never commit any of it, but keep the dir)
+# NOTE: `template/*/` matches the component folder (template/[[ evaluation_app_name ]]/).
+# A literal `[` would be parsed as a gitignore character class, so glob with `*` instead.
+template/*/output/*
+!template/*/output/.gitkeep
 
 # Claude-generated test cases (review before committing)
-template/user_datasets/generated_cases.json
+template/*/user_datasets/generated_cases.json
+
+# Local copier render output (`task render` — inspect-only, never commit)
+.rendered/
