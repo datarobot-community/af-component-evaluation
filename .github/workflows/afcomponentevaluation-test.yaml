@@ -40,12 +40,12 @@ jobs:
         run: |
           apt-get update && apt-get install -y --no-install-recommends git
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          uvx copier copy --vcs-ref=HEAD --defaults . ./rendered
+          uvx copier copy --vcs-ref=HEAD --defaults . ./.rendered
         env:
           UV_CACHE_DIR: /.uv_cache
       - name: Install dependencies
         shell: sh
-        working-directory: ./rendered/evaluations
+        working-directory: ./.rendered/evaluations
         run: uvx --from go-task-bin task install
         env:
           UV_CACHE_DIR: /.uv_cache
@@ -56,13 +56,13 @@ jobs:
           config: .github/.licenserc.yaml
       - name: Lint check
         shell: sh
-        working-directory: ./rendered/evaluations
+        working-directory: ./.rendered/evaluations
         run: uvx --from go-task-bin task lint-check
         env:
           UV_CACHE_DIR: /.uv_cache
       - name: Run tests with coverage
         shell: sh
-        working-directory: ./rendered/evaluations
+        working-directory: ./.rendered/evaluations
         run: uvx --from go-task-bin task test-coverage
         env:
           UV_CACHE_DIR: /.uv_cache

@@ -39,3 +39,10 @@ tasks:
   test-coverage:
     desc: 🧪 Run tests with coverage report
     cmds: [{task: eval:test-coverage}]
+  render:
+    desc: 🏗️ Render this component to ./.rendered to inspect the copied output (pass copier args with --, e.g. `task render -- --defaults`)
+    cmds:
+      - rm -rf .rendered
+      - 'uvx copier copy --vcs-ref=HEAD . .rendered {{.CLI_ARGS}}'
+      - echo "✅ Rendered to ./.rendered (renders committed state; commit changes first to see them)"
+    silent: true
