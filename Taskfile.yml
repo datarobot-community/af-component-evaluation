@@ -1,62 +1,10 @@
 ---
 # https://taskfile.dev
 version: '3'
-vars:
-  UV_CMD:
-    sh: |
-      if command -v env >/dev/null 2>&1; then
-        echo "env -u PYTHONPATH -u VIRTUAL_ENV uv"
-      else
-        echo "uv"
-      fi
-tasks:
-  install:
-    desc: 🛠️ Install dependencies
-    cmds:
-      - echo "Installing af-component-evaluation dependencies"
-      - '{{.UV_CMD}} sync --extra dev'
-    aliases: [req]
-  update:
-    cmds: ['{{.UV_CMD}} sync --extra dev -U']
-    silent: true
-  lint:
-    desc: 🧹 Run linters (ruff + mypy + yamlfix)
-    cmds:
-      - task: req
-      - echo "Linting the codebase"
-      - '{{.UV_CMD}} run ruff check . --fix'
-      - '{{.UV_CMD}} run ruff format .'
-      - '{{.UV_CMD}} run mypy --pretty .'
-      - "{{.UV_CMD}} run yamlfix . -e '.venv/**/*.yaml' -e '.venv/**/*.yml'"
-    silent: true
-  lint-check:
-    desc: 🧹 Check linting without fixing
-    cmds:
-      - task: req
-      - echo "Checking linting"
-      - '{{.UV_CMD}} run ruff format --check --diff .'
-      - '{{.UV_CMD}} run ruff check --diff .'
-      - echo "Checking type hints"
-      - '{{.UV_CMD}} run mypy --pretty .'
-    silent: true
-  test:
-    desc: 🧪 Run tests
-    cmds:
-      - echo "Running pytest"
-      - '{{.UV_CMD}} run pytest -vv ./tests/'
-    silent: true
-  generate:
-    desc: 🤖 Generate synthetic test cases (pass args with --)
-    cmds:
-      - '{{.UV_CMD}} run python generate/generate_test_cases.py {{.CLI_ARGS}}'
-    silent: true
-  eval:
-    desc: 🔬 Run a batch evaluation (pass --endpoint, --pipeline, --dataset)
-    cmds:
-      - '{{.UV_CMD}} run python run_eval.py {{.CLI_ARGS}}'
-    silent: true
-  summarize:
-    desc: 📊 Pretty-print latest eval results
-    cmds:
-      - '{{.UV_CMD}} run python scripts/summarize_results.py output/'
-    silent: true
+
+dotenv: ['.env']
+
+includes:
+  template:
+    taskfile: ./template/Taskfile.yml
+    dir: ./template
