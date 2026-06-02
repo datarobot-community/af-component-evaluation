@@ -33,7 +33,8 @@ import os
 from typing import Any
 
 from nemo_evaluator.contrib.byob import ScorerInput, benchmark, scorer
-from nemo_evaluator.contrib.byob.judge import judge_score
+
+from evaluator.judge import judge_score  # provider-compatible wrapper (drops top_p)
 
 # Judge endpoint config. ``api_key`` is the NAME of an env var, resolved at
 # runtime by the judge (sent as ``Authorization: Bearer <value>``). run.py
