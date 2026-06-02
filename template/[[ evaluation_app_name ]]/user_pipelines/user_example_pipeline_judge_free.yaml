@@ -1,0 +1,28 @@
+---
+# EXAMPLE PIPELINE (judge-free) — pairs with user_example_benchmark_judge_free.py
+#
+# Copy this file, rename it (e.g. my_keyword_check.yaml), and update:
+#   benchmark.module  → path to your benchmark .py (relative to the component root)
+#   benchmark.name    → must match the name= argument in @benchmark(...)
+#
+# Judge-free pipelines OMIT the judge: block entirely.  run.py only exports
+# JUDGE_* env vars when a judge: block is present, and judge_score() is never
+# called, so no credentials are required and results are fully reproducible.
+#
+# Run it:
+#   task eval -- --endpoint http://localhost:8842/v1 \
+#     --pipeline user_pipelines/user_example_pipeline_judge_free.yaml \
+#     --dataset user_datasets/your_cases.json
+benchmark:
+  module: user_pipelines/user_example_benchmark_judge_free.py  # path relative to component root
+  name: keyword_presence  # must match name= in @benchmark(...)
+target:
+  model_type: chat
+  model_id: unknown  # "unknown" → agent uses its own configured default LLM
+  api_key_name: AGENT_API_KEY  # env var NAME holding the agent token (set only if needed)
+# judge: block intentionally omitted — this is a judge-free benchmark.
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180
