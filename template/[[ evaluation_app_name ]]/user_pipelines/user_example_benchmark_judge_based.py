@@ -131,5 +131,7 @@ def score(sample: ScorerInput) -> dict[str, Any]:
     # hard-coding them here.  Leave `criteria` empty in the dataset to fall
     # back to the template's default "helpfulness / coherence / relevance" rubric.
     criteria = sample.metadata.get("criteria", "")
-    result = judge_score(sample, template="likert_5", question=question, criteria=criteria)
+    result = judge_score(
+        sample, template="likert_5", question=question, criteria=criteria
+    )
     return _scored(result, "quality")

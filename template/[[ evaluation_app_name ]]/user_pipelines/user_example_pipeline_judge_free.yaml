@@ -13,18 +13,14 @@
 #   task eval -- --endpoint http://localhost:8842/v1 \
 #     --pipeline user_pipelines/user_example_pipeline_judge_free.yaml \
 #     --dataset user_datasets/your_cases.json
-
 benchmark:
   module: user_pipelines/user_example_benchmark_judge_free.py  # path relative to component root
   name: keyword_presence  # must match name= in @benchmark(...)
-
 target:
   model_type: chat
   model_id: unknown  # "unknown" → agent uses its own configured default LLM
   api_key_name: AGENT_API_KEY  # env var NAME holding the agent token (set only if needed)
-
 # judge: block intentionally omitted — this is a judge-free benchmark.
-
 run:
   parallelism: 4
   max_tokens: 1024

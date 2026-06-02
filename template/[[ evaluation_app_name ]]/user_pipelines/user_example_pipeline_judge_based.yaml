@@ -13,22 +13,19 @@
 #
 # ⚠️  Bedrock/Claude models cannot be the stock judge — NeMo's judge client sends
 #     both temperature and top_p, which DR-gateway Bedrock models reject.
-#     Use an Azure OpenAI model.  See BUGS.md #1.
+#     Use an Azure OpenAI model.  See BUGS.md  # 1.
 #
 # Run it:
 #   task eval -- --endpoint http://localhost:8842/v1 \
 #     --pipeline user_pipelines/user_example_pipeline_judge_based.yaml \
 #     --dataset user_datasets/your_cases.json
-
 benchmark:
   module: user_pipelines/user_example_benchmark_judge_based.py  # path relative to component root
   name: custom_criteria  # must match name= in @benchmark(...)
-
 target:
   model_type: chat
   model_id: unknown  # "unknown" → agent uses its own configured default LLM
   api_key_name: AGENT_API_KEY  # env var NAME holding the agent token (set only if needed)
-
 judge:
   # OpenAI-compatible base URL; NeMo appends /chat/completions internally.
   url: https://app.datarobot.com/api/v2/genai/llmgw
@@ -37,7 +34,6 @@ judge:
   model_id: azure/gpt-4o-2024-11-20
   # env var NAME (not the token value) holding the judge bearer token.
   api_key_name: DATAROBOT_API_TOKEN
-
 run:
   parallelism: 4
   max_tokens: 1024
