@@ -82,9 +82,21 @@ run:
 
 ## Writing your own benchmark + pipeline
 
-Copy the closest default benchmark from `evaluator/benchmarks/` (each file is
-self-contained — no shared imports to untangle), adjust its `@benchmark`/`@scorer`,
-then copy the matching pipeline here and repoint `benchmark.module`/`name`.
-Built-in judge templates available to benchmarks: `binary_qa`, `binary_qa_partial`,
-`likert_5`, `safety` — or pass a custom template string + `grade_pattern` /
-`score_mapping` to `judge_score()`.
+Two annotated example files are included here as starting points:
+
+| Files | Pattern | When to use |
+|---|---|---|
+| `user_example_benchmark_judge_free.py` + `user_example_pipeline_judge_free.yaml` | **Judge-free** | You have deterministic pass/fail criteria — no LLM needed, always reproducible |
+| `user_example_benchmark_judge_based.py` + `user_example_pipeline_judge_based.yaml` | **Judge-based** | You need a language model to evaluate qualitative criteria |
+
+Copy the pair that fits your use case, rename both files, update `benchmark.module` /
+`benchmark.name` in the YAML to match, then adjust the scoring logic in the `.py`.
+
+Each file is commented as a tutorial — the `@benchmark`/`@scorer` mechanics, how to
+read from `sample.metadata`, and how to emit inconclusive vs. scored results.
+
+The default benchmarks in `evaluator/benchmarks/` (not meant to be edited) are also
+a good reference: each is self-contained with no shared imports.
+
+Built-in judge templates: `binary_qa`, `binary_qa_partial`, `likert_5`, `safety` — or
+pass a custom string + `grade_pattern` / `score_mapping` to `judge_score()`.
