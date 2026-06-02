@@ -29,7 +29,14 @@ Batch evaluation component for DataRobot agents using the [NeMo Evaluator](https
 
 **Why a separate component?** NeMo Evaluator's dependency tree is heavy and carries CVEs that should not infect the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
 
-**What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks** — pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema. See `user_pipelines/README.md` for the full menu.
+**What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks** — pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
+
+> **This README is for developers of `af-component-evaluation` itself.** The
+> user-facing documentation that ships with the component (and what an agent/CLI
+> consuming a rendered project reads) lives in **`template/docs/evaluation/`** →
+> rendered to **`docs/evaluation/`**. Start at
+> [`template/docs/evaluation/README.md`](template/docs/evaluation/README.md). Known
+> issues and gotchas are tracked in [`BUGS.md`](BUGS.md).
 
 ---
 
@@ -254,9 +261,6 @@ af-component-evaluation/
 ├── scripts/
 │   └── summarize_results.py       # Human-readable pretty-print of eval_results.json
 │
-├── docs/
-│   └── nat-eval-vs-nemo-evaluator.md  # Explanation of the two evaluation systems
-│
 ├── BUGS.md                        # Known issues / gotchas (Bedrock judge, LiteLLM, content filter)
 ├── run_eval.py                    # Main CLI entrypoint
 └── pyproject.toml                 # uv environment + [tool.af-component] detection marker
@@ -290,14 +294,3 @@ uv run python generate/generate_test_cases.py \
 ```bash
 uv run python scripts/summarize_results.py output/
 ```
-
-## Distinction from NAT /evaluate
-
-See `docs/nat-eval-vs-nemo-evaluator.md`. In brief:
-
-| | This component | NAT `/evaluate` |
-|---|---|---|
-| **Tests** | Agent output quality at scale | Agent trajectory and reasoning |
-| **Perspective** | Black-box — sees only the final response | Inside-out — sees tool calls and intermediate steps |
-| **Trigger** | CLI subprocess | `POST /evaluate` on running NAT server |
-| **Use when** | Batch regression testing, safety checks, release gates | Playground / development, checking agent reasoning |
