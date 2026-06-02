@@ -13,9 +13,11 @@
 # limitations under the License.
 """Faithfulness / Groundedness — RAG hallucination check (LLM-as-judge).
 
-For agents that answer from retrieved context. Each case supplies a ``context``
-passage; a judge decides whether the agent's answer is fully supported by that
-context (grounded) or introduces unsupported claims (hallucinated).
+For agents that answer from provided context. Each case supplies a ``context``
+passage which is sent to the agent **as part of the prompt** (this is a black-box
+eval — the agent only knows what the prompt carries). A judge then decides whether
+the agent's answer is fully supported by that context (grounded) or introduces
+unsupported claims (hallucinated).
 
 Scoring (judge-based):
     Reuses the built-in ``binary_qa`` template with the context injected into the
@@ -23,7 +25,8 @@ Scoring (judge-based):
 
 Dataset fields:
     input    (required) the question asked of the agent
-    context  (required) the source passage the answer must stay grounded in
+    context  (required) the source passage — sent to the agent in the prompt AND
+             used as the grounding reference for the judge
     notes    (optional) extra grading guidance for the judge
 
 Because the check is "supported by THIS context", a correct-but-ungrounded answer
@@ -74,7 +77,15 @@ def _criteria(context: str, notes: str) -> str:
 @benchmark(  # type: ignore[untyped-decorator]
     name="faithfulness",
     dataset="cases.jsonl",
-    prompt="{input}",
+    # The context is sent TO THE AGENT here (not just to the judge) — this is a
+    # black-box eval, so the agent only knows what the prompt carries. The judge
+    # then checks the answer against that same context. `context` is therefore a
+    # required dataset field; a case without it fails to render.
+    prompt=(
+        "Use ONLY the following context to answer the question. "
+        "If the context does not contain the answer, say so explicitly.\n\n"
+        "Context:\n{context}\n\nQuestion: {input}"
+    ),
     endpoint_type="chat",
     extra={"judge": JUDGE},
 )
