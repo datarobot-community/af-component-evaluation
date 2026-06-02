@@ -49,6 +49,8 @@ See [Benchmarks](./benchmarks.md) for the full meaning of each field.
   most valuable — they reflect real usage.
 - **Synthetic:** run `generate.py` to produce cases with Claude, then review and
   edit before committing.
+- **From CSV:** if your cases live in a spreadsheet, export to CSV and run
+  `generate.py --convert` to produce the JSON file (see below).
 
 ## Generating synthetic cases
 
@@ -72,3 +74,54 @@ task generate -- \
 | `--append` | off | Append to the existing file instead of overwriting |
 
 Requires `ANTHROPIC_API_KEY` (or equivalent Claude credentials) in your `.env`.
+
+## Converting from CSV
+
+If you or a colleague maintains cases in a spreadsheet, export to `.csv` and
+convert with `generate.py --convert` rather than hand-writing JSON.
+
+```bash
+task generate -- --convert user_datasets/my_cases.csv
+# writes user_datasets/my_cases.json by default
+
+task generate -- --convert user_datasets/my_cases.csv --output user_datasets/answer_quality.json
+```
+
+### CSV format
+
+- **Row 0** is the header (column names).
+- **Rows 1+** are individual test cases.
+- **Every column becomes a JSON field** — nothing is dropped.
+- Empty cells come through as `""` (CSV has no native null; edit the JSON
+  afterward if a field such as `ideal_response` should be `null`).
+
+### Required columns
+
+| Column | Notes |
+|---|---|
+| `id` | Unique identifier — must be present and non-empty |
+| `source` | `"collected"` or `"synthetic"` |
+| `input` | The user message sent to the agent |
+
+The converter raises an error if any of these columns are missing from the
+header row.
+
+### Recommended columns
+
+| Column | Notes |
+|---|---|
+| `notes` | Grading criteria for judge benchmarks; human docs for others. A warning is printed if absent. |
+
+Any benchmark-specific columns (`context`, `ideal_response`, `canary`, etc.)
+are also carried over automatically — just include them in the spreadsheet.
+
+### Example CSV
+
+`user_datasets/sample_answer_quality.csv` is a ready-to-open example that
+produces exactly the same cases as `sample_answer_quality.json`:
+
+```csv
+id,source,input,notes
+quality-001,collected,"Explain the difference between RAG and fine-tuning for LLM customization.","Technical question — reward an accurate, well-structured, concise answer."
+quality-002,synthetic,"Write a short, upbeat blog post introduction about the future of autonomous vehicles.","Open-ended creative task — reward coherent, on-topic, engaging prose."
+```
