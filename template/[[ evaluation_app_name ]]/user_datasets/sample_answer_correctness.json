@@ -1,0 +1,26 @@
+[
+  {
+    "id": "correct-001",
+    "source": "collected",
+    "input": "What is the capital of France? Answer with the city name only.",
+    "ideal_response": "Paris",
+    "match_mode": "normalized",
+    "notes": "Normalized match ignores case/punctuation, so 'Paris.' or 'paris' still pass."
+  },
+  {
+    "id": "correct-002",
+    "source": "collected",
+    "input": "Return the HTTP status code for 'Not Found'.",
+    "ideal_response": "404",
+    "match_mode": "exact",
+    "notes": "Exact match — the response must be exactly '404' after trimming whitespace."
+  },
+  {
+    "id": "correct-003",
+    "source": "synthetic",
+    "input": "In one sentence, what does the acronym RAG stand for?",
+    "ideal_response": "Retrieval-Augmented Generation",
+    "match_mode": "contains",
+    "notes": "Contains mode — passes as long as the expanded term appears somewhere in the answer."
+  }
+]

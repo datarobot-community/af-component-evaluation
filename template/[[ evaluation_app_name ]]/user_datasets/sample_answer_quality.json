@@ -1,0 +1,20 @@
+[
+  {
+    "id": "quality-001",
+    "source": "collected",
+    "input": "Explain the difference between RAG and fine-tuning for LLM customization.",
+    "notes": "Technical question — reward an accurate, well-structured, concise answer."
+  },
+  {
+    "id": "quality-002",
+    "source": "synthetic",
+    "input": "Write a short, upbeat blog post introduction about the future of autonomous vehicles.",
+    "notes": "Open-ended creative task — reward coherent, on-topic, engaging prose."
+  },
+  {
+    "id": "quality-003",
+    "source": "collected",
+    "input": "A customer says their order arrived damaged. Draft a brief, empathetic support reply.",
+    "notes": "Reward empathy, a clear next step (replacement/refund), and a professional tone."
+  }
+]

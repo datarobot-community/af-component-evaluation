@@ -29,7 +29,7 @@ Batch evaluation component for DataRobot agents using the [NeMo Evaluator](https
 
 **Why a separate component?** NeMo Evaluator's dependency tree is heavy and carries CVEs that should not infect the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
 
-**What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response with an **LLM-as-judge**. Good cases are scored for quality (1–5 Likert → 0–1); bad cases are scored for safety (SAFE/UNSAFE). Output is normalized to a stable JSON schema.
+**What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks** — pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema. See `user_pipelines/README.md` for the full menu.
 
 ---
 
@@ -43,10 +43,10 @@ Instead we use NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a cust
 run_eval.py
   ├─ validates endpoint / pipeline / dataset
   ├─ converts dataset JSON → BYOB JSONL
-  ├─ reads pipelines/<name>.yaml (benchmark + judge + run params)
+  ├─ reads user_pipelines/<name>.yaml (benchmark + optional judge + run params)
   └─ subprocess: python -m nemo_evaluator.contrib.byob.runner
          ├─ for each case: POST agent endpoint, get response
-         ├─ scorer (benchmarks/<name>.py) → LLM judge call → grade
+         ├─ scorer (evaluator/benchmarks/<name>.py) → judge call OR deterministic check → grade
          └─ writes byob_results.json (aggregate) + byob_predictions.jsonl (per-sample)
   └─ normalizes raw output → output/eval_results.json
 ```
@@ -57,16 +57,16 @@ run_eval.py
 
 1. **Add the component** — the core CLI detects it automatically via `[tool.af-component]` in `pyproject.toml`.
 
-2. **Configure a pipeline** — edit a YAML in `pipelines/`. This is the main file you touch to change evaluation behavior:
+2. **Pick a pipeline** — choose one of the 8 defaults in `user_pipelines/` (you usually don't edit it; just point `--dataset` at your data). Judge-based pipelines carry a `judge:` block; judge-free ones omit it:
    ```yaml
    benchmark:
-     module: benchmarks/agent_quality_safety.py   # the BYOB benchmark
-     name: agent_quality_safety                    # normalized benchmark name
+     module: evaluator/benchmarks/answer_quality.py   # the BYOB benchmark
+     name: answer_quality                              # normalized benchmark name
    target:
      model_type: chat
      model_id: unknown            # "unknown" -> the agent uses its own default LLM
      api_key_name: AGENT_API_KEY  # only sent if that env var is set (local agent needs none)
-   judge:
+   judge:                         # OMIT this whole block for judge-free benchmarks
      url: https://app.datarobot.com/api/v2/genai/llmgw   # OpenAI-compatible; NeMo appends /chat/completions
      model_id: azure/gpt-4o-2024-11-20   # gateway CATALOG name (NOT a litellm datarobot/ prefix)
      api_key_name: DATAROBOT_API_TOKEN
@@ -231,16 +231,17 @@ af-component-evaluation/
 │   ├── status_schema.json         # output/eval_status.json format
 │   └── output_schema.json         # output/eval_results.json format
 │
-├── pipelines/                     # Pipeline YAML — our simple schema (benchmark/target/judge/run)
-│   ├── README.md                  # pipeline format docs
-│   └── agent_quality_safety.yaml  # the default LLM-as-judge pipeline
+├── user_pipelines/                # Pipeline YAML — our simple schema (benchmark/target/[judge]/run)
+│   ├── README.md                  # pipeline format docs + the 8-benchmark menu
+│   └── <8 default pipelines>.yaml # answer_quality, safety_refusal, faithfulness (judge);
+│                                  # answer_correctness, instruction_following, prompt_injection,
+│                                  # pii_leakage, tool_grounding (judge-free)
 │
-├── benchmarks/                    # NeMo BYOB benchmark definitions (Python)
-│   └── agent_quality_safety.py    # good -> likert_5 quality, bad -> safety; LLM judge
+├── evaluator/benchmarks/          # NeMo BYOB benchmark definitions (Python, self-contained)
+│   └── <8 benchmark>.py           # one module per benchmark above
 │
-├── datasets/                      # Test case datasets (committed, human-reviewed)
-│   ├── sample_cases.json          # Default — 6 starter cases (good + bad)
-│   └── schema.md                  # Dataset field documentation
+├── user_datasets/                 # Test case datasets (committed, human-reviewed)
+│   └── sample_<benchmark>.json    # one starter dataset per benchmark
 │
 ├── generate/
 │   └── generate_test_cases.py     # Claude-powered synthetic test case generator
@@ -265,12 +266,13 @@ af-component-evaluation/
 
 ## Adding a New Benchmark / Pipeline
 
-A benchmark is a Python module using `nemo_evaluator.contrib.byob` (`@benchmark` + `@scorer`). The scorer can use NeMo's built-in judge templates (`binary_qa`, `binary_qa_partial`, `likert_5`, `safety`) via `judge_score`, or any custom logic. See `benchmarks/agent_quality_safety.py` for a working example.
+A benchmark is a Python module using `nemo_evaluator.contrib.byob` (`@benchmark` + `@scorer`). The scorer can use NeMo's built-in judge templates (`binary_qa`, `binary_qa_partial`, `likert_5`, `safety`) via `judge_score`, or score deterministically with no judge at all. Each file in `evaluator/benchmarks/` is self-contained — copy the closest one as your starting point.
 
 ```bash
-cp pipelines/agent_quality_safety.yaml pipelines/my_pipeline.yaml
-# point benchmark.module/name at your benchmark; set judge.model_id
-uv run python run_eval.py --endpoint ... --pipeline my_pipeline.yaml
+cp evaluator/benchmarks/answer_quality.py evaluator/benchmarks/my_benchmark.py
+cp user_pipelines/answer_quality.yaml user_pipelines/my_pipeline.yaml
+# point benchmark.module/name at your benchmark; set or remove the judge block
+uv run python run.py --endpoint ... --pipeline my_pipeline.yaml --dataset ...
 ```
 
 ## Generating Test Cases

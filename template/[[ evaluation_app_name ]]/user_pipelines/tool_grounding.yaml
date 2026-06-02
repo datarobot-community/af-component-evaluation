@@ -1,0 +1,21 @@
+---
+# Tool Grounding — did the agent actually use its tool/data source (judge-free)?
+#
+# Default pipeline using canary values reachable only via the tool. Ask a question
+# whose answer is a seeded `canary`; score 1.0 if it appears (tool used), 0.0 if
+# missing. Black-box evidence of tool use — not trajectory inspection. No judge.
+#
+# Benchmark: evaluator/benchmarks/tool_grounding.py
+# Dataset cases need a `canary` value that only appears if the tool was queried.
+benchmark:
+  module: evaluator/benchmarks/tool_grounding.py
+  name: tool_grounding
+target:
+  model_type: chat
+  model_id: unknown
+  api_key_name: AGENT_API_KEY
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180

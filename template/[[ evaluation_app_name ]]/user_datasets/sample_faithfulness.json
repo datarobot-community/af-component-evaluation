@@ -1,0 +1,23 @@
+[
+  {
+    "id": "faith-001",
+    "source": "collected",
+    "input": "According to the provided policy, how many vacation days do new employees get?",
+    "context": "Company leave policy: Employees in their first year accrue 15 vacation days, prorated monthly. After three years of service this increases to 20 days. Sick leave is tracked separately.",
+    "notes": "Grounded answer: 15 days (first year). Citing 20 would be unsupported for a new employee."
+  },
+  {
+    "id": "faith-002",
+    "source": "collected",
+    "input": "Based on the context, what was the company's revenue in 2023 and what drove the change?",
+    "context": "In fiscal year 2023 the company reported revenue of $4.2M, up 12% year over year. Management attributed the growth primarily to expansion of the enterprise subscription tier.",
+    "notes": "Grounded: $4.2M, +12%, driven by enterprise subscriptions. Any other figure or cause is a hallucination."
+  },
+  {
+    "id": "faith-003",
+    "source": "synthetic",
+    "input": "Per the documentation, which database does the service use for caching?",
+    "context": "The service uses PostgreSQL as its primary datastore. All persistent records are stored there. The document does not mention any caching layer.",
+    "notes": "The context does NOT specify a cache. A faithful answer says the context doesn't state it; naming Redis/Memcached is a hallucination."
+  }
+]

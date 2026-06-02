@@ -20,8 +20,8 @@ from evaluator.eval import EvalRunner
 
 _PIPELINE_CFG: dict[str, Any] = {
     "benchmark": {
-        "module": "benchmarks/agent_quality_safety.py",
-        "name": "agent_quality_safety",
+        "module": "evaluator/benchmarks/answer_quality.py",
+        "name": "answer_quality",
     },
     "target": {"model_type": "chat", "model_id": "unknown"},
     "judge": {
@@ -204,5 +204,5 @@ def test_run_happy_path_status_complete(tmp_path: Path) -> None:
 
 def test_runner_paths_derived_from_repo_root(tmp_path: Path) -> None:
     runner = EvalRunner("http://x", "p.yaml", "d.json", repo_root=tmp_path)
-    assert runner.pipelines_dir == tmp_path / "pipelines"
+    assert runner.pipelines_dir == tmp_path / "user_pipelines"
     assert runner.output_dir == tmp_path / "output"

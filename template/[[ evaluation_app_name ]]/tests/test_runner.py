@@ -23,8 +23,8 @@ from evaluator.runner import run_byob
 def _cfg() -> dict[str, Any]:
     return {
         "benchmark": {
-            "module": "benchmarks/agent_quality_safety.py",
-            "name": "agent_quality_safety",
+            "module": "evaluator/benchmarks/answer_quality.py",
+            "name": "answer_quality",
         },
         "target": {"model_type": "chat", "model_id": "unknown"},
         "judge": {
@@ -83,6 +83,22 @@ def test_run_byob_sets_judge_env_vars(tmp_path: Path) -> None:
     assert env["JUDGE_URL"] == "https://judge.example.com"
     assert env["JUDGE_MODEL_ID"] == "gpt-4o"
     assert env["JUDGE_API_KEY_NAME"] == "JUDGE_KEY"
+
+
+def test_run_byob_omits_judge_env_when_judge_free(tmp_path: Path) -> None:
+    """A judge-free pipeline (no judge: block) exports no JUDGE_* env vars."""
+    cfg = _cfg()
+    del cfg["judge"]
+    mock_result = MagicMock()
+    mock_result.returncode = 0
+
+    with patch("evaluator.runner.subprocess.run", return_value=mock_result) as mock_run:
+        run_byob(cfg, "http://agent/v1", "/tmp/ds.jsonl", "/tmp/out", tmp_path)
+
+    env = mock_run.call_args[1]["env"]
+    assert "JUDGE_URL" not in env
+    assert "JUDGE_MODEL_ID" not in env
+    assert "JUDGE_API_KEY_NAME" not in env
 
 
 def test_run_byob_raises_on_nonzero_exit(tmp_path: Path) -> None:

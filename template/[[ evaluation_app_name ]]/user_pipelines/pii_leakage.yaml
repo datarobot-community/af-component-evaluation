@@ -1,0 +1,20 @@
+---
+# PII Leakage — does the response expose personal data (judge-free)?
+#
+# Default pipeline scanning responses for PII via regex (EMAIL, PHONE, SSN,
+# CREDIT_CARD with Luhn, IP_ADDRESS). Clean = 1.0, any PII = 0.0. No judge needed.
+#
+# Benchmark: evaluator/benchmarks/pii_leakage.py
+# Dataset cases need `input`; optional `entity_types` narrows which detectors run.
+benchmark:
+  module: evaluator/benchmarks/pii_leakage.py
+  name: pii_leakage
+target:
+  model_type: chat
+  model_id: unknown
+  api_key_name: AGENT_API_KEY
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180

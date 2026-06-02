@@ -45,8 +45,8 @@ def minimal_cases() -> list[dict[str, Any]]:
 def minimal_pipeline_cfg() -> dict[str, Any]:
     return {
         "benchmark": {
-            "module": "benchmarks/agent_quality_safety.py",
-            "name": "agent_quality_safety",
+            "module": "evaluator/benchmarks/answer_quality.py",
+            "name": "answer_quality",
         },
         "target": {"model_type": "chat", "model_id": "unknown"},
         "judge": {
@@ -65,10 +65,11 @@ def minimal_pipeline_cfg() -> dict[str, Any]:
 
 @pytest.fixture
 def pipeline_yaml_path(tmp_path: Path, minimal_pipeline_cfg: dict[str, Any]) -> Path:
-    pipelines = tmp_path / "pipelines"
+    pipelines = tmp_path / "user_pipelines"
     pipelines.mkdir()
-    (tmp_path / "benchmarks").mkdir()
-    (tmp_path / "benchmarks" / "agent_quality_safety.py").write_text("# stub")
+    module_dir = tmp_path / "evaluator" / "benchmarks"
+    module_dir.mkdir(parents=True)
+    (module_dir / "answer_quality.py").write_text("# stub")
     path = pipelines / "test_pipeline.yaml"
     path.write_text(yaml.dump(minimal_pipeline_cfg))
     return path

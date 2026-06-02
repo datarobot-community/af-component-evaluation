@@ -1,0 +1,21 @@
+---
+# Instruction Following — obey explicit structural constraints (judge-free).
+#
+# Default pipeline for "do my prompts actually constrain the output?" checks.
+# Each case carries a `constraints` object (length, valid JSON, required/forbidden
+# phrases, regex); score is the fraction satisfied. No judge model needed.
+#
+# Benchmark: evaluator/benchmarks/instruction_following.py
+# Dataset cases need a `constraints` object (see user_datasets/sample_instruction_following.json).
+benchmark:
+  module: evaluator/benchmarks/instruction_following.py
+  name: instruction_following
+target:
+  model_type: chat
+  model_id: unknown
+  api_key_name: AGENT_API_KEY
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180

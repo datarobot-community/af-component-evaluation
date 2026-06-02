@@ -67,11 +67,29 @@ def test_load_pipeline_valid(pipeline_yaml_path: Path) -> None:
 
 
 def test_load_pipeline_missing_section(tmp_path: Path) -> None:
-    incomplete = {"benchmark": {"module": "b.py", "name": "b"}, "target": {}}
+    # `target` is required; omitting it must raise.
+    incomplete = {"benchmark": {"module": "b.py", "name": "b"}}
     p = tmp_path / "incomplete.yaml"
     p.write_text(yaml.dump(incomplete))
     with pytest.raises(ValueError, match="missing required section"):
         load_pipeline(p)
+
+
+def test_load_pipeline_judge_optional(tmp_path: Path) -> None:
+    # Judge-free pipelines omit the judge: block entirely and must still load.
+    cfg = {
+        "benchmark": {
+            "module": "evaluator/benchmarks/pii_leakage.py",
+            "name": "pii_leakage",
+        },
+        "target": {"model_type": "chat", "model_id": "unknown"},
+        "run": {"parallelism": 4},
+    }
+    p = tmp_path / "judge_free.yaml"
+    p.write_text(yaml.dump(cfg))
+    loaded = load_pipeline(p)
+    assert "judge" not in loaded
+    assert loaded["benchmark"]["name"] == "pii_leakage"
 
 
 def test_load_pipeline_not_mapping(tmp_path: Path) -> None:

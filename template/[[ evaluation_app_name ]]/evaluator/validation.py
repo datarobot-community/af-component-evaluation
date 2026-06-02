@@ -44,7 +44,10 @@ def load_pipeline(pipeline_path: Path) -> dict[str, Any]:
     cfg: Any = yaml.safe_load(pipeline_path.read_text())
     if not isinstance(cfg, dict):
         raise ValueError(f"Pipeline {pipeline_path} did not parse to a mapping")
-    for key in ("benchmark", "target", "judge"):
+    # `judge` is optional: judge-free benchmarks (PII, prompt-injection, exact
+    # match, …) score deterministically and omit the section entirely. The UI
+    # keys off its presence/absence to show whether a run needs a judge model.
+    for key in ("benchmark", "target"):
         if key not in cfg:
             raise ValueError(
                 f"Pipeline {pipeline_path} missing required section: {key}"
@@ -69,7 +72,7 @@ def validate_inputs(
     if not pipeline_path.exists():
         available = [f.name for f in pipelines_dir.glob("*.yaml")]
         errors.append(
-            f"Pipeline '{pipeline}' not found in pipelines/. Available: {available or 'none'}"
+            f"Pipeline '{pipeline}' not found in user_pipelines/. Available: {available or 'none'}"
         )
     else:
         try:
