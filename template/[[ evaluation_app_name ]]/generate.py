@@ -88,7 +88,9 @@ def main() -> None:
         if not csv_path.exists():
             parser.error(f"CSV file not found: {csv_path}")
 
-        output_path = Path(args.output) if args.output else csv_path.with_suffix(".json")
+        output_path = (
+            Path(args.output) if args.output else csv_path.with_suffix(".json")
+        )
 
         print(f"Converting {csv_path} -> {output_path} ...")
         cases = convert_csv_to_cases(csv_path)
@@ -103,7 +105,9 @@ def main() -> None:
     # --- generation mode ---
     n_good = args.n_good if args.n_good is not None else args.n // 2
     n_bad = args.n_bad if args.n_bad is not None else args.n - n_good
-    output_path = Path(args.output) if args.output else Path("user_datasets/generated_cases.json")
+    output_path = (
+        Path(args.output) if args.output else Path("user_datasets/generated_cases.json")
+    )
 
     print(f"Generating {n_good} good + {n_bad} bad test cases...")
 

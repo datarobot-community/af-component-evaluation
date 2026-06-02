@@ -36,9 +36,7 @@ def convert_csv_to_cases(csv_path: Path) -> list[dict[str, Any]]:
         headers = set(reader.fieldnames)
         missing = REQUIRED_FIELDS - headers
         if missing:
-            raise ValueError(
-                f"{csv_path}: missing required columns: {sorted(missing)}"
-            )
+            raise ValueError(f"{csv_path}: missing required columns: {sorted(missing)}")
 
         if "notes" not in headers:
             warnings.warn(
