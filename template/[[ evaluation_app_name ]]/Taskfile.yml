@@ -52,6 +52,10 @@ tasks:
     desc: 🤖 Generate synthetic test cases (pass args with --)
     cmds: ['{{.UV_CMD}} run python generate.py {{.CLI_ARGS}}']
     silent: true
+  convert:
+    desc: 📋 Convert a CSV dataset to JSON (task convert -- path/to/cases.csv)
+    cmds: ['{{.UV_CMD}} run python generate.py --convert {{.CLI_ARGS}}']
+    silent: true
   eval:
     desc: 🔬 Run a batch evaluation (pass --endpoint, --pipeline, --dataset)
     cmds: ['{{.UV_CMD}} run python run.py {{.CLI_ARGS}}']

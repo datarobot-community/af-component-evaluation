@@ -13,13 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Generate synthetic evaluation test cases using Claude.
+Generate or convert evaluation test cases.
 
-Usage:
+Generate synthetic cases using Claude:
     python generate.py \
         --agent-description "A content planner and writer agent that researches topics and writes articles" \
         --n 10 \
         --output user_datasets/generated_cases.json
+
+Convert an existing CSV to JSON:
+    python generate.py \
+        --convert user_datasets/my_cases.csv \
+        --output user_datasets/my_cases.json
 
 Review and edit the output before using it in evaluations.
 """
@@ -27,18 +32,26 @@ Review and edit the output before using it in evaluations.
 import argparse
 from pathlib import Path
 
+from evaluator.converter import convert_csv_to_cases, save_cases
 from evaluator.generator import CaseGenerator
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Generate synthetic evaluation test cases using Claude"
+        description="Generate synthetic evaluation test cases or convert a CSV dataset to JSON"
     )
-    parser.add_argument(
+
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument(
         "--agent-description",
-        required=True,
-        help="Description of what the agent does, what it should and shouldn't do",
+        help="Description of what the agent does (triggers synthetic generation via Claude)",
     )
+    mode.add_argument(
+        "--convert",
+        metavar="CSV_FILE",
+        help="Path to a CSV file to convert to JSON (columns: id, source, input required; others optional)",
+    )
+
     parser.add_argument(
         "--n",
         type=int,
@@ -57,26 +70,52 @@ def main() -> None:
     )
     parser.add_argument(
         "--output",
-        default="user_datasets/generated_cases.json",
-        help="Output file path (default: user_datasets/generated_cases.json)",
+        help=(
+            "Output JSON file path. "
+            "Defaults to user_datasets/generated_cases.json for generation, "
+            "or <csv_stem>.json in the same directory for --convert."
+        ),
     )
     parser.add_argument(
         "--append",
         action="store_true",
-        help="Append to existing file instead of overwriting",
+        help="Append to existing file instead of overwriting (generation only)",
     )
     args = parser.parse_args()
 
+    if args.convert:
+        csv_path = Path(args.convert)
+        if not csv_path.exists():
+            parser.error(f"CSV file not found: {csv_path}")
+
+        output_path = (
+            Path(args.output) if args.output else csv_path.with_suffix(".json")
+        )
+
+        print(f"Converting {csv_path} -> {output_path} ...")
+        cases = convert_csv_to_cases(csv_path)
+        save_cases(cases, output_path)
+        print(f"Wrote {len(cases)} cases to {output_path}")
+        print()
+        print("Review and edit before using in evaluations:")
+        for case in cases:
+            print(f"  {case['id']}: {str(case['input'])[:70]}")
+        return
+
+    # --- generation mode ---
     n_good = args.n_good if args.n_good is not None else args.n // 2
     n_bad = args.n_bad if args.n_bad is not None else args.n - n_good
+    output_path = (
+        Path(args.output) if args.output else Path("user_datasets/generated_cases.json")
+    )
 
     print(f"Generating {n_good} good + {n_bad} bad test cases...")
 
     generator = CaseGenerator()
     cases = generator.generate(args.agent_description, n_good, n_bad)
-    written = generator.save(cases, Path(args.output), append=args.append)
+    written = generator.save(cases, output_path, append=args.append)
 
-    print(f"Wrote {len(written)} cases to {args.output}")
+    print(f"Wrote {len(written)} cases to {output_path}")
     print()
     print("Review and edit before using in evaluations:")
     for case in written:
