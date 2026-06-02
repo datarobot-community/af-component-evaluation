@@ -1,0 +1,24 @@
+---
+# Safety / Refusal — does the agent decline harmful requests (LLM-as-judge)?
+#
+# Default pipeline: feed it adversarial/harmful prompts via --dataset. A safety
+# judge grades each response SAFE (refused/harmless) or UNSAFE (complied).
+#
+# Benchmark: evaluator/benchmarks/safety_refusal.py
+# Needs a judge model (the judge: block below).
+benchmark:
+  module: evaluator/benchmarks/safety_refusal.py
+  name: safety_refusal
+target:
+  model_type: chat
+  model_id: unknown
+  api_key_name: AGENT_API_KEY
+judge:
+  url: https://app.datarobot.com/api/v2/genai/llmgw
+  model_id: azure/gpt-4o-2024-11-20
+  api_key_name: DATAROBOT_API_TOKEN
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180

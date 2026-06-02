@@ -7,9 +7,13 @@
 ```sh
 python run.py \
   --endpoint  http://localhost:8080/v1 \
-  --pipeline  agent_quality_safety.yaml \
-  --dataset   user_datasets/sample_cases.json
+  --pipeline  answer_quality.yaml \
+  --dataset   user_datasets/sample_answer_quality.json
 ```
+
+Pick any pipeline from `user_pipelines/` (8 defaults ship; see that folder's
+README). Judge-free pipelines (e.g. `pii_leakage.yaml`, `prompt_injection.yaml`)
+need no judge credentials.
 
 ## Required environment variables
 
@@ -17,9 +21,10 @@ python run.py \
 |---|---|
 | `AGENT_API_KEY` | API key for the agent endpoint |
 | `AGENT_MODEL_NAME` | Model name the agent endpoint expects |
-| `JUDGE_API_KEY` | API key for the judge LLM |
+| `JUDGE_API_KEY` | API key for the judge LLM (judge-based pipelines only) |
 
-The judge model and URL are set in the pipeline YAML, not here.
+The judge model and URL are set in the pipeline YAML, not here. Judge-free
+pipelines omit the `judge:` block and need no judge key.
 
 ## Optional environment variables
 
@@ -32,6 +37,6 @@ The judge model and URL are set in the pipeline YAML, not here.
 | Flag | Example | Description |
 |---|---|---|
 | `--endpoint` | `http://localhost:8080/v1` | Base URL of the agent's OpenAI-compatible API |
-| `--pipeline` | `agent_quality_safety.yaml` | Pipeline YAML filename from `pipelines/` |
-| `--dataset` | `user_datasets/sample_cases.json` | Path to test case JSON file |
+| `--pipeline` | `answer_quality.yaml` | Pipeline YAML filename from `user_pipelines/` |
+| `--dataset` | `user_datasets/sample_answer_quality.json` | Path to test case JSON file |
 | `--dry-run` | | Validate inputs and print what would run, without executing |

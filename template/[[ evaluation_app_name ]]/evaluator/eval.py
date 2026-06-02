@@ -40,7 +40,7 @@ class EvalRunner:
         self.pipeline = pipeline
         self.dataset = dataset
         self.repo_root = repo_root if repo_root is not None else _DEFAULT_REPO_ROOT
-        self.pipelines_dir = self.repo_root / "pipelines"
+        self.pipelines_dir = self.repo_root / "user_pipelines"
         self.output_dir = self.repo_root / "output"
 
     def run(self, dry_run: bool = False) -> int:
@@ -61,7 +61,7 @@ class EvalRunner:
                 print(f"  ✗ {e}", file=sys.stderr)
             return 1
         print(f"  ✓ Endpoint reachable: {self.endpoint}")
-        print(f"  ✓ Pipeline found:     pipelines/{self.pipeline}")
+        print(f"  ✓ Pipeline found:     user_pipelines/{self.pipeline}")
         print(f"  ✓ Dataset found:      {self.dataset}")
 
         cfg = load_pipeline(self.pipelines_dir / self.pipeline)
@@ -69,7 +69,11 @@ class EvalRunner:
         if dry_run:
             print("\nDry run — all inputs valid. Would run BYOB benchmark:")
             print(f"  module:  {cfg['benchmark']['module']}")
-            print(f"  judge:   {cfg['judge']['model_id']} @ {cfg['judge']['url']}")
+            judge = cfg.get("judge")
+            if judge:
+                print(f"  judge:   {judge['model_id']} @ {judge['url']}")
+            else:
+                print("  judge:   none (judge-free benchmark)")
             print("  output → output/eval_results.json")
             return 0
 

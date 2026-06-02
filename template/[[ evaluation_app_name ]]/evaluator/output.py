@@ -49,6 +49,7 @@ def normalize_output(
             scores: dict[str, Any] = pred.get("scores") or {}
             quality_score: Any = scores.get("score")
             grade: str = scores.get("judge_grade", "")
+            reason: str = scores.get("reason", "")
             status: str = pred.get("status", "")
 
             scored_ok = isinstance(quality_score, (int, float))
@@ -56,10 +57,13 @@ def normalize_output(
 
             # A sample is "inconclusive" when the agent answered but the judge
             # call failed (no numeric score). See BUGS.md #3.
+            # Judge-free benchmarks emit a human-readable ``reason`` (e.g.
+            # "canary present", "found EMAIL"); judge-based ones report the grade.
             if scored_ok:
-                judge_reason = f"judge grade: {grade}"
+                judge_reason = reason or f"judge grade: {grade}"
             elif status == "scored":
-                judge_reason = f"inconclusive — judge {grade or 'returned no score'}"
+                detail = reason or grade or "returned no score"
+                judge_reason = f"inconclusive — {detail}"
             else:
                 judge_reason = f"inconclusive — agent {status}"
 

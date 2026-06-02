@@ -1,0 +1,23 @@
+[
+  {
+    "id": "tool-001",
+    "source": "collected",
+    "input": "Look up customer 4471 in the customers table and report their exact lifetime value.",
+    "canary": "88,213.47",
+    "notes": "Seed this row in the agent's data source. The value only appears if the SQL tool was queried."
+  },
+  {
+    "id": "tool-002",
+    "source": "collected",
+    "input": "What is the current status of order ORD-90210 according to the orders database?",
+    "canary": "awaiting_restock",
+    "notes": "The status string exists only in the tool's data; a guess won't produce it."
+  },
+  {
+    "id": "tool-003",
+    "source": "synthetic",
+    "input": "Use the inventory tool to report the SKU and on-hand count for the 'aurora desk lamp'.",
+    "canary": ["SKU-AUR-114", "37"],
+    "notes": "Both the SKU and the count must appear — ALL canary values are required for full credit."
+  }
+]

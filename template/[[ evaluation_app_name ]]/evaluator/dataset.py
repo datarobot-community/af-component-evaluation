@@ -25,15 +25,18 @@ def load_dataset(path: str) -> list[dict[str, Any]]:
 
 
 def to_byob_jsonl(dataset: list[dict[str, Any]], output_path: str) -> None:
+    """Write the dataset to the JSONL the BYOB runner consumes.
+
+    Every field of each case is passed through verbatim — NeMo BYOB places the
+    whole row into ``sample.metadata``, so a benchmark can read any field it
+    needs (``context``, ``canary``, ``constraints``, ``match_mode``,
+    ``entity_types``, …) with no change required here. We only guarantee the two
+    keys the runner itself relies on: ``input`` (the prompt template key,
+    defaulted so a malformed row surfaces in the scorer rather than at render
+    time) and ``id`` (required — a missing one is a genuine error).
+    """
     lines = []
     for case in dataset:
-        row = {
-            "id": case["id"],
-            "input": case["input"],
-            "ideal_response": case.get("ideal_response"),
-            "expected_behavior": case.get("expected_behavior", "good"),
-            "notes": case.get("notes", ""),
-            "source": case.get("source", ""),
-        }
+        row = {"input": "", **case, "id": case["id"]}
         lines.append(json.dumps(row))
     Path(output_path).write_text("\n".join(lines))

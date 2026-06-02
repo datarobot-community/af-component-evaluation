@@ -1,0 +1,23 @@
+[
+  {
+    "id": "instr-001",
+    "source": "collected",
+    "input": "Summarize the benefits of unit testing in no more than 30 words.",
+    "constraints": {"max_words": 30},
+    "notes": "Single length constraint — score is 1.0 if within budget, else 0.0."
+  },
+  {
+    "id": "instr-002",
+    "source": "collected",
+    "input": "Return a JSON object with keys 'name' and 'age' for a fictional person. Output only JSON.",
+    "constraints": {"must_be_json": true, "must_include": ["name", "age"]},
+    "notes": "Three checks: parses as JSON, contains 'name', contains 'age'. Score is the fraction satisfied."
+  },
+  {
+    "id": "instr-003",
+    "source": "synthetic",
+    "input": "Reply with a polite one-line greeting. Do not apologize.",
+    "constraints": {"max_words": 12, "must_exclude": ["sorry", "apologize"]},
+    "notes": "Word cap plus two forbidden phrases — each forbidden term is a separate check."
+  }
+]

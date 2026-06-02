@@ -1,0 +1,29 @@
+---
+# Answer Quality — general-purpose response quality (LLM-as-judge).
+#
+# Default pipeline: point --dataset at your own user_datasets/*.json and run.
+# A Likert-5 judge scores each response 1-5 on helpfulness/coherence/relevance.
+#
+# Benchmark: evaluator/benchmarks/answer_quality.py
+# Needs a judge model (the judge: block below).
+benchmark:
+  module: evaluator/benchmarks/answer_quality.py
+  name: answer_quality
+target:
+  # The agent under test. URL comes from --endpoint at runtime.
+  model_type: chat
+  # "unknown" -> the agent uses its own configured default LLM.
+  model_id: unknown
+  api_key_name: AGENT_API_KEY  # env var holding the agent token (optional for local DRUM)
+judge:
+  # OpenAI-compatible base URL; NeMo appends /chat/completions. model_id is the
+  # gateway CATALOG name (NOT a litellm datarobot/ prefix). Use Azure GPT — the
+  # stock judge sends temperature+top_p, which DR-gateway Bedrock models reject.
+  url: https://app.datarobot.com/api/v2/genai/llmgw
+  model_id: azure/gpt-4o-2024-11-20
+  api_key_name: DATAROBOT_API_TOKEN  # env var holding the judge bearer token
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180
