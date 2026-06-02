@@ -1,0 +1,4 @@
+id,source,input,notes
+quality-001,collected,"Explain the difference between RAG and fine-tuning for LLM customization.","Technical question — reward an accurate, well-structured, concise answer."
+quality-002,synthetic,"Write a short, upbeat blog post introduction about the future of autonomous vehicles.","Open-ended creative task — reward coherent, on-topic, engaging prose."
+quality-003,collected,"A customer says their order arrived damaged. Draft a brief, empathetic support reply.","Reward empathy, a clear next step (replacement/refund), and a professional tone."
