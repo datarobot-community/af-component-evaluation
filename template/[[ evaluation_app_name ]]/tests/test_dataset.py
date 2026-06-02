@@ -77,14 +77,39 @@ def test_to_byob_jsonl_required_fields(
     }
 
 
-def test_to_byob_jsonl_defaults_missing_fields(tmp_path: Path) -> None:
-    cases = [{"id": "x", "input": "hello"}]
+def test_to_byob_jsonl_guarantees_input_and_id(tmp_path: Path) -> None:
+    # Only `input` (defaulted) and `id` are guaranteed; optional fields are not
+    # fabricated — they pass through if present, and are simply absent otherwise.
+    cases = [{"id": "x"}]
     out = tmp_path / "out.jsonl"
     to_byob_jsonl(cases, str(out))
     row = json.loads(out.read_text())
-    assert row["expected_behavior"] == "good"
-    assert row["notes"] == ""
-    assert row["source"] == ""
+    assert row["id"] == "x"
+    assert row["input"] == ""
+    assert "expected_behavior" not in row
+    assert "notes" not in row
+
+
+def test_to_byob_jsonl_passes_through_arbitrary_fields(tmp_path: Path) -> None:
+    # Benchmark-specific fields (context, canary, constraints, …) must survive
+    # verbatim so any benchmark can read them from sample.metadata.
+    cases = [
+        {
+            "id": "x",
+            "input": "hi",
+            "context": "some passage",
+            "canary": ["A", "B"],
+            "constraints": {"max_words": 5},
+            "match_mode": "contains",
+        }
+    ]
+    out = tmp_path / "out.jsonl"
+    to_byob_jsonl(cases, str(out))
+    row = json.loads(out.read_text())
+    assert row["context"] == "some passage"
+    assert row["canary"] == ["A", "B"]
+    assert row["constraints"] == {"max_words": 5}
+    assert row["match_mode"] == "contains"
 
 
 def test_to_byob_jsonl_preserves_null_ideal_response(tmp_path: Path) -> None:

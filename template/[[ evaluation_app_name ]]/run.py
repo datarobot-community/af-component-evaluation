@@ -17,8 +17,8 @@ NeMo Evaluator batch evaluation CLI (BYOB / in-process — no Docker).
 
 The external CLI passes three things:
   --endpoint   Base URL of the agent's OpenAI-compatible API
-  --pipeline   Filename of a pipeline YAML in pipelines/
-  --dataset    Path to a test case JSON file (defaults to user_datasets/sample_cases.json)
+  --pipeline   Filename of a pipeline YAML in user_pipelines/
+  --dataset    Path to a test case JSON file (defaults to user_datasets/sample_answer_quality.json)
 
 Fixed output locations (always the same — external CLI can rely on these paths):
   output/eval_status.json     current run status
@@ -38,7 +38,7 @@ from pathlib import Path
 from evaluator.eval import EvalRunner
 
 _REPO_ROOT = Path(__file__).parent
-_DEFAULT_DATASET = str(_REPO_ROOT / "user_datasets" / "sample_cases.json")
+_DEFAULT_DATASET = str(_REPO_ROOT / "user_datasets" / "sample_answer_quality.json")
 
 
 def main() -> None:
@@ -55,7 +55,7 @@ def main() -> None:
     parser.add_argument(
         "--pipeline",
         required=True,
-        help="Pipeline YAML filename in pipelines/ (e.g. agent_quality_safety.yaml)",
+        help="Pipeline YAML filename in user_pipelines/ (e.g. answer_quality.yaml)",
     )
     parser.add_argument(
         "--dataset",

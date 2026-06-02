@@ -1,0 +1,25 @@
+---
+# Faithfulness / Groundedness — RAG hallucination check (LLM-as-judge).
+#
+# Default pipeline for retrieval agents. Each dataset case supplies a `context`
+# passage; a judge decides whether the answer is fully supported by it.
+#
+# Benchmark: evaluator/benchmarks/faithfulness.py
+# Needs a judge model (the judge: block below).
+# Dataset cases MUST include a `context` field (see user_datasets/sample_faithfulness.json).
+benchmark:
+  module: evaluator/benchmarks/faithfulness.py
+  name: faithfulness
+target:
+  model_type: chat
+  model_id: unknown
+  api_key_name: AGENT_API_KEY
+judge:
+  url: https://app.datarobot.com/api/v2/genai/llmgw
+  model_id: azure/gpt-4o-2024-11-20
+  api_key_name: DATAROBOT_API_TOKEN
+run:
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180

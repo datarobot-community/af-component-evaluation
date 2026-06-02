@@ -27,18 +27,21 @@ def run_byob(
 ) -> None:
     benchmark = cfg["benchmark"]
     target = cfg["target"]
-    judge = cfg["judge"]
+    judge = cfg.get("judge") or {}
     run = cfg.get("run", {})
 
     module_path = str((repo_root / benchmark["module"]).absolute())
 
-    env = {
-        **os.environ,
-        # Judge config consumed by benchmarks/*.py at import time.
-        "JUDGE_URL": str(judge["url"]),
-        "JUDGE_MODEL_ID": str(judge["model_id"]),
-        "JUDGE_API_KEY_NAME": str(judge.get("api_key_name", "DATAROBOT_API_TOKEN")),
-    }
+    env = {**os.environ}
+    # Judge config consumed by judge-based benchmarks/*.py at import time. A
+    # judge-free pipeline omits the `judge` section, so we export nothing and the
+    # benchmark never calls judge_score().
+    if judge:
+        env["JUDGE_URL"] = str(judge["url"])
+        env["JUDGE_MODEL_ID"] = str(judge["model_id"])
+        env["JUDGE_API_KEY_NAME"] = str(
+            judge.get("api_key_name", "DATAROBOT_API_TOKEN")
+        )
 
     cmd = [
         sys.executable,
