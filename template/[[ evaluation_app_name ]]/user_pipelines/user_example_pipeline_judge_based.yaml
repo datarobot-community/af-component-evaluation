@@ -1,24 +1,10 @@
 ---
 # EXAMPLE PIPELINE (judge-based) — pairs with user_example_benchmark_judge_based.py
-#
-# Copy this file, rename it (e.g. my_tone_check.yaml), and update:
-#   benchmark.module  → path to your benchmark .py (relative to the component root)
-#   benchmark.name    → must match the name= argument in @benchmark(...)
-#   judge.*           → your judge endpoint, model, and auth env var
-#
-# The judge: block is what distinguishes a judge-based pipeline.  run.py reads it
-# and exports JUDGE_URL, JUDGE_MODEL_ID, and JUDGE_API_KEY_NAME into the subprocess
-# environment before the NeMo runner starts.  Your benchmark module reads those vars
-# from os.environ to build its JUDGE dict.
-#
-# ⚠️  Bedrock/Claude models cannot be the stock judge — NeMo's judge client sends
-#     both temperature and top_p, which DR-gateway Bedrock models reject.
-#     Use an Azure OpenAI model.  See the known issues notes  # 1.
-#
-# Run it:
-#   task eval -- --endpoint http://localhost:8842/v1 \
-#     --pipeline user_pipelines/user_example_pipeline_judge_based.yaml \
-#     --dataset user_datasets/your_cases.json
+# Copy, rename, point benchmark.module/name at your benchmark, and set the judge: block.
+# run.py exports JUDGE_URL/JUDGE_MODEL_ID/JUDGE_API_KEY_NAME from it for the scorer.
+# ⚠️  Bedrock/Claude cannot be the stock judge (NeMo sends temperature + top_p, which
+#     DR-gateway Bedrock rejects) — use an Azure OpenAI model.
+# Full guide: docs/evaluation/writing-benchmarks.md and docs/evaluation/troubleshooting.md
 benchmark:
   module: user_pipelines/user_example_benchmark_judge_based.py  # path relative to component root
   name: custom_criteria  # must match name= in @benchmark(...)
