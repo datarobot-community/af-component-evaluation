@@ -41,7 +41,7 @@ from __future__ import annotations
 
 import functools
 import warnings
-from typing import Any
+from typing import Any, cast
 
 import requests
 from nemo_evaluator.contrib.byob.judge import judge_score as _judge_score
@@ -107,7 +107,7 @@ _SESSION = _JudgeCompatSession()
 
 
 @functools.wraps(_judge_score)
-def judge_score(sample: Any, *args: Any, **kwargs: Any) -> dict:
+def judge_score(sample: Any, *args: Any, **kwargs: Any) -> dict[str, Any]:
     """``nemo_evaluator`` ``judge_score`` with cross-provider payload sanitizing.
 
     Drop-in replacement: identical signature and return value. It just installs
@@ -116,4 +116,5 @@ def judge_score(sample: Any, *args: Any, **kwargs: Any) -> dict:
     """
     # setdefault: never clobber a session the caller deliberately supplied.
     sample.config.setdefault("_judge_session", _SESSION)
-    return _judge_score(sample, *args, **kwargs)
+    # cast: nemo_evaluator ships untyped, so its return is Any to mypy.
+    return cast(dict[str, Any], _judge_score(sample, *args, **kwargs))
