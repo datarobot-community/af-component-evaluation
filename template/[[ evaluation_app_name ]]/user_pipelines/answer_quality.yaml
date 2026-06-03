@@ -17,8 +17,8 @@ target:
   api_key_name: AGENT_API_KEY  # env var holding the agent token (optional for local DRUM)
 judge:
   # OpenAI-compatible base URL; NeMo appends /chat/completions. model_id is the
-  # gateway CATALOG name (NOT a litellm datarobot/ prefix). Use Azure GPT — the
-  # stock judge sends temperature+top_p, which DR-gateway Bedrock models reject.
+  # gateway CATALOG name (NOT a litellm datarobot/ prefix) — any model in your
+  # gateway works. The judge scores deterministically (temperature 0).
   url: https://app.datarobot.com/api/v2/genai/llmgw
   model_id: azure/gpt-4o-2024-11-20
   api_key_name: DATAROBOT_API_TOKEN  # env var holding the judge bearer token
