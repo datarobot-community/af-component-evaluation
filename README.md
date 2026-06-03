@@ -27,9 +27,37 @@
 
 Batch evaluation component for DataRobot agents using the [NeMo Evaluator](https://github.com/NVIDIA-NeMo/evaluator) **BYOB** (Bring Your Own Benchmark) framework.
 
+# Prerequisites
+
+The following tools are required before applying this component.
+
+- Python 3.11+
+- [`uv`](https://docs.astral.sh/uv/) and [`uvx`](https://docs.astral.sh/uv/guides/tools/) installed.
+- [`dr`](https://cli.datarobot.com) installed.
+- A DataRobot account with API access and a valid API token.
+
+# Quick start
+
+Run the following command in your project directory:
+
+```bash
+dr component add https://github.com/datarobot-community/af-component-evaluation .
+```
+
+If you need additional control, you can run this to use copier directly:
+
+```bash
+uvx copier copy datarobot-community/af-component-evaluation .
+```
+
+After the wizard completes, your project directory contains the evaluation component files ready for customization and deployment.
+
+# Developers
+
 **Why a separate component?** NeMo Evaluator's dependency tree is heavy and carries CVEs that should not infect the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
 
 **What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks** — pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
+
 
 > **This README is for developers of `af-component-evaluation` itself.** The
 > user-facing documentation that ships with the component (and what an agent/CLI
