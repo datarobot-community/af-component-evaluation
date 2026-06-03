@@ -52,6 +52,27 @@ uvx copier copy datarobot-community/af-component-evaluation .
 
 After the wizard completes, your project directory contains the evaluation component files ready for customization and deployment.
 
+# Component dependencies
+
+## Required
+
+The following components must be applied to the project **before** this component:
+
+| Name | Repository | Repeatable |
+|------|-----------|------------|
+| `base` | [https://github.com/datarobot-community/af-component-base](https://github.com/datarobot-community/af-component-base) | No |
+
+# Authentication and configuration
+
+Set the following environment variables before running or deploying the agent:
+
+```bash
+export DATAROBOT_ENDPOINT=https://app.datarobot.com/api/v2
+export DATAROBOT_API_TOKEN=YOUR_API_TOKEN
+```
+
+You can also place these in a `.env` file at the root of your project instead of exporting them in your shell.
+
 # Developers
 
 **Why a separate component?** NeMo Evaluator's dependency tree is heavy and carries CVEs that should not infect the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
