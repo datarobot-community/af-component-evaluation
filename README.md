@@ -27,6 +27,15 @@
 
 Batch evaluation component for DataRobot agents using the [NeMo Evaluator](https://github.com/NVIDIA-NeMo/evaluator) **BYOB** (Bring Your Own Benchmark) framework.
 
+# Table of contents
+
+- [Prerequisites](#prerequisites)
+- [Quick start](#quick-start)
+- [Component dependencies](#component-dependencies)
+- [Authentication and configuration](#authentication-and-configuration)
+- [Local development](#local-development)
+- [Contributing, changelog, support, and legal](#contributing-changelog-support-and-legal)
+
 # Prerequisites
 
 The following tools are required before applying this component.
@@ -73,7 +82,7 @@ export DATAROBOT_API_TOKEN=YOUR_API_TOKEN
 
 You can also place these in a `.env` file at the root of your project instead of exporting them in your shell.
 
-# Developers
+# Local Development
 
 **Why a separate component?** NeMo Evaluator's dependency tree is heavy and carries CVEs that should not infect the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
 
@@ -343,3 +352,11 @@ uv run python generate/generate_test_cases.py \
 ```bash
 uv run python scripts/summarize_results.py output/
 ```
+
+# Contributing, changelog, support, and legal
+
+See [AUTHORS](AUTHORS) and [LICENSE](LICENSE) for authorship and licensing information.
+
+To contribute, fork the repository, make your changes on a branch, and open a pull request. Ensure `task test` passes before submitting. See [CONTRIBUTING.md](CONTRIBUTING.md) if present for additional guidelines.
+
+For support, see the [troubleshooting](#troubleshooting) section above or [contact DataRobot](https://docs.datarobot.com/en/docs/get-started/troubleshooting/general-help.html).
