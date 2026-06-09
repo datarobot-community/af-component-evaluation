@@ -59,9 +59,14 @@ and "bad" cases from a plain description of what the agent does. **Review and ed
 the output before using it in evaluations** — generated cases are a starting point,
 not ground truth.
 
+Pass `--pipeline` to tailor the prompt to the specific benchmark being evaluated:
+what "good" vs "bad" means, and which extra fields (e.g. `canary`, `constraints`,
+`context`) are required for that benchmark.
+
 ```bash
 task generate -- \
   --agent-description "A research assistant that answers questions concisely" \
+  --pipeline user_pipelines/answer_quality.yaml \
   --n 20 \
   --output user_datasets/my_agent_cases.json
 ```
@@ -69,6 +74,7 @@ task generate -- \
 | Flag | Default | Description |
 |---|---|---|
 | `--agent-description` | (required) | What the agent does, and what it should / shouldn't do |
+| `--pipeline` | — | Pipeline YAML to tailor good/bad criteria and required fields to the benchmark |
 | `--n` | `10` | Total cases to generate (split evenly good/bad) |
 | `--n-good` / `--n-bad` | — | Override the even split |
 | `--output` | `user_datasets/generated_cases.json` | Output file path |

@@ -30,10 +30,15 @@ Review and edit the output before using it in evaluations.
 """
 
 import argparse
+import sys
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 from evaluator.converter import convert_csv_to_cases, save_cases
 from evaluator.generator import CaseGenerator
+from evaluator.validation import preflight_judge
 
 
 def main() -> None:
@@ -81,6 +86,15 @@ def main() -> None:
         action="store_true",
         help="Append to existing file instead of overwriting (generation only)",
     )
+    parser.add_argument(
+        "--pipeline",
+        metavar="YAML_FILE",
+        help=(
+            "Pipeline YAML (e.g. user_pipelines/answer_quality.yaml). "
+            "When provided, the generator tailors good/bad criteria and required "
+            "fields to match the benchmark."
+        ),
+    )
     args = parser.parse_args()
 
     if args.convert:
@@ -109,10 +123,30 @@ def main() -> None:
         Path(args.output) if args.output else Path("user_datasets/generated_cases.json")
     )
 
+    benchmark_name: str | None = None
+    if args.pipeline:
+        pipeline_path = Path(args.pipeline)
+        if not pipeline_path.exists():
+            parser.error(f"Pipeline file not found: {pipeline_path}")
+        pipeline_cfg: dict[str, Any] = yaml.safe_load(pipeline_path.read_text())
+        benchmark_name = (pipeline_cfg.get("benchmark") or {}).get("name")
+        if benchmark_name:
+            print(f"Tailoring cases for benchmark: {benchmark_name}")
+        judge_cfg = pipeline_cfg.get("judge")
+        if judge_cfg:
+            try:
+                preflight_judge(judge_cfg)
+            except RuntimeError as e:
+                print(f"ERROR: {e}", file=sys.stderr)
+                raise SystemExit(1) from e
+            print(f"Judge reachable: {judge_cfg['model_id']}")
+
     print(f"Generating {n_good} good + {n_bad} bad test cases...")
 
     generator = CaseGenerator()
-    cases = generator.generate(args.agent_description, n_good, n_bad)
+    cases = generator.generate(
+        args.agent_description, n_good, n_bad, benchmark_name=benchmark_name
+    )
     written = generator.save(cases, output_path, append=args.append)
 
     print(f"Wrote {len(written)} cases to {output_path}")

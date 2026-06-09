@@ -133,7 +133,7 @@ run_eval.py
      api_key_name: AGENT_API_KEY  # only sent if that env var is set (local agent needs none)
    judge:                         # OMIT this whole block for judge-free benchmarks
      url: https://app.datarobot.com/api/v2/genai/llmgw   # OpenAI-compatible; NeMo appends /chat/completions
-     model_id: azure/gpt-4o-2024-11-20   # gateway CATALOG name (NOT a litellm datarobot/ prefix)
+     model_id: azure/gpt-5-5-2026-04-23   # gateway CATALOG name (NOT a litellm datarobot/ prefix)
      api_key_name: DATAROBOT_API_TOKEN
    run:
      parallelism: 4
@@ -141,7 +141,7 @@ run_eval.py
      temperature: 0.0
      timeout_per_sample: 180
    ```
-   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that's the gateway catalog name (no `datarobot/` prefix) — e.g. `azure/gpt-4o-2024-11-20`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models can't be used as the stock judge — see `BUGS.md #1`.
+   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that's the gateway catalog name (no `datarobot/` prefix) — e.g. `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models can't be used as the stock judge — see `BUGS.md #1`.
 
 3. **Add or select a dataset** — drop a JSON file in `datasets/` following `datasets/schema.md`, or generate cases with `generate/generate_test_cases.py`.
 

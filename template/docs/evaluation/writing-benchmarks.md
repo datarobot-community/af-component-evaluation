@@ -89,7 +89,7 @@ invoked via `task eval` or run manually for debugging:
 ```python
 JUDGE = {
     "url": os.environ.get("JUDGE_URL", "https://app.datarobot.com/api/v2/genai/llmgw"),
-    "model_id": os.environ.get("JUDGE_MODEL_ID", "azure/gpt-4o-2024-11-20"),
+    "model_id": os.environ.get("JUDGE_MODEL_ID", "azure/gpt-5-5-2026-04-23"),
     "api_key": os.environ.get("JUDGE_API_KEY_NAME", "DATAROBOT_API_TOKEN"),  # env var NAME, not the token
     "temperature": 0.0,
     "max_new_tokens": 1024,

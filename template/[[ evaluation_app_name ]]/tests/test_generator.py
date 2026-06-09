@@ -18,7 +18,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from evaluator.generator import CaseGenerator
+from evaluator.generator import (
+    _BENCHMARK_CONTEXTS,
+    _GENERIC_BENCHMARK_CONTEXT,
+    CaseGenerator,
+)
 
 
 def _make_mock_response(cases: list[dict[str, Any]]) -> MagicMock:
@@ -51,7 +55,10 @@ def _valid_case(case_id: str = "gen-001", behavior: str = "good") -> dict[str, A
 def test_generate_returns_cases() -> None:
     cases = [_valid_case("gen-001", "good"), _valid_case("gen-002", "bad")]
 
-    with patch("evaluator.generator.litellm.completion", return_value=_make_mock_response(cases)):
+    with patch(
+        "evaluator.generator.litellm.completion",
+        return_value=_make_mock_response(cases),
+    ):
         gen = CaseGenerator()
         result = gen.generate("test agent", n_good=1, n_bad=1)
 
@@ -63,27 +70,84 @@ def test_generate_returns_cases() -> None:
 def test_generate_calls_api_with_model(monkeypatch: pytest.MonkeyPatch) -> None:
     cases = [_valid_case()]
 
-    with patch("evaluator.generator.litellm.completion", return_value=_make_mock_response(cases)) as mock_completion:
-        gen = CaseGenerator(model="datarobot/bedrock/anthropic.claude-haiku-4-5-20251001")
+    with patch(
+        "evaluator.generator.litellm.completion",
+        return_value=_make_mock_response(cases),
+    ) as mock_completion:
+        gen = CaseGenerator(
+            model="datarobot/bedrock/anthropic.claude-haiku-4-5-20251001"
+        )
         gen.generate("test agent", n_good=1, n_bad=0)
 
     call_kwargs = mock_completion.call_args[1]
-    assert call_kwargs["model"] == "datarobot/bedrock/anthropic.claude-haiku-4-5-20251001"
+    assert (
+        call_kwargs["model"] == "datarobot/bedrock/anthropic.claude-haiku-4-5-20251001"
+    )
 
 
 def test_generate_raises_on_missing_fields() -> None:
     incomplete = [{"id": "gen-001", "source": "synthetic"}]  # missing required fields
 
-    with patch("evaluator.generator.litellm.completion", return_value=_make_mock_response(incomplete)):
+    with patch(
+        "evaluator.generator.litellm.completion",
+        return_value=_make_mock_response(incomplete),
+    ):
         gen = CaseGenerator()
         with pytest.raises(ValueError, match="missing fields"):
             gen.generate("test agent", n_good=1, n_bad=0)
 
 
+def test_generate_uses_benchmark_context() -> None:
+    cases = [_valid_case()]
+
+    with patch(
+        "evaluator.generator.litellm.completion",
+        return_value=_make_mock_response(cases),
+    ) as mock_completion:
+        gen = CaseGenerator()
+        gen.generate("test agent", n_good=1, n_bad=0, benchmark_name="safety_refusal")
+
+    user_content = mock_completion.call_args[1]["messages"][1]["content"]
+    assert _BENCHMARK_CONTEXTS["safety_refusal"] in user_content
+    assert _GENERIC_BENCHMARK_CONTEXT not in user_content
+
+
+def test_generate_uses_generic_context_without_benchmark() -> None:
+    cases = [_valid_case()]
+
+    with patch(
+        "evaluator.generator.litellm.completion",
+        return_value=_make_mock_response(cases),
+    ) as mock_completion:
+        gen = CaseGenerator()
+        gen.generate("test agent", n_good=1, n_bad=0)
+
+    user_content = mock_completion.call_args[1]["messages"][1]["content"]
+    assert _GENERIC_BENCHMARK_CONTEXT in user_content
+
+
+def test_generate_raises_on_missing_benchmark_extra_fields() -> None:
+    # prompt_injection requires 'canary' field
+    case = {**_valid_case(), "expected_behavior": "bad"}  # no canary
+
+    with patch(
+        "evaluator.generator.litellm.completion",
+        return_value=_make_mock_response([case]),
+    ):
+        gen = CaseGenerator()
+        with pytest.raises(ValueError, match="missing fields"):
+            gen.generate(
+                "test agent", n_good=0, n_bad=1, benchmark_name="prompt_injection"
+            )
+
+
 def test_generate_raises_on_invalid_behavior() -> None:
     bad_case = {**_valid_case(), "expected_behavior": "maybe"}
 
-    with patch("evaluator.generator.litellm.completion", return_value=_make_mock_response([bad_case])):
+    with patch(
+        "evaluator.generator.litellm.completion",
+        return_value=_make_mock_response([bad_case]),
+    ):
         gen = CaseGenerator()
         with pytest.raises(ValueError, match="invalid expected_behavior"):
             gen.generate("test agent", n_good=1, n_bad=0)
