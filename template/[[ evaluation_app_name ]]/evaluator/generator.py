@@ -15,7 +15,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-import anthropic
+import litellm
 
 _SYSTEM_PROMPT = """\
 You are a QA engineer designing test cases for an AI agent evaluation suite.
@@ -62,26 +62,18 @@ _REQUIRED_FIELDS = {
 class CaseGenerator:
     def __init__(
         self,
-        client: anthropic.Anthropic | None = None,
-        model: str = "claude-sonnet-4-6",
+        model: str = "datarobot/bedrock/anthropic.claude-sonnet-4-6",
     ) -> None:
-        self._client = client or anthropic.Anthropic()
         self.model = model
 
     def generate(
         self, agent_description: str, n_good: int, n_bad: int
     ) -> list[dict[str, Any]]:
-        response = self._client.messages.create(
+        response = litellm.completion(
             model=self.model,
             max_tokens=4096,
-            system=[
-                {
-                    "type": "text",
-                    "text": _SYSTEM_PROMPT,
-                    "cache_control": {"type": "ephemeral"},
-                }
-            ],
             messages=[
+                {"role": "system", "content": _SYSTEM_PROMPT},
                 {
                     "role": "user",
                     "content": _GENERATION_PROMPT.format(
@@ -89,14 +81,14 @@ class CaseGenerator:
                         n_good=n_good,
                         n_bad=n_bad,
                     ),
-                }
+                },
             ],
         )
 
-        block = response.content[0]
-        if not isinstance(block, anthropic.types.TextBlock):
-            raise ValueError(f"Unexpected response content type: {type(block)}")
-        cases: list[dict[str, Any]] = json.loads(block.text.strip())
+        text = response.choices[0].message.content
+        if text is None:
+            raise ValueError("No text content in response")
+        cases: list[dict[str, Any]] = json.loads(text.strip())
 
         for i, case in enumerate(cases):
             missing = _REQUIRED_FIELDS - case.keys()

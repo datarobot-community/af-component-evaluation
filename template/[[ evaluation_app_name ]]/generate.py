@@ -15,7 +15,7 @@
 """
 Generate or convert evaluation test cases.
 
-Generate synthetic cases using Claude:
+Generate synthetic cases using a DataRobot-hosted model:
     python generate.py \
         --agent-description "A content planner and writer agent that researches topics and writes articles" \
         --n 10 \
@@ -44,7 +44,7 @@ def main() -> None:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument(
         "--agent-description",
-        help="Description of what the agent does (triggers synthetic generation via Claude)",
+        help="Description of what the agent does (triggers synthetic generation via a DataRobot-hosted model)",
     )
     mode.add_argument(
         "--convert",

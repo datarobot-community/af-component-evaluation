@@ -47,16 +47,17 @@ See [Benchmarks](./benchmarks.md) for the full meaning of each field.
 - **Collected:** copy a real agent interaction, set `"source": "collected"`, and
   fill in the benchmark's required fields. Human-reviewed collected cases are the
   most valuable — they reflect real usage.
-- **Synthetic:** run `generate.py` to produce cases with Claude, then review and
+- **Synthetic:** run `generate.py` to produce cases with a DataRobot-hosted model, then review and
   edit before committing.
 - **From CSV:** if your cases live in a spreadsheet, export to CSV and run
   `generate.py --convert` to produce the JSON file (see below).
 
 ## Generating synthetic cases
 
-`generate.py` uses Claude to produce a mix of "good" and "bad" cases from a plain
-description of what the agent does. **Review and edit the output before using it
-in evaluations** — generated cases are a starting point, not ground truth.
+`generate.py` uses a DataRobot-hosted model via LiteLLM to produce a mix of "good"
+and "bad" cases from a plain description of what the agent does. **Review and edit
+the output before using it in evaluations** — generated cases are a starting point,
+not ground truth.
 
 ```bash
 task generate -- \
@@ -73,7 +74,7 @@ task generate -- \
 | `--output` | `user_datasets/generated_cases.json` | Output file path |
 | `--append` | off | Append to the existing file instead of overwriting |
 
-Requires `ANTHROPIC_API_KEY` (or equivalent Claude credentials) in your `.env`.
+Requires `DATAROBOT_API_TOKEN` and `DATAROBOT_ENDPOINT` in your `.env`.
 
 ## Converting from CSV
 
