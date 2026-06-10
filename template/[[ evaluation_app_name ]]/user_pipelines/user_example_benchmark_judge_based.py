@@ -32,12 +32,11 @@ docs/evaluation/writing-benchmarks.md
 import os
 from typing import Any
 
-from nemo_evaluator.contrib.byob import ScorerInput, benchmark, scorer
-
 # Import judge_score from evaluator.judge (not directly from nemo_evaluator): it
 # wraps NeMo's judge to drop the redundant top_p that Anthropic/Bedrock judges
 # reject. Use this import in your own judge-based benchmarks too.
 from evaluator.judge import judge_score
+from nemo_evaluator.contrib.byob import ScorerInput, benchmark, scorer
 
 # JUDGE_* env vars are exported by run.py from the pipeline's judge: block; the
 # defaults here are fallbacks for direct/manual invocation. api_key is an env var

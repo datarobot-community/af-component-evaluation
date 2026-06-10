@@ -4,3 +4,6 @@ version = "0.1.0"
 description = "Batch evaluation framework for DataRobot agents using NeMo Evaluator"
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+    "jinja-cli",
+]
