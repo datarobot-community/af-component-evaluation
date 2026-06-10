@@ -23,7 +23,7 @@ Usage:
 import sys
 from pathlib import Path
 
-from evaluator.summarize import ResultsSummarizer
+from datarobot_genai.eval.summarize import ResultsSummarizer
 
 
 def main() -> None:
