@@ -51,7 +51,7 @@ def minimal_pipeline_cfg() -> dict[str, Any]:
         "target": {"model_type": "chat", "model_id": "unknown"},
         "judge": {
             "url": "https://app.datarobot.com/api/v2/genai/llmgw",
-            "model_id": "azure/gpt-4o-2024-11-20",
+            "model_id": "azure/gpt-5-5-2026-04-23",
             "api_key_name": "DATAROBOT_API_TOKEN",
         },
         "run": {

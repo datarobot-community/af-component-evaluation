@@ -14,11 +14,11 @@
 evaluation_app_name:
   type: str
   default: "evaluations"
-  help: "The name/folder of your Agent Deployment. Must be a Python-friendly name (letters, numbers, underscores only, no spaces)"
+  help: "The name/folder for your agent evaluation criteria. Must be a Python-friendly name (letters, numbers, underscores only, no spaces)"
   validator: >-
-    [% if not evaluation_app_name %]ERROR: Agent app name cannot be empty
-    [% elif ' ' in evaluation_app_name %]ERROR: Agent app name cannot contain spaces
-    [% elif not evaluation_app_name.isidentifier() %]ERROR: Agent app name must be a valid Python identifier (letters, numbers, underscores only, cannot start with number)
+    [% if not evaluation_app_name %]ERROR: Evaluation app name cannot be empty
+    [% elif ' ' in evaluation_app_name %]ERROR: Evaluation app name cannot contain spaces
+    [% elif not evaluation_app_name.isidentifier() %]ERROR: Evaluation app name must be a valid Python identifier (letters, numbers, underscores only, cannot start with number)
     [% endif %]
 
 # Grab the base component answers to re-use answers

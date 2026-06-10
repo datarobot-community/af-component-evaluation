@@ -41,7 +41,7 @@ from evaluator.judge import judge_score  # provider-compatible wrapper (drops to
 # exports JUDGE_* from the pipeline's judge: block before invoking the runner.
 JUDGE = {
     "url": os.environ.get("JUDGE_URL", "https://app.datarobot.com/api/v2/genai/llmgw"),
-    "model_id": os.environ.get("JUDGE_MODEL_ID", "azure/gpt-4o-2024-11-20"),
+    "model_id": os.environ.get("JUDGE_MODEL_ID", "azure/gpt-5-5-2026-04-23"),
     "api_key": os.environ.get("JUDGE_API_KEY_NAME", "DATAROBOT_API_TOKEN"),
     "temperature": 0.0,
     "max_new_tokens": 1024,

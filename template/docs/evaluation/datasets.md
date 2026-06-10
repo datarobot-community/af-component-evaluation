@@ -47,20 +47,26 @@ See [Benchmarks](./benchmarks.md) for the full meaning of each field.
 - **Collected:** copy a real agent interaction, set `"source": "collected"`, and
   fill in the benchmark's required fields. Human-reviewed collected cases are the
   most valuable — they reflect real usage.
-- **Synthetic:** run `generate.py` to produce cases with Claude, then review and
+- **Synthetic:** run `generate.py` to produce cases with a DataRobot-hosted model, then review and
   edit before committing.
 - **From CSV:** if your cases live in a spreadsheet, export to CSV and run
   `generate.py --convert` to produce the JSON file (see below).
 
 ## Generating synthetic cases
 
-`generate.py` uses Claude to produce a mix of "good" and "bad" cases from a plain
-description of what the agent does. **Review and edit the output before using it
-in evaluations** — generated cases are a starting point, not ground truth.
+`generate.py` uses a DataRobot-hosted model via LiteLLM to produce a mix of "good"
+and "bad" cases from a plain description of what the agent does. **Review and edit
+the output before using it in evaluations** — generated cases are a starting point,
+not ground truth.
+
+Pass `--pipeline` to tailor the prompt to the specific benchmark being evaluated:
+what "good" vs "bad" means, and which extra fields (e.g. `canary`, `constraints`,
+`context`) are required for that benchmark.
 
 ```bash
 task generate -- \
   --agent-description "A research assistant that answers questions concisely" \
+  --pipeline user_pipelines/answer_quality.yaml \
   --n 20 \
   --output user_datasets/my_agent_cases.json
 ```
@@ -68,12 +74,13 @@ task generate -- \
 | Flag | Default | Description |
 |---|---|---|
 | `--agent-description` | (required) | What the agent does, and what it should / shouldn't do |
+| `--pipeline` | — | Pipeline YAML to tailor good/bad criteria and required fields to the benchmark |
 | `--n` | `10` | Total cases to generate (split evenly good/bad) |
 | `--n-good` / `--n-bad` | — | Override the even split |
 | `--output` | `user_datasets/generated_cases.json` | Output file path |
 | `--append` | off | Append to the existing file instead of overwriting |
 
-Requires `ANTHROPIC_API_KEY` (or equivalent Claude credentials) in your `.env`.
+Requires `DATAROBOT_API_TOKEN` and `DATAROBOT_ENDPOINT` in your `.env`.
 
 ## Converting from CSV
 

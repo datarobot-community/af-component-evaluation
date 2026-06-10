@@ -1,6 +1,6 @@
 module: af-component-evaluation
 short_description: "The agent evaluation component"
-repeatable: true
+repeatable: false
 depends_on:
   base:
     url: https://github.com/datarobot-community/af-component-base

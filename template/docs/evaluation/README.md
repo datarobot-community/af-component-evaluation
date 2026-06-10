@@ -86,7 +86,7 @@ task summarize
 ```
 <component>/
 ├── run.py                      # Main entrypoint (the af-component detection target)
-├── generate.py                 # Claude-powered synthetic test-case generator
+├── generate.py                 # LiteLLM-powered synthetic test-case generator (uses DataRobot)
 ├── summarize.py                # Pretty-print eval_results.json
 ├── Taskfile.yml                # task eval / generate / summarize / test / lint
 ├── pyproject.toml              # uv environment + [tool.af-component] marker
@@ -132,7 +132,8 @@ uv run python run.py \
 
 | Variable | Required | Description |
 |---|:---:|---|
-| `DATAROBOT_API_TOKEN` | judge runs only | Bearer token for the judge (DR LLM gateway). Set in `.env`. |
+| `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `task generate`). Set in `.env`. |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (e.g. `https://app.datarobot.com`). Set in `.env`. |
 | `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set — a local DRUM agent needs none. |
 
 The judge `url` / `model_id` / `api_key_name` come from the pipeline YAML;
