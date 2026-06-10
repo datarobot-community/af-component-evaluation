@@ -37,7 +37,7 @@ curl -sS -X POST "https://app.datarobot.com/api/v2/genai/llmgw/chat/completions"
 stock path.
 
 **Current workaround:** use an **Azure** judge model
-(`azure/gpt-4o-2024-11-20`) — Azure/OpenAI models accept both params, so the
+(`azure/gpt-5-5-2026-04-23`) — Azure/OpenAI models accept both params, so the
 stock `judge_call` works unmodified. Set via `JUDGE_MODEL_ID` env var; default
 lives in `benchmarks/agent_quality_safety.py`.
 
@@ -76,7 +76,7 @@ middle. Whatever endpoint you name receives the `model` string verbatim.
   not a universal LiteLLM format.
 - Against the DR LLM gateway directly, that means the **gateway catalog name**
   with no `datarobot/` prefix — e.g. `bedrock/anthropic.claude-sonnet-4-6` or
-  `azure/gpt-4o-2024-11-20` (verify via
+  `azure/gpt-5-5-2026-04-23` (verify via
   `GET https://app.datarobot.com/api/v2/genai/llmgw/models`).
 
 **If we ever DO want LiteLLM routing:** stand up a LiteLLM proxy and point the

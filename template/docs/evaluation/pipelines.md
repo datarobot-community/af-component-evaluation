@@ -50,7 +50,7 @@ target:                                           # the agent under test
 
 judge:                                            # OMIT ENTIRELY for judge-free benchmarks
   url: https://app.datarobot.com/api/v2/genai/llmgw   # base URL; NeMo appends /chat/completions
-  model_id: azure/gpt-4o-2024-11-20               # gateway CATALOG name (NOT a litellm datarobot/ prefix)
+  model_id: azure/gpt-5-5-2026-04-23               # gateway CATALOG name (NOT a litellm datarobot/ prefix)
   api_key_name: DATAROBOT_API_TOKEN               # env var NAME holding the judge bearer token
 
 run:
@@ -67,7 +67,7 @@ run:
   call. (The UI also reads this to show whether a run needs a judge model.)
 - **Model names are endpoint-catalog names, not LiteLLM names.** NeMo makes plain
   OpenAI-compatible HTTP calls — no LiteLLM layer. Against the DR LLM gateway, use
-  the catalog name with no `datarobot/` prefix (e.g. `azure/gpt-4o-2024-11-20`).
+  the catalog name with no `datarobot/` prefix (e.g. `azure/gpt-5-5-2026-04-23`).
   List models: `GET https://app.datarobot.com/api/v2/genai/llmgw/models`.
 - **`api_key_name` is an env var NAME**, not the key value. `DATAROBOT_API_TOKEN`
   for the judge; `AGENT_API_KEY` for the agent (optional — only sent if set).

@@ -22,7 +22,7 @@ from evaluator.output import normalize_output
 from evaluator.runner import run_byob
 from evaluator.status import write_status
 from evaluator.utils import make_run_id
-from evaluator.validation import load_pipeline, validate_inputs
+from evaluator.validation import load_pipeline, preflight_judge, validate_inputs
 
 # evaluator/ lives one level below the repo root (template/)
 _DEFAULT_REPO_ROOT = Path(__file__).parent.parent
@@ -76,6 +76,26 @@ class EvalRunner:
                 print("  judge:   none (judge-free benchmark)")
             print("  output → output/eval_results.json")
             return 0
+
+        # Preflight the judge before doing anything expensive. Catches missing /
+        # invalid tokens, wrong model_id, and gateway outages up front instead of
+        # producing a run full of CALL_ERRORs.
+        judge_cfg = cfg.get("judge")
+        if judge_cfg:
+            try:
+                preflight_judge(judge_cfg)
+            except RuntimeError as e:
+                print(f"ERROR: {e}", file=sys.stderr)
+                write_status(
+                    "failed",
+                    run_id,
+                    self.pipeline,
+                    self.endpoint,
+                    self.output_dir,
+                    error=str(e),
+                )
+                return 1
+            print(f"  ✓ Judge reachable:    {judge_cfg['model_id']}")
 
         # 2. Mark as running
         write_status("running", run_id, self.pipeline, self.endpoint, self.output_dir)

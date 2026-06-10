@@ -11,7 +11,7 @@ LiteLLM proxy. Whatever endpoint you name in the pipeline receives the `model`
 string verbatim.
 
 Against the DR LLM gateway directly, use the **gateway catalog name** with no
-`datarobot/` prefix — e.g. `azure/gpt-4o-2024-11-20`. List available models:
+`datarobot/` prefix — e.g. `azure/gpt-5-5-2026-04-23`. List available models:
 
 ```bash
 GET https://app.datarobot.com/api/v2/genai/llmgw/models
@@ -28,7 +28,7 @@ that combination:
      Please use only one."
 ```
 
-**Workaround:** use an **Azure** GPT judge model (`azure/gpt-4o-2024-11-20`) —
+**Workaround:** use an **Azure** GPT judge model (`azure/gpt-5-5-2026-04-23`) —
 Azure/OpenAI models accept both params, so the stock judge works unmodified. Set it
 via the pipeline's `judge.model_id` or the `JUDGE_MODEL_ID` env var.
 

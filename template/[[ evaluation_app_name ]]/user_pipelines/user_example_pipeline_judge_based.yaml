@@ -16,7 +16,7 @@ judge:
   url: https://app.datarobot.com/api/v2/genai/llmgw
   # Gateway CATALOG name — NOT a litellm datarobot/ prefix.
   # List available models: GET .../api/v2/genai/llmgw/models
-  model_id: azure/gpt-4o-2024-11-20
+  model_id: azure/gpt-5-5-2026-04-23
   # env var NAME (not the token value) holding the judge bearer token.
   api_key_name: DATAROBOT_API_TOKEN
 run:

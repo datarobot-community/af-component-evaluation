@@ -120,6 +120,7 @@ def test_run_returns_2_on_byob_failure(tmp_path: Path) -> None:
     with (
         patch("evaluator.eval.validate_inputs", return_value=[]),
         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.preflight_judge"),
         patch("evaluator.eval.run_byob", side_effect=RuntimeError("runner crashed")),
     ):
         assert runner.run() == 2
@@ -130,6 +131,7 @@ def test_run_writes_failed_status_on_byob_error(tmp_path: Path) -> None:
     with (
         patch("evaluator.eval.validate_inputs", return_value=[]),
         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.preflight_judge"),
         patch("evaluator.eval.run_byob", side_effect=RuntimeError("runner crashed")),
     ):
         runner.run()
@@ -148,6 +150,7 @@ def test_run_returns_3_on_normalization_failure(tmp_path: Path) -> None:
     with (
         patch("evaluator.eval.validate_inputs", return_value=[]),
         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.preflight_judge"),
         patch("evaluator.eval.run_byob"),
         patch("evaluator.eval.normalize_output", side_effect=ValueError("bad output")),
     ):
@@ -164,6 +167,7 @@ def test_run_happy_path_returns_0(tmp_path: Path) -> None:
     with (
         patch("evaluator.eval.validate_inputs", return_value=[]),
         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.preflight_judge"),
         patch("evaluator.eval.run_byob"),
         patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS),
     ):
@@ -175,6 +179,7 @@ def test_run_happy_path_writes_results(tmp_path: Path) -> None:
     with (
         patch("evaluator.eval.validate_inputs", return_value=[]),
         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.preflight_judge"),
         patch("evaluator.eval.run_byob"),
         patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS),
     ):
@@ -188,6 +193,7 @@ def test_run_happy_path_status_complete(tmp_path: Path) -> None:
     with (
         patch("evaluator.eval.validate_inputs", return_value=[]),
         patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("evaluator.eval.preflight_judge"),
         patch("evaluator.eval.run_byob"),
         patch("evaluator.eval.normalize_output", return_value=_NORMALIZED_RESULTS),
     ):
