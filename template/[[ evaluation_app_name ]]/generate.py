@@ -35,8 +35,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-
 from evaluator.converter import convert_csv_to_cases, save_cases
+
 from evaluator.generator import CaseGenerator
 from evaluator.validation import preflight_judge
 

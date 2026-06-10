@@ -37,9 +37,10 @@ hallucination — that is the RAG failure mode this benchmark exists to catch.
 import os
 from typing import Any
 
+from datarobot_genai.eval.judge import (
+    judge_score,  # provider-compatible wrapper (drops top_p)
+)
 from nemo_evaluator.contrib.byob import ScorerInput, benchmark, scorer
-
-from datarobot_genai.eval.judge import judge_score  # provider-compatible wrapper (drops top_p)
 
 JUDGE = {
     "url": os.environ.get("JUDGE_URL", "https://app.datarobot.com/api/v2/genai/llmgw"),

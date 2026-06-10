@@ -26,7 +26,30 @@ tasks:
     silent: true
   install:
     desc: 🛠️ Install evaluation component dependencies
-    cmds: [{task: eval:install}]
+    cmds:
+      - uv sync
+      - task: _render-pyproject
+      - task: eval:install
+  _render-pyproject:
+    internal: true
+    cmds:
+      - |
+        uv run python - <<'PYEOF'
+        import jinja2, pathlib
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader('.'),
+            variable_start_string='[[',
+            variable_end_string=']]',
+            block_start_string='[%',
+            block_end_string='%]',
+            comment_start_string='[#',
+            comment_end_string='#]',
+            keep_trailing_newline=True,
+        )
+        t = env.get_template('template/[[ evaluation_app_name ]]/pyproject.toml.jinja')
+        out = pathlib.Path('template/[[ evaluation_app_name ]]/pyproject.toml')
+        out.write_text(t.render(evaluation_app_name='evaluations'))
+        PYEOF
   lint:
     desc: 🧹 Run linters
     cmds: [{task: eval:lint}]

@@ -32,9 +32,10 @@ to avoid a judge model entirely.
 import os
 from typing import Any
 
+from datarobot_genai.eval.judge import (
+    judge_score,  # provider-compatible wrapper (drops top_p)
+)
 from nemo_evaluator.contrib.byob import ScorerInput, benchmark, scorer
-
-from datarobot_genai.eval.judge import judge_score  # provider-compatible wrapper (drops top_p)
 
 # Judge endpoint config. ``api_key`` is the NAME of an env var, resolved at
 # runtime by the judge (sent as ``Authorization: Bearer <value>``). run.py
