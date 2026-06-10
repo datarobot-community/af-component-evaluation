@@ -34,7 +34,7 @@ from typing import Any
 
 from nemo_evaluator.contrib.byob import ScorerInput, benchmark, scorer
 
-from evaluator.judge import judge_score  # provider-compatible wrapper (drops top_p)
+from datarobot_genai.eval.judge import judge_score  # provider-compatible wrapper (drops top_p)
 
 JUDGE = {
     "url": os.environ.get("JUDGE_URL", "https://app.datarobot.com/api/v2/genai/llmgw"),

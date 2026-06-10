@@ -17,12 +17,13 @@ import sys
 import tempfile
 from pathlib import Path
 
-from evaluator.dataset import load_dataset, to_byob_jsonl
-from evaluator.output import normalize_output
-from evaluator.runner import run_byob
-from evaluator.status import write_status
-from evaluator.utils import make_run_id
-from evaluator.validation import load_pipeline, preflight_judge, validate_inputs
+from datarobot_genai.eval.dataset import load_dataset, to_byob_jsonl
+from datarobot_genai.eval.output import normalize_output
+from datarobot_genai.eval.runner import run_byob
+from datarobot_genai.eval.status import write_status
+from datarobot_genai.eval.utils import make_run_id
+from datarobot_genai.eval.validation import load_pipeline, validate_inputs
+from evaluator.validation import preflight_judge
 
 # evaluator/ lives one level below the repo root (template/)
 _DEFAULT_REPO_ROOT = Path(__file__).parent.parent

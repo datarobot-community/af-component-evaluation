@@ -5,9 +5,9 @@ description = "Batch evaluation framework for DataRobot agents using NeMo Evalua
 readme = "README.md"
 requires-python = ">=3.11, <3.14"
 dependencies = [
-    "nemo-evaluator-launcher",
     "litellm",
     "pyyaml>=6.0",
+    "datarobot-genai[eval]>=0.15.124",
 ]
 
 [project.optional-dependencies]
@@ -46,6 +46,9 @@ output_results = "output/eval_results.json"
 
 [tool.uv]
 required-version = ">=0.7.0"
+
+[tool.uv.sources]
+datarobot-genai = { path = "/Users/matt.nitzken/workspaces/datarobot-genai", editable = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
