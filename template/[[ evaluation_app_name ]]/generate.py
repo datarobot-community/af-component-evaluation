@@ -37,7 +37,7 @@ from typing import Any
 import yaml
 from datarobot_genai.eval.converter import convert_csv_to_cases, save_cases
 
-from evaluator.generator import CaseGenerator
+from datarobot_genai.eval.generator import CaseGenerator
 from evaluator.validation import preflight_judge
 
 

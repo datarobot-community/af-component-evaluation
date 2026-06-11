@@ -128,25 +128,6 @@ wheels = [
 ]
 
 [[package]]
-name = "anthropic"
-version = "0.109.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "distro" },
-    { name = "docstring-parser" },
-    { name = "httpx" },
-    { name = "jiter" },
-    { name = "pydantic" },
-    { name = "sniffio" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/54/0b/ce24a4f275573f5e436ca954faca60c759d58ed152b8fa36a1e3b888e261/anthropic-0.109.1.tar.gz", hash = "sha256:83e06b3d9d40ff5898f588020e0cc4e42187de954549a3b5fbe6e2685a09c785", size = 927569, upload-time = "2026-06-09T23:55:24.884Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/91/0f/a6110d713370bc92f074a622f8a5ebdec7e92360149b1048dca258a07b2f/anthropic-0.109.1-py3-none-any.whl", hash = "sha256:ce7d94a7657f2aa29338cca448945eac621b4f62c1794cf461cb32847223e9b8", size = 923851, upload-time = "2026-06-09T23:55:23.348Z" },
-]
-
-[[package]]
 name = "antlr4-python3-runtime"
 version = "4.9.3"
 source = { registry = "https://pypi.org/simple" }
@@ -512,16 +493,16 @@ wheels = [
 
 [[package]]
 name = "datarobot-genai"
-version = "0.15.125"
+version = "0.16.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/4d/4f/b6cb4fb0c82aa6b5ebe162c967426fa2613dba0befb112df767b535ee0fb/datarobot_genai-0.15.125.tar.gz", hash = "sha256:e1cfba73ddb596c55e584a891b2b3a850dbb34b3e778d32105a419505941127a", size = 382596, upload-time = "2026-06-10T14:40:11.821Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9f/19/f91222ec85fa03a0e3bf6e2e7c085652340eabd8c1a404961adaa4e9de1d/datarobot_genai-0.16.2.tar.gz", hash = "sha256:b7bb199ebed81345f9c6caa3ea23ae117b92f54ae1aa22773ee214d269f7434e", size = 392353, upload-time = "2026-06-11T13:11:27.374Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/36/3420ebb01cd90e9305c40184c87eb7c5303ac8bfe11d9e740ad6087d9a25/datarobot_genai-0.15.125-py3-none-any.whl", hash = "sha256:f2515b100bfddf4536e8848a604b869723d7d396016dfb3dd805ee8ce1a21665", size = 543447, upload-time = "2026-06-10T14:40:09.776Z" },
+    { url = "https://files.pythonhosted.org/packages/64/b0/ffb1bfa8f66e25c76cfb841caafc8d67e5a5743a61a0d6f1c6c1b94f0e1a/datarobot_genai-0.16.2-py3-none-any.whl", hash = "sha256:8e2c737b6e8e2a254f5bdab01a81a6790e4dedadfffb9c39c087d7148c52e3e0", size = 556437, upload-time = "2026-06-11T13:11:25.021Z" },
 ]
 
 [package.optional-dependencies]
 eval = [
-    { name = "anthropic" },
+    { name = "litellm" },
     { name = "nemo-evaluator-launcher" },
     { name = "pyyaml" },
 ]
@@ -559,7 +540,6 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "datarobot-genai", extra = ["eval"] },
-    { name = "litellm" },
     { name = "pyyaml" },
 ]
 
@@ -576,8 +556,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "datarobot-genai", extras = ["eval"], specifier = ">=0.15.124" },
-    { name = "litellm" },
+    { name = "datarobot-genai", extras = ["eval"], specifier = ">=0.16.2" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.15.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.2.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.4.0" },
