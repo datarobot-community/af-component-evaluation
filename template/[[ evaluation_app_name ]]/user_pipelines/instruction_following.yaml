@@ -5,10 +5,10 @@
 # Each case carries a `constraints` object (length, valid JSON, required/forbidden
 # phrases, regex); score is the fraction satisfied. No judge model needed.
 #
-# Benchmark: evaluator/benchmarks/instruction_following.py
+# Benchmark: datarobot_genai/eval/benchmarks/instruction_following.py
 # Dataset cases need a `constraints` object (see user_datasets/sample_instruction_following.json).
 benchmark:
-  module: evaluator/benchmarks/instruction_following.py
+  module: datarobot_genai/eval/benchmarks/instruction_following.py
   name: instruction_following
 target:
   model_type: chat

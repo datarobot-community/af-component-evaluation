@@ -4,11 +4,11 @@
 # Default pipeline for retrieval agents. Each dataset case supplies a `context`
 # passage; a judge decides whether the answer is fully supported by it.
 #
-# Benchmark: evaluator/benchmarks/faithfulness.py
+# Benchmark: datarobot_genai/eval/benchmarks/faithfulness.py
 # Needs a judge model (the judge: block below).
 # Dataset cases MUST include a `context` field (see user_datasets/sample_faithfulness.json).
 benchmark:
-  module: evaluator/benchmarks/faithfulness.py
+  module: datarobot_genai/eval/benchmarks/faithfulness.py
   name: faithfulness
 target:
   model_type: chat

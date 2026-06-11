@@ -5,10 +5,10 @@
 # `ideal_response` via match_mode (exact | normalized | contains). No judge model
 # is needed, so this runs with no judge credentials and is fully reproducible.
 #
-# Benchmark: evaluator/benchmarks/answer_correctness.py
+# Benchmark: datarobot_genai/eval/benchmarks/answer_correctness.py
 # Dataset cases need `ideal_response` (and optional `match_mode`).
 benchmark:
-  module: evaluator/benchmarks/answer_correctness.py
+  module: datarobot_genai/eval/benchmarks/answer_correctness.py
   name: answer_correctness
 target:
   model_type: chat
