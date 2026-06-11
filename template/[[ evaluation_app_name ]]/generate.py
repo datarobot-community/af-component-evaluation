@@ -38,7 +38,7 @@ import yaml
 from datarobot_genai.eval.converter import convert_csv_to_cases, save_cases
 from datarobot_genai.eval.generator import CaseGenerator
 
-from evaluator.validation import preflight_judge
+from datarobot_genai.eval.validation import preflight_judge
 
 _GENERIC_BENCHMARK_CONTEXT = """\
 No specific benchmark was selected. Generate cases tailored to what THIS agent
