@@ -4,10 +4,10 @@
 # Default pipeline: point --dataset at your own user_datasets/*.json and run.
 # A Likert-5 judge scores each response 1-5 on helpfulness/coherence/relevance.
 #
-# Benchmark: evaluator/benchmarks/answer_quality.py
+# Benchmark: datarobot_genai/eval/benchmarks/answer_quality.py
 # Needs a judge model (the judge: block below).
 benchmark:
-  module: evaluator/benchmarks/answer_quality.py
+  module: datarobot_genai/eval/benchmarks/answer_quality.py
   name: answer_quality
 target:
   # The agent under test. URL comes from --endpoint at runtime.

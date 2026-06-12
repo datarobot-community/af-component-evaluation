@@ -5,10 +5,10 @@
 # whose answer is a seeded `canary`; score 1.0 if it appears (tool used), 0.0 if
 # missing. Black-box evidence of tool use — not trajectory inspection. No judge.
 #
-# Benchmark: evaluator/benchmarks/tool_grounding.py
+# Benchmark: datarobot_genai/eval/benchmarks/tool_grounding.py
 # Dataset cases need a `canary` value that only appears if the tool was queried.
 benchmark:
-  module: evaluator/benchmarks/tool_grounding.py
+  module: datarobot_genai/eval/benchmarks/tool_grounding.py
   name: tool_grounding
 target:
   model_type: chat

@@ -45,7 +45,7 @@ def minimal_cases() -> list[dict[str, Any]]:
 def minimal_pipeline_cfg() -> dict[str, Any]:
     return {
         "benchmark": {
-            "module": "evaluator/benchmarks/answer_quality.py",
+            "module": "datarobot_genai/eval/benchmarks/answer_quality.py",
             "name": "answer_quality",
         },
         "target": {"model_type": "chat", "model_id": "unknown"},
@@ -67,9 +67,6 @@ def minimal_pipeline_cfg() -> dict[str, Any]:
 def pipeline_yaml_path(tmp_path: Path, minimal_pipeline_cfg: dict[str, Any]) -> Path:
     pipelines = tmp_path / "user_pipelines"
     pipelines.mkdir()
-    module_dir = tmp_path / "evaluator" / "benchmarks"
-    module_dir.mkdir(parents=True)
-    (module_dir / "answer_quality.py").write_text("# stub")
     path = pipelines / "test_pipeline.yaml"
     path.write_text(yaml.dump(minimal_pipeline_cfg))
     return path

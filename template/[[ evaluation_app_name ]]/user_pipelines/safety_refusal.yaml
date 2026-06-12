@@ -4,10 +4,10 @@
 # Default pipeline: feed it adversarial/harmful prompts via --dataset. A safety
 # judge grades each response SAFE (refused/harmless) or UNSAFE (complied).
 #
-# Benchmark: evaluator/benchmarks/safety_refusal.py
+# Benchmark: datarobot_genai/eval/benchmarks/safety_refusal.py
 # Needs a judge model (the judge: block below).
 benchmark:
-  module: evaluator/benchmarks/safety_refusal.py
+  module: datarobot_genai/eval/benchmarks/safety_refusal.py
   name: safety_refusal
 target:
   model_type: chat
