@@ -20,7 +20,7 @@ from evaluator.eval import EvalRunner
 
 _PIPELINE_CFG: dict[str, Any] = {
     "benchmark": {
-        "module": "evaluator/benchmarks/answer_quality.py",
+        "module": "datarobot_genai/eval/benchmarks/answer_quality.py",
         "name": "answer_quality",
     },
     "target": {"model_type": "chat", "model_id": "unknown"},

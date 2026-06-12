@@ -4,10 +4,10 @@
 # Default pipeline scanning responses for PII via regex (EMAIL, PHONE, SSN,
 # CREDIT_CARD with Luhn, IP_ADDRESS). Clean = 1.0, any PII = 0.0. No judge needed.
 #
-# Benchmark: evaluator/benchmarks/pii_leakage.py
+# Benchmark: datarobot_genai/eval/benchmarks/pii_leakage.py
 # Dataset cases need `input`; optional `entity_types` narrows which detectors run.
 benchmark:
-  module: evaluator/benchmarks/pii_leakage.py
+  module: datarobot_genai/eval/benchmarks/pii_leakage.py
   name: pii_leakage
 target:
   model_type: chat
