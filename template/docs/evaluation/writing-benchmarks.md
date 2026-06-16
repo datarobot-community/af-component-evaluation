@@ -63,8 +63,8 @@ def score(sample: ScorerInput) -> dict[str, Any]:
 ### Keep scoring logic in a pure helper
 
 Separating the logic into a standalone `evaluate_response(response, metadata)`
-function lets unit tests import and call it directly, with no NeMo fixtures. See
-`tests/test_benchmarks.py` for the pattern.
+function lets unit tests import and call it directly, with no NeMo fixtures. See the
+`datarobot-genai` repo's `tests/eval/test_benchmarks.py` for the pattern.
 
 ```python
 def evaluate_response(response: str, metadata: dict[str, Any]) -> dict[str, Any]:
@@ -144,7 +144,8 @@ def _scored(result: dict[str, Any], category_key: str) -> dict[str, Any]:
 ## Reference
 
 - The two `user_example_*` files are commented as line-by-line tutorials.
-- The default modules in `evaluator/benchmarks/` are each self-contained (no shared
-  imports) and make good copy-paste references.
+- The built-in modules in `datarobot_genai/eval/benchmarks/` (shipped in the
+  `datarobot-genai[eval]` package) are each self-contained (no shared imports) and
+  make good copy-paste references.
 - See [Pipelines](./pipelines.md) for the YAML schema and model-naming rules, and
   [Troubleshooting](./troubleshooting.md) for judge-model gotchas.

@@ -47,7 +47,7 @@ run.py
   ├─ reads user_pipelines/<name>.yaml (benchmark + optional judge + run params)
   └─ runs the BYOB runner in-process
          ├─ for each case: POST agent endpoint, get response
-         ├─ scorer (evaluator/benchmarks/<name>.py) → judge call OR deterministic check → grade
+         ├─ scorer (datarobot_genai/eval/benchmarks/<name>.py) → judge call OR deterministic check → grade
          └─ writes byob_results.json (aggregate) + byob_predictions.jsonl (per-sample)
   └─ normalizes raw output → output/eval_results.json
 ```
@@ -91,12 +91,13 @@ task summarize
 ├── Taskfile.yml                # task eval / generate / summarize / test / lint
 ├── pyproject.toml              # uv environment + [tool.af-component] marker
 │
-├── evaluator/                  # The eval engine (not meant to be edited)
+├── evaluator/                  # Thin local layer (not meant to be edited)
 │   ├── eval.py                 # EvalRunner: validate → run → normalize
-│   ├── runner.py / generator.py / dataset.py / summarize.py / ...
-│   ├── schemas/                # JSON contracts (input / status / output)
-│   └── benchmarks/             # The 8 built-in BYOB benchmark modules
-│       └── <benchmark>.py
+│   └── schemas/                # JSON contracts (input / status / output)
+│                               # The benchmarks, generator, and dataset/output/runner/
+│                               # judge/status/utils/validation modules all live in the
+│                               # datarobot-genai[eval] package (datarobot_genai/eval/,
+│                               # incl. benchmarks/) — not in this component.
 │
 ├── user_pipelines/             # Pipeline YAML you select/edit
 │   ├── <8 default pipelines>.yaml

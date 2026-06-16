@@ -40,7 +40,7 @@ Each has a matching `user_datasets/sample_<name>.json` showing the required shap
 
 ```yaml
 benchmark:
-  module: evaluator/benchmarks/answer_quality.py  # repo-relative path to the BYOB module
+  module: datarobot_genai/eval/benchmarks/answer_quality.py  # built-in (resolved from the datarobot-genai[eval] package); a local repo-relative path also works for custom benchmarks
   name: answer_quality                            # normalized benchmark name (matches @benchmark)
 
 target:                                           # the agent under test
