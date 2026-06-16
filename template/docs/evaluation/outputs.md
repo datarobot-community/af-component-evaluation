@@ -28,7 +28,7 @@ output/
     └── byob_predictions.jsonl  # raw BYOB per-sample
 ```
 
-### `eval_status.json` — schema: `evaluator/schemas/status_schema.json`
+### `eval_status.json` — schema: `docs/evaluation/schemas/status_schema.json`
 
 ```json
 {
@@ -43,7 +43,7 @@ output/
 
 `status` transitions: `running` → `complete` | `failed`.
 
-### `eval_results.json` — schema: `evaluator/schemas/output_schema.json`
+### `eval_results.json` — schema: `docs/evaluation/schemas/output_schema.json`
 
 ```json
 {

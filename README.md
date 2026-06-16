@@ -203,7 +203,7 @@ output/
     └── byob_predictions.jsonl  # raw BYOB per-sample
 ```
 
-### `output/eval_status.json` — schema: `schemas/status_schema.json`
+### `output/eval_status.json` — schema: `docs/evaluation/schemas/status_schema.json`
 
 ```json
 {
@@ -218,7 +218,7 @@ output/
 
 `status` values: `running` → `complete` | `failed`
 
-### `output/eval_results.json` — schema: `schemas/output_schema.json`
+### `output/eval_results.json` — schema: `docs/evaluation/schemas/output_schema.json`
 
 ```json
 {
@@ -291,7 +291,7 @@ for pyproject in Path(".").rglob("pyproject.toml"):
 ```
 af-component-evaluation/
 │
-├── schemas/                       # JSON contracts — stable API surface
+├── docs/evaluation/schemas/       # JSON contracts — stable API surface
 │   ├── input_schema.json          # CLI flags: --endpoint, --pipeline, --dataset
 │   ├── status_schema.json         # output/eval_status.json format
 │   └── output_schema.json         # output/eval_results.json format
@@ -302,9 +302,9 @@ af-component-evaluation/
 │                                  # answer_correctness, instruction_following, prompt_injection,
 │                                  # pii_leakage, tool_grounding (judge-free)
 │
-# The 8 BYOB benchmark modules now live in the datarobot-genai[eval] package
-# (datarobot_genai/eval/benchmarks/<name>.py), not in this component.
-
+│   # The eval engine + the 8 BYOB benchmark modules live in the
+│   # datarobot-genai[eval] package (datarobot_genai/eval/benchmarks/), not here.
+│
 ├── user_datasets/                 # Test case datasets (committed, human-reviewed)
 │   └── sample_<benchmark>.json    # one starter dataset per benchmark
 │
