@@ -158,8 +158,8 @@ def test_run_dry_run_exits_zero(monkeypatch: pytest.MonkeyPatch) -> None:
         ],
     )
     with (
-        patch("evaluator.eval.validate_inputs", return_value=[]),
-        patch("evaluator.eval.load_pipeline", return_value=_PIPELINE_CFG),
+        patch("datarobot_genai.eval.eval.validate_inputs", return_value=[]),
+        patch("datarobot_genai.eval.eval.load_pipeline", return_value=_PIPELINE_CFG),
         pytest.raises(SystemExit) as exc,
     ):
         run.main()
