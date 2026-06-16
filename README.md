@@ -111,7 +111,7 @@ run_eval.py
   ├─ reads user_pipelines/<name>.yaml (benchmark + optional judge + run params)
   └─ subprocess: python -m nemo_evaluator.contrib.byob.runner
          ├─ for each case: POST agent endpoint, get response
-         ├─ scorer (evaluator/benchmarks/<name>.py) → judge call OR deterministic check → grade
+         ├─ scorer (datarobot_genai/eval/benchmarks/<name>.py) → judge call OR deterministic check → grade
          └─ writes byob_results.json (aggregate) + byob_predictions.jsonl (per-sample)
   └─ normalizes raw output → output/eval_results.json
 ```
@@ -125,7 +125,7 @@ run_eval.py
 2. **Pick a pipeline** — choose one of the 8 defaults in `user_pipelines/` (you usually don't edit it; just point `--dataset` at your data). Judge-based pipelines carry a `judge:` block; judge-free ones omit it:
    ```yaml
    benchmark:
-     module: evaluator/benchmarks/answer_quality.py   # the BYOB benchmark
+     module: datarobot_genai/eval/benchmarks/answer_quality.py   # the BYOB benchmark
      name: answer_quality                              # normalized benchmark name
    target:
      model_type: chat
@@ -302,9 +302,9 @@ af-component-evaluation/
 │                                  # answer_correctness, instruction_following, prompt_injection,
 │                                  # pii_leakage, tool_grounding (judge-free)
 │
-├── evaluator/benchmarks/          # NeMo BYOB benchmark definitions (Python, self-contained)
-│   └── <8 benchmark>.py           # one module per benchmark above
-│
+# The 8 BYOB benchmark modules now live in the datarobot-genai[eval] package
+# (datarobot_genai/eval/benchmarks/<name>.py), not in this component.
+
 ├── user_datasets/                 # Test case datasets (committed, human-reviewed)
 │   └── sample_<benchmark>.json    # one starter dataset per benchmark
 │
@@ -328,10 +328,10 @@ af-component-evaluation/
 
 ## Adding a New Benchmark / Pipeline
 
-A benchmark is a Python module using `nemo_evaluator.contrib.byob` (`@benchmark` + `@scorer`). The scorer can use NeMo's built-in judge templates (`binary_qa`, `binary_qa_partial`, `likert_5`, `safety`) via `judge_score`, or score deterministically with no judge at all. Each file in `evaluator/benchmarks/` is self-contained — copy the closest one as your starting point.
+A benchmark is a Python module using `nemo_evaluator.contrib.byob` (`@benchmark` + `@scorer`). The scorer can use NeMo's built-in judge templates (`binary_qa`, `binary_qa_partial`, `likert_5`, `safety`) via `judge_score`, or score deterministically with no judge at all. The 8 built-ins live in the `datarobot-genai[eval]` package (`datarobot_genai/eval/benchmarks/`) and make good references; to author your own, copy one of the annotated `user_example_benchmark_*.py` templates in `user_pipelines/`.
 
 ```bash
-cp evaluator/benchmarks/answer_quality.py evaluator/benchmarks/my_benchmark.py
+cp user_pipelines/user_example_benchmark_judge_based.py user_pipelines/my_benchmark.py
 cp user_pipelines/answer_quality.yaml user_pipelines/my_pipeline.yaml
 # point benchmark.module/name at your benchmark; set or remove the judge block
 uv run python run.py --endpoint ... --pipeline my_pipeline.yaml --dataset ...

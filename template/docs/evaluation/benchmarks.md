@@ -1,9 +1,9 @@
 # Benchmarks
 
-A **benchmark** is a self-contained Python module in `evaluator/benchmarks/` that
-defines what to send to the agent and how to score the response. Each ships with a
-default pipeline (`user_pipelines/<name>.yaml`) and a sample dataset
-(`user_datasets/sample_<name>.json`).
+A **benchmark** is a self-contained Python module that defines what to send to the
+agent and how to score the response. The 8 built-ins ship in the `datarobot-genai[eval]`
+package (`datarobot_genai/eval/benchmarks/`); each comes with a default pipeline
+(`user_pipelines/<name>.yaml`) and a sample dataset (`user_datasets/sample_<name>.json`).
 
 Each run uses exactly **one** benchmark. They fall into two families:
 
@@ -136,6 +136,6 @@ without using the tool.
 
 ## Adding a benchmark
 
-Each module in `evaluator/benchmarks/` is self-contained with no shared imports,
-so it doubles as a reference. To write your own, copy one of the annotated
-`user_example_*` templates — see [Writing your own benchmark](./writing-benchmarks.md).
+Each built-in module in `datarobot_genai/eval/benchmarks/` is self-contained with no
+shared imports, so it doubles as a reference. To write your own, copy one of the
+annotated `user_example_*` templates — see [Writing your own benchmark](./writing-benchmarks.md).
