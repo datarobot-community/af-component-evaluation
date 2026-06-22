@@ -41,13 +41,17 @@ tasks:
     silent: true
   test:
     desc: 🧪 Run tests
-    cmds: [echo "Running pytest", '{{.UV_CMD}} run python -m pytest -vv ./tests/']
+    cmds: [echo "Running pytest", '{{.UV_CMD}} run python -m pytest -vv -m "not integration" ./tests/']
     silent: true
   test-coverage:
     desc: 🧪 Run tests with coverage report
     cmds:
       - task: req
-      - '{{.UV_CMD}} run python -m pytest --cov=. --cov-report=term-missing --cov-report=html ./tests/'
+      - '{{.UV_CMD}} run python -m pytest --cov=. --cov-report=term-missing --cov-report=html -m "not integration" ./tests/'
+    silent: true
+  test-integration:
+    desc: 🔬 Run integration smoke tests (requires DATAROBOT_API_TOKEN + DATAROBOT_ENDPOINT)
+    cmds: ['{{.UV_CMD}} run python -m pytest -vv -m integration ./tests/']
     silent: true
   generate:
     desc: 🤖 Generate synthetic test cases (pass args with --)

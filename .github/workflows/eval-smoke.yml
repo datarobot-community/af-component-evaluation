@@ -1,0 +1,42 @@
+---
+name: eval-smoke
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "template/**"
+      - ".github/workflows/eval-smoke.yml"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  smoke:
+    name: "Integration smoke test"
+    runs-on: "ubuntu-latest"
+    container:
+      image: ghcr.io/astral-sh/uv:python3.11-bookworm
+    steps:
+      - name: Checkout
+        uses: "actions/checkout@v4"
+      - name: Render copier instance
+        shell: sh
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends git
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          uvx copier copy --vcs-ref=HEAD --defaults . ./.rendered
+        env:
+          UV_CACHE_DIR: /.uv_cache
+      - name: Install dependencies
+        shell: sh
+        working-directory: ./.rendered/evaluations
+        run: uvx --from go-task-bin task install
+        env:
+          UV_CACHE_DIR: /.uv_cache
+      - name: Run integration smoke test
+        shell: sh
+        working-directory: ./.rendered/evaluations
+        run: uvx --from go-task-bin task test-integration
+        env:
+          DATAROBOT_API_TOKEN: ${{ secrets.DATAROBOT_API_TOKEN }}
+          DATAROBOT_ENDPOINT: ${{ secrets.DATAROBOT_ENDPOINT }}
+          UV_CACHE_DIR: /.uv_cache
