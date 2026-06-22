@@ -85,19 +85,13 @@ task summarize
 
 ```
 <component>/
-├── run.py                      # Main entrypoint (the af-component detection target)
-├── generate.py                 # LiteLLM-powered synthetic test-case generator (uses DataRobot)
-├── summarize.py                # Pretty-print eval_results.json
+├── run.py                      # Thin CLI wrapper → datarobot_genai.eval.cli.run_main (af-component target)
+├── generate.py                 # Thin CLI wrapper → datarobot_genai.eval.cli.generate_main
+├── summarize.py                # Thin CLI wrapper → datarobot_genai.eval.cli.summarize_main
 ├── Taskfile.yml                # task eval / generate / summarize / test / lint
 ├── pyproject.toml              # uv environment + [tool.af-component] marker
-│
-├── evaluator/                  # Thin local layer (not meant to be edited)
-│   ├── eval.py                 # EvalRunner: validate → run → normalize
-│   └── schemas/                # JSON contracts (input / status / output)
-│                               # The benchmarks, generator, and dataset/output/runner/
-│                               # judge/status/utils/validation modules all live in the
-│                               # datarobot-genai[eval] package (datarobot_genai/eval/,
-│                               # incl. benchmarks/) — not in this component.
+│                               # The eval engine (EvalRunner, benchmarks, generator, etc.)
+│                               # lives in the datarobot-genai[eval] package, not here.
 │
 ├── user_pipelines/             # Pipeline YAML you select/edit
 │   ├── <8 default pipelines>.yaml
