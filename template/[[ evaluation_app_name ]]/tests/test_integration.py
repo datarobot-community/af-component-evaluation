@@ -32,7 +32,6 @@ from typing import Any
 
 import pytest
 import yaml
-
 from datarobot_genai.eval.cli import generate_main, run_main, summarize_main
 
 _RESULTS: dict[str, Any] = {
@@ -64,7 +63,8 @@ _RESULTS: dict[str, Any] = {
 }
 
 _NEEDS_CREDS = pytest.mark.skipif(
-    not os.environ.get("DATAROBOT_API_TOKEN") or not os.environ.get("DATAROBOT_ENDPOINT"),
+    not os.environ.get("DATAROBOT_API_TOKEN")
+    or not os.environ.get("DATAROBOT_ENDPOINT"),
     reason="DATAROBOT_API_TOKEN and DATAROBOT_ENDPOINT must be set",
 )
 
@@ -128,7 +128,9 @@ def test_answer_quality_smoke(tmp_path: Path, mock_agent_endpoint: str) -> None:
             repo_root=tmp_path,
         )
 
-    assert exc.value.code == 0, "run_main exited non-zero — check output above for details"
+    assert exc.value.code == 0, (
+        "run_main exited non-zero — check output above for details"
+    )
 
     results_path = tmp_path / "output" / "eval_results.json"
     assert results_path.exists(), "eval_results.json was not written"
