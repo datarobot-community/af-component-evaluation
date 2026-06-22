@@ -47,7 +47,7 @@ tasks:
     desc: 🧪 Run tests with coverage report
     cmds:
       - task: req
-      - '{{.UV_CMD}} run python -m pytest --cov=evaluator --cov-report=term-missing --cov-report=html ./tests/'
+      - '{{.UV_CMD}} run python -m pytest --cov=. --cov-report=term-missing --cov-report=html ./tests/'
     silent: true
   generate:
     desc: 🤖 Generate synthetic test cases (pass args with --)

@@ -38,8 +38,9 @@ stock path.
 
 **Current workaround:** use an **Azure** judge model
 (`azure/gpt-5-5-2026-04-23`) — Azure/OpenAI models accept both params, so the
-stock `judge_call` works unmodified. Set via `JUDGE_MODEL_ID` env var; default
-lives in `benchmarks/agent_quality_safety.py`.
+stock `judge_call` works unmodified. Set via `JUDGE_MODEL_ID` env var; defaults
+live in the judge-based benchmark modules (e.g.
+`datarobot_genai/eval/benchmarks/answer_quality.py`).
 
 **Future fix options (if we want Claude as judge):**
 - Write a small custom judge call in the scorer (BYOB scorers are arbitrary
@@ -118,9 +119,9 @@ text, surfaced by the DR gateway as an opaque 400.
 
 **Mitigation in place (2026-06-01):** a judge `CALL_ERROR` / `PARSE_ERROR` is
 now treated as **inconclusive** — the scorer emits no numeric score
-(`benchmarks/agent_quality_safety.py::_scored`), so the case is excluded from
+(`datarobot_genai/eval/benchmarks/answer_quality.py::_scored`), so the case is excluded from
 aggregates with `quality_score: null` / `passed: null` instead of counting as a
-`0.0` agent failure. `run_eval.py` reports `inconclusive_cases` in the summary.
+`0.0` agent failure. `run.py` reports `inconclusive_cases` in the summary.
 Confirmed: with the lean agent, `bad-002` still `CALL_ERROR`s (the injection
 *question* text alone trips the filter) but no longer drags down the pass rate.
 

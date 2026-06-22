@@ -105,11 +105,11 @@ A note on what this is **not**: it does *not* use `nemo-evaluator-launcher`. The
 Instead we use NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a custom benchmark defined in plain Python, run **in-process** via the BYOB runner. Both the agent (target) and the judge are reached over plain OpenAI-compatible HTTP — there is **no LiteLLM layer** (see `BUGS.md` for why that matters for model names).
 
 ```
-run_eval.py
+run.py
   ├─ validates endpoint / pipeline / dataset
   ├─ converts dataset JSON → BYOB JSONL
   ├─ reads user_pipelines/<name>.yaml (benchmark + optional judge + run params)
-  └─ subprocess: python -m nemo_evaluator.contrib.byob.runner
+  └─ runs the BYOB runner in-process
          ├─ for each case: POST agent endpoint, get response
          ├─ scorer (datarobot_genai/eval/benchmarks/<name>.py) → judge call OR deterministic check → grade
          └─ writes byob_results.json (aggregate) + byob_predictions.jsonl (per-sample)
@@ -143,7 +143,7 @@ run_eval.py
    ```
    **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that's the gateway catalog name (no `datarobot/` prefix) — e.g. `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models can't be used as the stock judge — see `BUGS.md #1`.
 
-3. **Add or select a dataset** — drop a JSON file in `datasets/` following `datasets/schema.md`, or generate cases with `generate/generate_test_cases.py`.
+3. **Add or select a dataset** — copy `user_datasets/sample_<benchmark>.json`, or generate cases with `generate.py`.
 
 4. **Launch from the external CLI** — it presents pipelines/datasets, prompts for the agent endpoint, then invokes this component.
 
@@ -154,23 +154,24 @@ run_eval.py
 ## CLI Interface
 
 ```bash
-uv run python run_eval.py \
-  --endpoint  http://localhost:8842/v1 \      # agent OpenAI-compatible endpoint
-  --pipeline  agent_quality_safety.yaml \      # filename in pipelines/
-  --dataset   datasets/sample_cases.json       # optional, defaults to sample_cases.json
+uv run python run.py \
+  --endpoint  http://localhost:8842/v1 \                  # agent OpenAI-compatible endpoint
+  --pipeline  answer_quality.yaml \                        # filename in user_pipelines/
+  --dataset   user_datasets/sample_answer_quality.json     # optional, defaults to sample_answer_quality.json
 
 # Validate inputs without running:
-uv run python run_eval.py --endpoint ... --pipeline ... --dry-run
+uv run python run.py --endpoint ... --pipeline ... --dry-run
 ```
 
 **Environment variables:**
 
 | Variable | Required | Description |
 |---|---|---|
-| `DATAROBOT_API_TOKEN` | yes | Bearer token for the judge (DR LLM gateway). Set in `.env`. |
+| `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `generate.py`). Set in `.env`. |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (e.g. `https://app.datarobot.com`). Set in `.env`. |
 | `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set — a local DRUM agent needs none. |
 
-The judge `url`/`model_id`/`api_key_name` come from the pipeline YAML; `run_eval.py` exports them to the benchmark as `JUDGE_URL` / `JUDGE_MODEL_ID` / `JUDGE_API_KEY_NAME`.
+The judge `url`/`model_id`/`api_key_name` come from the pipeline YAML; `run.py` exports them to the benchmark as `JUDGE_URL` / `JUDGE_MODEL_ID` / `JUDGE_API_KEY_NAME`.
 
 ---
 
@@ -178,7 +179,7 @@ The judge `url`/`model_id`/`api_key_name` come from the pipeline YAML; `run_eval
 
 1. **Validate** — health-check the agent endpoint (any HTTP response = reachable), verify pipeline YAML + benchmark module + dataset exist. Exit 1 on failure.
 2. **Status: running** — writes `output/eval_status.json`.
-3. **Execute** — converts dataset to BYOB JSONL, runs the BYOB runner in-process as a subprocess.
+3. **Execute** — converts dataset to BYOB JSONL, runs the BYOB runner in-process.
 4. **Normalize** — reads `byob_results.json` (aggregate) + `byob_predictions.jsonl` (per-sample) from `output/raw/<run_id>/<benchmark_name>/`.
 5. **Status: complete** — writes `output/eval_results.json`, updates `output/eval_status.json`.
 
@@ -203,14 +204,14 @@ output/
     └── byob_predictions.jsonl  # raw BYOB per-sample
 ```
 
-### `output/eval_status.json` — schema: `schemas/status_schema.json`
+### `output/eval_status.json` — schema: `docs/evaluation/schemas/status_schema.json`
 
 ```json
 {
   "status": "complete",
   "run_id": "20260601_100054",
   "updated_at": "2026-06-01T14:00:54Z",
-  "pipeline": "agent_quality_safety.yaml",
+  "pipeline": "answer_quality.yaml",
   "agent_endpoint": "http://localhost:8842/v1",
   "error": null
 }
@@ -218,14 +219,14 @@ output/
 
 `status` values: `running` → `complete` | `failed`
 
-### `output/eval_results.json` — schema: `schemas/output_schema.json`
+### `output/eval_results.json` — schema: `docs/evaluation/schemas/output_schema.json`
 
 ```json
 {
   "run_id": "20260601_100054",
   "completed_at": "2026-06-01T14:00:54Z",
   "agent_endpoint": "http://localhost:8842/v1",
-  "pipeline": "agent_quality_safety.yaml",
+  "pipeline": "answer_quality.yaml",
   "total_cases": 6,
   "summary": {
     "scored_cases": 5,
@@ -235,9 +236,8 @@ output/
     "good_case_pass_rate": 1.0,
     "bad_case_pass_rate": 1.0,
     "nemo_aggregate": {
-      "agent_quality_safety.pass@1.score": 0.92,
-      "agent_quality_safety.pass@1.quality": 0.8667,
-      "agent_quality_safety.pass@1.safety": 1.0
+      "answer_quality.pass@1.score": 0.92,
+      "answer_quality.pass@1.quality": 0.8667
     }
   },
   "cases": [
@@ -274,9 +274,9 @@ for pyproject in Path(".").rglob("pyproject.toml"):
     meta = data.get("tool", {}).get("af-component", {})
     if meta.get("type") == "evaluation":
         component_dir  = pyproject.parent
-        entrypoint     = component_dir / meta["entrypoint"]       # run_eval.py
-        pipelines_dir  = component_dir / meta["pipelines_dir"]    # pipelines/
-        datasets_dir   = component_dir / meta["datasets_dir"]     # datasets/
+        entrypoint     = component_dir / meta["entrypoint"]       # run.py
+        pipelines_dir  = component_dir / meta["pipelines_dir"]    # user_pipelines/
+        datasets_dir   = component_dir / meta["datasets_dir"]     # user_datasets/
         status_path    = component_dir / meta["output_status"]    # output/eval_status.json
         results_path   = component_dir / meta["output_results"]   # output/eval_results.json
         # Invoke:
@@ -291,7 +291,7 @@ for pyproject in Path(".").rglob("pyproject.toml"):
 ```
 af-component-evaluation/
 │
-├── schemas/                       # JSON contracts — stable API surface
+├── docs/evaluation/schemas/       # JSON contracts — stable API surface
 │   ├── input_schema.json          # CLI flags: --endpoint, --pipeline, --dataset
 │   ├── status_schema.json         # output/eval_status.json format
 │   └── output_schema.json         # output/eval_results.json format
@@ -302,25 +302,21 @@ af-component-evaluation/
 │                                  # answer_correctness, instruction_following, prompt_injection,
 │                                  # pii_leakage, tool_grounding (judge-free)
 │
-# The 8 BYOB benchmark modules now live in the datarobot-genai[eval] package
-# (datarobot_genai/eval/benchmarks/<name>.py), not in this component.
-
+│   # The eval engine + the 8 BYOB benchmark modules live in the
+│   # datarobot-genai[eval] package (datarobot_genai/eval/benchmarks/), not here.
+│
 ├── user_datasets/                 # Test case datasets (committed, human-reviewed)
 │   └── sample_<benchmark>.json    # one starter dataset per benchmark
-│
-├── generate/
-│   └── generate_test_cases.py     # Claude-powered synthetic test case generator
 │
 ├── output/                        # Runtime output — gitignored
 │   ├── eval_status.json           # ← external CLI polls this
 │   ├── eval_results.json          # ← external CLI reads this on completion
 │   └── raw/<run_id>/<benchmark>/  # Raw BYOB output (byob_results.json, byob_predictions.jsonl)
 │
-├── scripts/
-│   └── summarize_results.py       # Human-readable pretty-print of eval_results.json
-│
 ├── BUGS.md                        # Known issues / gotchas (Bedrock judge, LiteLLM, content filter)
-├── run_eval.py                    # Main CLI entrypoint
+├── run.py                         # Thin CLI wrapper → datarobot_genai.eval.cli.run_main (main entrypoint)
+├── generate.py                    # Thin CLI wrapper → datarobot_genai.eval.cli.generate_main (synthetic test cases)
+├── summarize.py                   # Thin CLI wrapper → datarobot_genai.eval.cli.summarize_main (pretty-print results)
 └── pyproject.toml                 # uv environment + [tool.af-component] detection marker
 ```
 
@@ -340,17 +336,17 @@ uv run python run.py --endpoint ... --pipeline my_pipeline.yaml --dataset ...
 ## Generating Test Cases
 
 ```bash
-uv run python generate/generate_test_cases.py \
+uv run python generate.py \
   --agent-description "A research assistant that answers questions concisely" \
   --n 20 \
-  --output datasets/my_agent_cases.json
+  --output user_datasets/my_agent_cases.json
 # Review and edit, then commit as ground truth
 ```
 
 ## Viewing Results
 
 ```bash
-uv run python scripts/summarize_results.py output/
+uv run python summarize.py output/
 ```
 
 # Contributing, changelog, support, and legal
