@@ -12,11 +12,73 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Any
 
 import pytest
 import yaml
+
+
+class _MockAgentHandler(BaseHTTPRequestHandler):
+    """Minimal OpenAI-compatible agent stub for integration tests.
+
+    GET  <any path> → 200  (satisfies health_check, which accepts any HTTP response)
+    POST <any path> → 200 chat.completion JSON with a canned assistant message
+    """
+
+    _RESPONSE = json.dumps(
+        {
+            "id": "chatcmpl-smoke",
+            "object": "chat.completion",
+            "created": 1700000000,
+            "model": "mock-agent",
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": "The answer is 4.",
+                    },
+                    "finish_reason": "stop",
+                }
+            ],
+            "usage": {"prompt_tokens": 5, "completion_tokens": 5, "total_tokens": 10},
+        }
+    ).encode()
+
+    def do_GET(self) -> None:
+        self._send(200, b'{"status":"ok"}')
+
+    def do_POST(self) -> None:
+        length = int(self.headers.get("Content-Length", 0))
+        self.rfile.read(length)
+        self._send(200, self._RESPONSE)
+
+    def _send(self, code: int, body: bytes) -> None:
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, format: str, *args: object) -> None:
+        pass
+
+
+@pytest.fixture(scope="session")
+def mock_agent_endpoint() -> str:
+    """Start a mock OpenAI-compatible agent server and return its base URL.
+
+    Session-scoped so the server starts once and is shared across all
+    integration tests in the run.
+    """
+    server = HTTPServer(("localhost", 0), _MockAgentHandler)
+    port = server.server_address[1]
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    return f"http://localhost:{port}/v1"
 
 
 @pytest.fixture
@@ -51,7 +113,7 @@ def minimal_pipeline_cfg() -> dict[str, Any]:
         "target": {"model_type": "chat", "model_id": "unknown"},
         "judge": {
             "url": "https://app.datarobot.com/api/v2/genai/llmgw",
-            "model_id": "azure/gpt-5-5-2026-04-23",
+            "model_id": "bedrock/anthropic.claude-haiku-4-5-20251001-v1:0",
             "api_key_name": "DATAROBOT_API_TOKEN",
         },
         "run": {

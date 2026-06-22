@@ -62,6 +62,9 @@ tasks:
   test-coverage:
     desc: 🧪 Run tests with coverage report
     cmds: [{task: eval:test-coverage}]
+  test-integration:
+    desc: 🔬 Run integration smoke tests (requires DATAROBOT_API_TOKEN + DATAROBOT_ENDPOINT in .env)
+    cmds: [{task: eval:test-integration}]
   render:
     desc: 🏗️ Render this component to ./.rendered to inspect the copied output (pass copier args with --, e.g. `task render -- --defaults`)
     cmds:
