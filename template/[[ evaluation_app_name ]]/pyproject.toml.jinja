@@ -7,7 +7,7 @@ requires-python = ">=3.11, <3.14"
 dependencies = [
     "litellm",
     "pyyaml>=6.0",
-    "datarobot-genai[eval]>=0.23.7",
+    "datarobot-genai[eval]>=0.23.21",
 ]
 
 [project.optional-dependencies]
@@ -46,6 +46,13 @@ output_results = "output/eval_results.json"
 
 [tool.uv]
 required-version = ">=0.7.0"
+# datarobot-genai[eval] pulls in nemo-evaluator-launcher, which depends on
+# leptonai. leptonai pins httpx[http2]==0.27.2, but litellm>=1.91.1 (required
+# by datarobot-genai for a CVE fix) needs httpx>=0.28.0 — an unsatisfiable
+# conflict. datarobot-genai excludes leptonai in its own resolution, but
+# [tool.uv] exclusions are not transitive, so downstream consumers must repeat
+# it. The leptonai cloud backend is unused here.
+exclude-dependencies = ["leptonai"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
