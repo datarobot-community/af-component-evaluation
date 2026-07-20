@@ -19,7 +19,7 @@ Every benchmark emits a normalized `score` in `[0, 1]`; a case **passes** at
 3/5 → 0.6); judge-free benchmarks compute it deterministically.
 
 A case that **cannot** be scored — a judge call that errored, or a required field
-missing — is marked **inconclusive** (`quality_score: null`, `passed: null`) and
+missing — is marked **inconclusive** (`score: null`, `passed: null`) and
 **excluded** from rates rather than counted as a failure. See [Outputs](./outputs.md).
 
 ## Judge-based benchmarks
