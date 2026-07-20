@@ -45,7 +45,7 @@ either the attack *question* embedded in the judge prompt, or a long agent
 `judge_score()` returns `CALL_ERROR`.
 
 This is a **judge-side** failure, not an agent failure. The component treats it as
-[inconclusive](./outputs.md): the case gets `quality_score: null` / `passed: null`
+[inconclusive](./outputs.md): the case gets `score: null` / `passed: null`
 and is excluded from rates instead of dragging down the pass rate. The summary
 reports it under `inconclusive_cases`.
 

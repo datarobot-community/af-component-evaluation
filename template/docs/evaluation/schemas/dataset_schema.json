@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evaluation Dataset — Test Cases",
+  "description": "The shape of the test-case data an evaluation consumes. A dataset is a JSON array (or JSONL, one object per line) of test cases. The SAME object shape covers both hand-authored / collected 'user data' and cases produced by the synthetic generator — they differ only in the 'source' field and in which fields are guaranteed present (see x-generator-output). Every field is passed through to the benchmark verbatim, so custom benchmarks may read fields not listed here.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "input"],
+    "additionalProperties": true,
+    "properties": {
+      "id":                { "type": "string", "description": "Unique identifier for the case. Required. Duplicate ids warn and the later one wins." },
+      "input":             { "type": "string", "description": "The user message sent to the agent (the prompt). Required." },
+      "source":            { "type": "string", "enum": ["collected", "synthetic"], "description": "'collected' = a real / hand-authored interaction; 'synthetic' = produced by the generator. Recommended on every case." },
+      "expected_behavior": { "type": "string", "enum": ["good", "bad"], "description": "Whether a well-behaved agent should succeed ('good') or the case probes a failure mode ('bad'). Optional, but it drives the good_case_pass_rate / bad_case_pass_rate split in the output; the generator always emits it." },
+      "ideal_response":    { "type": ["string", "null"], "description": "Reference answer. REQUIRED by the answer_correctness benchmark (missing -> inconclusive). null for open-ended or refusal cases. The generator always emits it (null when open-ended)." },
+      "notes":             { "type": "string", "description": "For judge-based benchmarks, extra grading criteria injected into the judge prompt; otherwise human documentation of expected behavior. Recommended." },
+      "context":           { "type": "string", "description": "Source passage sent to the agent as part of the prompt and used as the grounding reference. REQUIRED by the faithfulness benchmark." },
+      "canary":            {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "array", "items": { "type": "string" } }
+        ],
+        "description": "A unique marker string, or list of them. REQUIRED by prompt_injection (score 1.0 if ABSENT from the response) and tool_grounding (score 1.0 if PRESENT). Missing -> inconclusive."
+      },
+      "constraints": {
+        "type": "object",
+        "description": "Structural constraints on the response. REQUIRED by the instruction_following benchmark; supply at least one key. Each must_include / must_exclude item is scored individually.",
+        "additionalProperties": true,
+        "properties": {
+          "max_words":    { "type": "integer", "description": "Word-count upper bound" },
+          "min_words":    { "type": "integer", "description": "Word-count lower bound" },
+          "max_chars":    { "type": "integer", "description": "Character-count upper bound" },
+          "must_be_json": { "type": "boolean", "description": "Response must parse as JSON (code fences tolerated)" },
+          "must_include": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ],
+            "description": "Substring(s) that must appear in the response"
+          },
+          "must_exclude": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ],
+            "description": "Substring(s) that must NOT appear in the response"
+          },
+          "regex":        { "type": "string", "description": "Pattern that must match somewhere in the response" }
+        }
+      },
+      "entity_types": {
+        "type": "array",
+        "items": { "type": "string", "enum": ["EMAIL", "PHONE", "SSN", "CREDIT_CARD", "IP_ADDRESS"] },
+        "description": "Optional (pii_leakage only). Limits which PII detectors run; omit to run all."
+      },
+      "match_mode": {
+        "type": "string",
+        "enum": ["exact", "normalized", "contains"],
+        "default": "normalized",
+        "description": "Optional (answer_correctness only). How ideal_response is matched: 'exact' (trimmed), 'normalized' (lowercase + strip punctuation/extra spaces, the default), or 'contains' (normalized reference appears in normalized response)."
+      }
+    }
+  },
+  "x-generator-output": {
+    "description": "Cases produced by the synthetic generator (generate.py --agent-description) always include these fields, with source='synthetic'. Bad cases and open-ended good cases get ideal_response=null. Use this as the guaranteed shape when rendering generated data.",
+    "always_present": ["id", "source", "input", "expected_behavior", "ideal_response", "notes"]
+  },
+  "x-benchmark-required-fields": {
+    "description": "Extra fields each benchmark requires beyond id/input. Judge-based: answer_quality, safety_refusal, faithfulness. Judge-free: the rest.",
+    "answer_quality":        [],
+    "safety_refusal":        [],
+    "faithfulness":          ["context"],
+    "answer_correctness":    ["ideal_response"],
+    "instruction_following": ["constraints"],
+    "prompt_injection":      ["canary"],
+    "pii_leakage":           [],
+    "tool_grounding":        ["canary"]
+  },
+  "x-csv-import": {
+    "description": "Datasets can also be authored as CSV and converted with generate.py --convert. Required columns: id, source, input. 'notes' is recommended (a warning prints if absent). Empty cells become empty strings (CSV has no null), so edit the resulting JSON if a field such as ideal_response should be null."
+  }
+}

@@ -7,17 +7,23 @@
     "run_id":       { "type": "string", "description": "Unique ID for this eval run (timestamp-based)" },
     "completed_at": { "type": "string", "format": "date-time" },
     "agent_endpoint": { "type": "string", "description": "The agent URL that was evaluated" },
+    "pipeline":     { "type": "string", "description": "Pipeline YAML filename that ran this eval (e.g. answer_quality.yaml)" },
     "total_cases":  { "type": "integer" },
     "summary": {
       "type": "object",
       "description": "Aggregate scores across all cases. Rates are computed over SCORED cases only (inconclusive cases are excluded).",
       "properties": {
-        "scored_cases":       { "type": "integer", "description": "Cases that received a numeric judge score" },
+        "scored_cases":       { "type": "integer", "description": "Cases that received a numeric score" },
         "inconclusive_cases": { "type": "integer", "description": "Cases excluded from rates — agent errored or judge call failed (e.g. gateway content filter). See the known issues notes #3." },
-        "mean_quality_score": { "type": ["number", "null"], "description": "Average LLM judge score across scored cases (0-1)" },
+        "mean_score":         { "type": ["number", "null"], "description": "Average score across scored cases (0-1)" },
         "pass_rate":          { "type": ["number", "null"], "description": "Fraction of scored cases scoring >= 0.5" },
-        "good_case_pass_rate":{ "type": "number", "description": "Pass rate on expected_behavior=good cases only" },
-        "bad_case_pass_rate": { "type": "number", "description": "Pass rate on expected_behavior=bad cases only" }
+        "good_case_pass_rate":{ "type": ["number", "null"], "description": "Pass rate on expected_behavior=good cases only, or null if none" },
+        "bad_case_pass_rate": { "type": ["number", "null"], "description": "Pass rate on expected_behavior=bad cases only, or null if none" },
+        "nemo_aggregate": {
+          "type": "object",
+          "description": "Raw aggregate metrics passed through from the BYOB results.json, keyed as '<task>.<metric>.<score>' (e.g. answer_quality.pass@1.score). Empty when no aggregate was produced.",
+          "additionalProperties": { "type": ["number", "null"] }
+        }
       }
     },
     "cases": {
@@ -26,13 +32,15 @@
         "type": "object",
         "properties": {
           "id":                 { "type": "string" },
+          "benchmark":          { "type": "string", "description": "Name of the benchmark that scored this case (e.g. answer_correctness)" },
           "input":              { "type": "string" },
-          "expected_behavior":  { "type": "string", "enum": ["good", "bad"] },
+          "expected_behavior":  { "type": ["string", "null"], "enum": ["good", "bad", null] },
           "agent_response":     { "type": "string", "description": "Raw response from the agent" },
-          "quality_score":      { "type": ["number", "null"], "description": "LLM judge score 0-1, or null if inconclusive" },
-          "judge_reason":       { "type": "string", "description": "Judge grade, or an 'inconclusive — ...' reason" },
+          "has_judge":          { "type": "boolean", "description": "Whether an LLM judge scored this case (true) or it was scored deterministically (false)" },
+          "score":              { "type": ["number", "null"], "description": "Score 0-1 (judge or deterministic), or null if inconclusive" },
           "passed":             { "type": ["boolean", "null"], "description": "score >= 0.5, or null if inconclusive" },
-          "answer_match_score": { "type": ["number", "null"], "description": "ROUGE-L score vs ideal_response, null if no ideal_response" },
+          "reason":             { "type": "string", "description": "Human-readable explanation for the score, or an 'inconclusive — ...' reason" },
+          "judge_grade":        { "type": ["string", "null"], "description": "Raw judge grade for traceability; null when no judge ran or the judge returned no grade" },
           "notes":              { "type": "string" },
           "source":             { "type": "string", "enum": ["collected", "synthetic"] }
         }
