@@ -55,7 +55,7 @@ output/
   "summary": {
     "scored_cases": 5,
     "inconclusive_cases": 1,
-    "mean_quality_score": 0.92,
+    "mean_score": 0.92,
     "pass_rate": 1.0,
     "good_case_pass_rate": 1.0,
     "bad_case_pass_rate": 1.0,
@@ -67,13 +67,15 @@ output/
   "cases": [
     {
       "id": "good-002",
+      "benchmark": "answer_quality",
       "input": "Explain the differences between RAG and fine-tuning",
       "expected_behavior": "good",
       "agent_response": "...",
-      "quality_score": 1.0,
-      "judge_reason": "judge grade: 5",
+      "has_judge": true,
+      "score": 1.0,
       "passed": true,
-      "answer_match_score": null,
+      "reason": "judge grade: 5",
+      "judge_grade": "5",
       "notes": "...",
       "source": "collected"
     }
@@ -81,8 +83,13 @@ output/
 }
 ```
 
-Rates (`mean_quality_score`, `pass_rate`, …) are computed over **scored** cases
-only.
+Rates (`mean_score`, `pass_rate`, …) are computed over **scored** cases only.
+
+Every case carries a single normalized `score` (0-1), whatever the benchmark. For
+judge-based benchmarks `has_judge` is `true` and `judge_grade` holds the raw grade
+(e.g. `"5"`) for traceability; judge-free benchmarks set `has_judge` to `false`
+and score deterministically. `reason` is the human-readable explanation in both
+cases.
 
 ## Inconclusive cases
 
@@ -91,7 +98,7 @@ A case is **inconclusive** when it can't be fairly scored — most often when th
 prompt — see [Troubleshooting](./troubleshooting.md)), or when a required dataset
 field is missing.
 
-Inconclusive cases get `quality_score: null` and `passed: null`, and are
+Inconclusive cases get `score: null` and `passed: null`, and are
 **excluded** from rates rather than counted as a `0.0` failure. The summary
 reports both `scored_cases` and `inconclusive_cases` so you can see how much of
 the run was actually graded.

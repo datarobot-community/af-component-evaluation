@@ -11,10 +11,15 @@ a slightly different set of fields, so datasets are benchmark-specific — see
 | `id` | string | yes | Unique identifier for the test case |
 | `input` | string | yes | The user message sent to the agent (the prompt) |
 | `source` | string | no | `"collected"` (real interaction) or `"synthetic"` (generated) |
+| `expected_behavior` | string | no | `"good"` or `"bad"` — whether a well-behaved agent should succeed or the case probes a failure. Drives the good/bad pass-rate split in the output; the generator always sets it. |
 | `notes` | string | no | For judge-based benchmarks, extra grading criteria passed to the judge; otherwise human documentation |
 
 Any extra fields you add are passed through to the benchmark verbatim, so custom
 benchmarks can read whatever they need without changing the loader.
+
+A machine-readable JSON Schema for the full case shape (common + per-benchmark
+fields, plus what the generator always emits) lives at
+[`schemas/dataset_schema.json`](./schemas/dataset_schema.json).
 
 ## Per-benchmark fields
 
