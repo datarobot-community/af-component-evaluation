@@ -22,8 +22,11 @@
   <a href="/LICENSE">
     <img src="https://img.shields.io/github/license/datarobot-community/af-component-evaluation" alt="License">
   </a>
+  <img src="https://img.shields.io/badge/status-beta-orange" alt="Beta">
 </p>
 
+> [!NOTE]
+> This project is in **beta**. It is under active development and the APIs, configuration, and outputs may change between releases.
 
 Batch evaluation component for DataRobot agents using the [NeMo Evaluator](https://github.com/NVIDIA-NeMo/evaluator) **BYOB** (Bring Your Own Benchmark) framework.
 
