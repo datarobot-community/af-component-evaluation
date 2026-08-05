@@ -87,7 +87,7 @@ You can also place these in a `.env` file at the root of your project instead of
 
 # Local Development
 
-**Why a separate component?** NeMo Evaluator's dependency tree is heavy and carries CVEs that should not infect the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
+**Why a separate component?** NeMo Evaluator has a large transitive dependency tree that should not be imposed on the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
 
 **What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks** — pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
 
@@ -97,7 +97,8 @@ You can also place these in a `.env` file at the root of your project instead of
 > consuming a rendered project reads) lives in **`template/docs/evaluation/`** →
 > rendered to **`docs/evaluation/`**. Start at
 > [`template/docs/evaluation/README.md`](template/docs/evaluation/README.md). Known
-> issues and gotchas are tracked in [`the known issues notes`](the known issues notes).
+> issues and gotchas are tracked in
+> [`troubleshooting.md`](template/docs/evaluation/troubleshooting.md).
 
 ---
 
@@ -105,7 +106,7 @@ You can also place these in a `.env` file at the root of your project instead of
 
 A note on what this is **not**: it does *not* use `nemo-evaluator-launcher`. The launcher runs every task inside an `nvcr.io` Docker container (`--gpus all`) and only exposes fixed benchmarks (MMLU, GSM8K, MTBench, …) — there is no generic "custom Q&A + judge" task, and the Docker path won't run on a laptop.
 
-Instead we use NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a custom benchmark defined in plain Python, run **in-process** via the BYOB runner. Both the agent (target) and the judge are reached over plain OpenAI-compatible HTTP — there is **no LiteLLM layer** (see `the known issues notes` for why that matters for model names).
+Instead we use NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a custom benchmark defined in plain Python, run **in-process** via the BYOB runner. Both the agent (target) and the judge are reached over plain OpenAI-compatible HTTP — there is **no LiteLLM layer** (see [Troubleshooting](template/docs/evaluation/troubleshooting.md) for why that matters for model names).
 
 ```
 run.py
@@ -144,7 +145,7 @@ run.py
      temperature: 0.0
      timeout_per_sample: 180
    ```
-   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that's the gateway catalog name (no `datarobot/` prefix) — e.g. `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models can't be used as the stock judge — see `the known issues notes #1`.
+   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that's the gateway catalog name (no `datarobot/` prefix) — e.g. `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models can't be used as the stock judge — see [Troubleshooting](template/docs/evaluation/troubleshooting.md).
 
 3. **Add or select a dataset** — copy `user_datasets/sample_<benchmark>.json`, or generate cases with `generate.py`.
 
@@ -190,7 +191,7 @@ If any step fails, `eval_status.json` is set to `"failed"` with an error message
 
 ### Inconclusive cases
 
-If the agent answers but the **judge call itself fails** (e.g. the gateway content-filters an adversarial prompt — see `the known issues notes #3`), that case is marked **inconclusive**: `quality_score: null`, `passed: null`, and it is **excluded** from rates rather than counted as a `0.0` failure. The summary reports `scored_cases` and `inconclusive_cases`.
+If the agent answers but the **judge call itself fails** (e.g. the judge endpoint applies input content filtering to an adversarial prompt — see [Troubleshooting](template/docs/evaluation/troubleshooting.md)), that case is marked **inconclusive**: `quality_score: null`, `passed: null`, and it is **excluded** from rates rather than counted as a `0.0` failure. The summary reports `scored_cases` and `inconclusive_cases`.
 
 ---
 
@@ -316,7 +317,6 @@ af-component-evaluation/
 │   ├── eval_results.json          # ← external CLI reads this on completion
 │   └── raw/<run_id>/<benchmark>/  # Raw BYOB output (byob_results.json, byob_predictions.jsonl)
 │
-├── the known issues notes                        # Known issues / gotchas (Bedrock judge, LiteLLM, content filter)
 ├── run.py                         # Thin CLI wrapper → datarobot_genai.eval.cli.run_main (main entrypoint)
 ├── generate.py                    # Thin CLI wrapper → datarobot_genai.eval.cli.generate_main (synthetic test cases)
 ├── summarize.py                   # Thin CLI wrapper → datarobot_genai.eval.cli.summarize_main (pretty-print results)

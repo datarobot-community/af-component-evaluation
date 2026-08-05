@@ -94,9 +94,9 @@ cases.
 ## Inconclusive cases
 
 A case is **inconclusive** when it can't be fairly scored — most often when the
-**judge call itself fails** (e.g. the gateway content-filters an adversarial
-prompt — see [Troubleshooting](./troubleshooting.md)), or when a required dataset
-field is missing.
+**judge call itself fails** (e.g. the judge endpoint applies input content
+filtering to an adversarial prompt — see [Troubleshooting](./troubleshooting.md)),
+or when a required dataset field is missing.
 
 Inconclusive cases get `score: null` and `passed: null`, and are
 **excluded** from rates rather than counted as a `0.0` failure. The summary

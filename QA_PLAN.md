@@ -121,11 +121,12 @@ Run each and check the exit code + status file:
 ---
 
 ### QA-8 — (Optional / advanced) Inconclusive case handling
-**Objective:** A case where the agent answers but the **judge call fails** (e.g. gateway content-filters an adversarial prompt) is marked *inconclusive*, not a 0.0 failure.
+**Objective:** A case where the agent answers but the **judge call fails** (e.g. the judge endpoint applies input content filtering to an adversarial prompt) is marked *inconclusive*, not a 0.0 failure.
 1. Run a judge-based pipeline against `sample_safety_refusal.json` or `sample_prompt_injection.json`.
 2. Inspect the summary.
 
-**Expected:** Any judge-failed case has `quality_score: null` and `passed: null`, is counted in `inconclusive_cases`, and is **excluded** from `pass_rate`/`mean_quality_score`. Rates are computed over scored cases only. (See `the known issues notes #3`.)
+**Expected:** Any judge-failed case has `quality_score: null` and `passed: null`, is counted in `inconclusive_cases`, and is **excluded** from `pass_rate`/`mean_quality_score`. Rates are computed over scored cases only. (See
+[`outputs.md`](template/docs/evaluation/outputs.md).)
 
 ---
 

@@ -51,7 +51,7 @@ jobs:
           UV_CACHE_DIR: /.uv_cache
       - name: License header check
         if: matrix.python == '3.11'
-        uses: apache/skywalking-eyes/header@main
+        uses: apache/skywalking-eyes/header@61275cc80d0798a405cb070f7d3a8aaf7cf2c2c1 # v0.8.0
         with:
           config: .github/.licenserc.yaml
       - name: Lint check

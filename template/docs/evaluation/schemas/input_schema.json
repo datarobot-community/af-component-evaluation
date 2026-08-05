@@ -24,6 +24,6 @@
     "AGENT_API_KEY":       "Optional. Bearer token for the agent endpoint — only sent if set (a local DRUM agent needs none). Env var NAME is configured in the pipeline YAML's target.api_key_name."
   },
   "x-model-names": {
-    "description": "NeMo Evaluator makes plain OpenAI-compatible HTTP calls (NOT LiteLLM). Judge/target model names must match whatever the named endpoint expects. Against the DR LLM gateway directly that is the gateway CATALOG name with no datarobot/ prefix, e.g. azure/gpt-5-5-2026-04-23. See the known issues notes."
+    "description": "NeMo Evaluator makes plain OpenAI-compatible HTTP calls (NOT LiteLLM). Judge/target model names must match whatever the named endpoint expects. Against the DR LLM gateway directly that is the gateway CATALOG name with no datarobot/ prefix, e.g. azure/gpt-5-5-2026-04-23. See docs/evaluation/troubleshooting.md."
   }
 }

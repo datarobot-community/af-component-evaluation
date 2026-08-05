@@ -14,7 +14,7 @@
       "description": "Aggregate scores across all cases. Rates are computed over SCORED cases only (inconclusive cases are excluded).",
       "properties": {
         "scored_cases":       { "type": "integer", "description": "Cases that received a numeric score" },
-        "inconclusive_cases": { "type": "integer", "description": "Cases excluded from rates — agent errored or judge call failed (e.g. gateway content filter). See the known issues notes #3." },
+        "inconclusive_cases": { "type": "integer", "description": "Cases excluded from rates — agent errored or judge call failed (e.g. judge endpoint input content filtering). See docs/evaluation/outputs.md." },
         "mean_score":         { "type": ["number", "null"], "description": "Average score across scored cases (0-1)" },
         "pass_rate":          { "type": ["number", "null"], "description": "Fraction of scored cases scoring >= 0.5" },
         "good_case_pass_rate":{ "type": ["number", "null"], "description": "Pass rate on expected_behavior=good cases only, or null if none" },
