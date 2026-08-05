@@ -1,7 +1,6 @@
 # Troubleshooting
 
-User-facing gotchas when running evaluations. (Component developers: the full
-running log of known issues lives in the repo's `BUGS.md`.)
+User-facing gotchas when running evaluations.
 
 ## Judge model names are catalog names, not LiteLLM names
 
