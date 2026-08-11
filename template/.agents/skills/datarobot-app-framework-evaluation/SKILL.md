@@ -193,7 +193,7 @@ dr task run evaluations:summarize    # pretty-prints output/eval_results.json
 
 Rates are computed over **scored** cases only. A case that can't be fairly graded
 (e.g. the judge call itself errors, or a required field is missing) is marked
-**inconclusive** (`quality_score: null`, `passed: null`) and excluded from rates —
+**inconclusive** (`score: null`, `passed: null`) and excluded from rates —
 reported separately under `inconclusive_cases`. See `docs/evaluation/outputs.md`.
 
 When reporting back to the user, lead with the pass rate and mean score, then surface
@@ -225,6 +225,7 @@ each). Avoid loading all of `docs/evaluation/` at once.
 
 ## See also
 
+- `docs/evaluation/getting-started.md` — install through first completed run
 - `docs/evaluation/README.md` — component overview and execution model
 - `docs/evaluation/pipelines.md` · `benchmarks.md` · `datasets.md` — reference detail
 - `docs/evaluation/outputs.md` — result/status schemas and lifecycle
