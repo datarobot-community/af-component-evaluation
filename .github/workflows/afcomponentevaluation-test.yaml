@@ -18,6 +18,8 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+permissions:
+  contents: read
 jobs:
   test:
     name: "Test (python${{ matrix.python }})"
@@ -54,6 +56,11 @@ jobs:
         uses: apache/skywalking-eyes/header@61275cc80d0798a405cb070f7d3a8aaf7cf2c2c1 # v0.8.0
         with:
           config: .github/.licenserc.yaml
+          # `.licenserc.yaml` sets `comment: on-failure`, which needs
+          # `pull-requests: write`. This job renders and runs PR-authored code, so
+          # it deliberately stays read-only. Empty token disables PR commenting;
+          # the step still fails and logs the offending files.
+          token: ""
       - name: Lint check
         shell: sh
         working-directory: ./.rendered/evaluations

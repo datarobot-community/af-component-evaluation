@@ -16,16 +16,13 @@ Against the DR LLM gateway directly, use the **gateway catalog name** with no
 GET https://app.datarobot.com/api/v2/genai/llmgw/models
 ```
 
-## Bedrock / Claude can't be the stock judge
+## Judge parameters can't be customized per model
 
-NeMo's built-in judge client always sends **both** `temperature` and `top_p`. The
-DR gateway's **Bedrock** models (e.g. `bedrock/anthropic.claude-sonnet-4-6`) reject
-that combination:
-
-```
-400 "`temperature` and `top_p` cannot both be specified for this model.
-     Please use only one."
-```
+NeMo's built-in judge client sends a fixed sampling parameter set that always
+includes **both** `temperature` and `top_p`, and the harness gives you no way to
+override it. Some model APIs accept only one of the two and reject the request
+when both are present, which rules those models out as the stock judge. Claude
+models via `bedrock/...` are the case you are most likely to hit.
 
 **Workaround:** use an **Azure** GPT judge model (`azure/gpt-5-5-2026-04-23`) —
 Azure/OpenAI models accept both params, so the stock judge works unmodified. Set it

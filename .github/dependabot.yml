@@ -1,0 +1,20 @@
+---
+# This file configures Dependabot for the repository.
+#
+# Only the github-actions ecosystem is enabled. The Python ecosystem is
+# deliberately omitted: this is a copier template, so the dependency manifests
+# live under a jinja-templated path (`template/[[ evaluation_app_name ]]/`) that
+# Dependabot cannot resolve, and enabling it produces PRs that have to be closed
+# and fixed by hand. Python dependencies are bumped as part of normal
+# datarobot-genai version bumps instead.
+version: 2
+updates:
+  # Maintain dependencies for GitHub Actions.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
