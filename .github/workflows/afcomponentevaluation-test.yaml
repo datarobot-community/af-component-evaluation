@@ -32,7 +32,7 @@ jobs:
         python: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
       # CI tests the COPIED (rendered) instance — i.e. what a user actually gets —
       # rather than the source `template/` tree. Local development still runs
       # directly against `template/[[ evaluation_app_name ]]/` via the root
