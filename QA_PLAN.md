@@ -1,6 +1,6 @@
-# QA Plan — `af-component-evaluation`
+# QA plan&mdash;`af-component-evaluation`
 
-Manual QA plan to complement the automated unit/integration suite. The goal is **not** exhaustive coverage — it is a small set of real user flows that a human runs end-to-end and eyeballs the results. Automated tests already cover the internals; these tests confirm the component behaves correctly when a person drives it the way a real user would.
+Manual QA plan to complement the automated unit/integration suite. The goal is **not** exhaustive coverage&mdash;it is a small set of real user flows that a human runs end-to-end and eyeballs the results. Automated tests already cover the internals; these tests confirm the component behaves correctly when a person drives it the way a real user would.
 
 ## What this component does (one paragraph)
 
@@ -15,10 +15,10 @@ It is a batch evaluation component for DataRobot agents. A user picks a **pipeli
 
 | Item | Notes |
 |---|---|
-| `uv`, `dr` CLI, Python 3.11+ | See README "Prerequisites" |
-| `DATAROBOT_API_TOKEN` + `DATAROBOT_ENDPOINT` | In `.env` at project root. Required for judge-based runs and `generate.py` |
-| An agent endpoint to test against | A local DRUM agent (`http://localhost:8842/v1`) or any OpenAI-compatible endpoint. No `AGENT_API_KEY` needed for a local agent |
-| Component installed | `task install` (runs `uv sync` + component deps) |
+| `uv`, `dr` CLI, Python 3.11+ | See README "Prerequisites". |
+| `DATAROBOT_API_TOKEN` + `DATAROBOT_ENDPOINT` | In `.env` at project root. Required for judge-based runs and `generate.py`. |
+| An agent endpoint to test against | A local DRUM agent (`http://localhost:8842/v1`) or any OpenAI-compatible endpoint. No `AGENT_API_KEY` needed for a local agent. |
+| Component installed | `task install` (runs `uv sync` + component deps). |
 
 Run commands from the component directory (`template/[[ evaluation_app_name ]]/` in source, or the rendered project root in a real install).
 
@@ -28,7 +28,7 @@ Run commands from the component directory (`template/[[ evaluation_app_name ]]/`
 
 Each test: run the steps, record **PASS/FAIL** and any notes. Aim for ~30–45 min total.
 
-### QA-1 — Install & environment sanity
+### QA-1&mdash;Install and environment sanity
 **Objective:** A fresh setup installs cleanly and credentials are wired.
 1. From the project root run `task install`.
 2. Confirm it completes with no errors.
@@ -38,7 +38,7 @@ Each test: run the steps, record **PASS/FAIL** and any notes. Aim for ~30–45 m
 
 ---
 
-### QA-2 — Dry-run validation (no judge cost)
+### QA-2&mdash;Dry-run validation (no judge cost)
 **Objective:** Input validation works before any agent/judge calls are made.
 ```bash
 uv run python run.py \
@@ -51,7 +51,7 @@ uv run python run.py \
 
 ---
 
-### QA-3 — Happy path: judge-based benchmark (answer_quality)
+### QA-3&mdash;Happy path: judge-based benchmark (answer_quality)
 **Objective:** Full end-to-end LLM-as-judge run produces a valid result file.
 *Precondition:* agent endpoint reachable; DR credentials set.
 ```bash
@@ -68,7 +68,7 @@ uv run python run.py \
 
 ---
 
-### QA-4 — Judge-free benchmark (answer_correctness) with no judge creds
+### QA-4&mdash;Judge-free benchmark (answer_correctness) with no judge creds
 **Objective:** A deterministic benchmark runs without any judge model / credentials and is reproducible.
 1. Confirm `user_pipelines/answer_correctness.yaml` has **no** `judge:` block.
 2. Run:
@@ -84,7 +84,7 @@ uv run python run.py \
 
 ---
 
-### QA-5 — Generate synthetic test cases
+### QA-5&mdash;Generate synthetic test cases
 **Objective:** `generate.py` produces a reviewable dataset.
 ```bash
 uv run python generate.py \
@@ -92,20 +92,20 @@ uv run python generate.py \
   --n 10 \
   --output user_datasets/qa_generated.json
 ```
-**Expected:** File is written with ~10 cases. Open it: each case has an `id`, `input`, and `expected_behavior` (`good`/`bad`). The prompts are relevant to the described agent. (This is a human judgment call — do the cases look usable?)
+**Expected:** File is written with ~10 cases. Open it: each case has an `id`, `input`, and `expected_behavior` (`good`/`bad`). The prompts are relevant to the described agent. (This is a human judgment call&mdash;do the cases look usable?)
 
 ---
 
-### QA-6 — View results
+### QA-6&mdash;View results
 **Objective:** `summarize.py` renders a readable summary of a completed run.
 ```bash
 uv run python summarize.py output/
 ```
-**Expected:** A formatted summary prints — per-case table with IDs, scores (2 decimals), and pass/fail markers (✓/✗), plus the aggregate rates. Numbers match what's in `output/eval_results.json` from QA-3 or QA-4.
+**Expected:** A formatted summary prints&mdash;per-case table with IDs, scores (2 decimals), and pass/fail markers (✓/✗), plus the aggregate rates. Numbers match what's in `output/eval_results.json` from QA-3 or QA-4.
 
 ---
 
-### QA-7 — Error handling: unreachable / invalid inputs
+### QA-7&mdash;Error handling: unreachable / invalid inputs
 **Objective:** Failures are reported cleanly, not as a stack-trace crash.
 
 Run each and check the exit code + status file:
@@ -120,7 +120,7 @@ Run each and check the exit code + status file:
 
 ---
 
-### QA-8 — (Optional / advanced) Inconclusive case handling
+### QA-8&mdash;(Optional / advanced) Inconclusive case handling
 **Objective:** A case where the agent answers but the **judge call fails** (e.g. the judge endpoint applies input content filtering to an adversarial prompt) is marked *inconclusive*, not a 0.0 failure.
 1. Run a judge-based pipeline against `sample_safety_refusal.json` or `sample_prompt_injection.json`.
 2. Inspect the summary.
@@ -139,7 +139,7 @@ task test-integration          # requires DATAROBOT_API_TOKEN + DATAROBOT_ENDPOI
 # or: uv run python -m pytest -m integration -vv
 ```
 
-These cover: a one-case `answer_quality` end-to-end run (agent → judge → metric → normalization), `summarize` output rendering, and one synthetic `generate` call. If they fail, stop and fix before continuing manual QA — it usually means credentials or the gateway, not the component.
+These cover: a one-case `answer_quality` end-to-end run (agent → judge → metric → normalization), `summarize` output rendering, and one synthetic `generate` call. If they fail, stop and fix before continuing manual QA&mdash;it usually means credentials or the gateway, not the component.
 
 ---
 

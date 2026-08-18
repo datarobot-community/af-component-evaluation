@@ -37,7 +37,7 @@ App developers use it to regression-test agents after model or prompt changes, r
 
 This repository ships the **Copier template** (`template/`) that renders into a project, plus the **user-facing documentation** in `template/docs/evaluation/` (rendered to `docs/evaluation/` in an installed project).
 
-**What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks** — pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
+**What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks**&mdash;pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
 
 # Table of contents
 
@@ -112,15 +112,15 @@ User-facing documentation ships with the component in [`template/docs/evaluation
 
 | Page | What it covers |
 |------|----------------|
-| [Getting started](template/docs/evaluation/getting-started.md) | Install through your first completed run |
-| [Overview](template/docs/evaluation/README.md) | Start here; index of everything below |
-| [Benchmarks](template/docs/evaluation/benchmarks.md) | The 8 built-in benchmarks and what each scores |
-| [Pipelines](template/docs/evaluation/pipelines.md) | Configuring a run with a pipeline YAML |
-| [Datasets](template/docs/evaluation/datasets.md) | Test case format and required fields |
-| [Outputs](template/docs/evaluation/outputs.md) | Result schema, scoring, inconclusive cases |
-| [Writing your own benchmark](template/docs/evaluation/writing-benchmarks.md) | Custom scorers |
-| [Troubleshooting](template/docs/evaluation/troubleshooting.md) | Judge-model gotchas and known limits |
-| [NAT vs. NeMo](template/docs/evaluation/nat-vs-nemo.md) | How this differs from NVIDIA NAT `/evaluate` |
+| [Getting started](template/docs/evaluation/getting-started.md) | Install through your first completed run. |
+| [Overview](template/docs/evaluation/README.md) | Start here; index of everything below. |
+| [Benchmarks](template/docs/evaluation/benchmarks.md) | The 8 built-in benchmarks and what each scores. |
+| [Pipelines](template/docs/evaluation/pipelines.md) | Configuring a run with a pipeline YAML. |
+| [Datasets](template/docs/evaluation/datasets.md) | Test case format and required fields. |
+| [Outputs](template/docs/evaluation/outputs.md) | Result schema, scoring, inconclusive cases. |
+| [Writing your own benchmark](template/docs/evaluation/writing-benchmarks.md) | Custom scorers. |
+| [Troubleshooting](template/docs/evaluation/troubleshooting.md) | Judge-model gotchas and known limits. |
+| [NAT vs. NeMo](template/docs/evaluation/nat-vs-nemo.md) | How this differs from NVIDIA NAT `/evaluate`. |
 
 Developing this component itself is covered in [DEVELOPMENT.md](DEVELOPMENT.md).
 

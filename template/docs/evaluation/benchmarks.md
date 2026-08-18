@@ -109,7 +109,7 @@ DataRobot platform. They solve different problems and are not substitutes:
 
 Think of this as the test suite and guardrails as the runtime safety net. A good
 score here means an agent handled your test cases on the day you ran it. It says
-nothing about what the agent will do on traffic it has never seen, which is what
+nothing about what the agent does on traffic it has never seen, which is what
 guardrails are for. Shipping an agent that scores well here still needs whatever
 runtime controls your use case requires.
 

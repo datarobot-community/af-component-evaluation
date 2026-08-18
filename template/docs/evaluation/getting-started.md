@@ -16,7 +16,7 @@ Confirm the following prerequisites:
 
 Judge-free benchmarks (`answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`) run without judge credentials.
 
-## Step 1 — Install dependencies
+## Step 1&mdash;Install dependencies
 
 From the component directory (for example `evaluations/`):
 
@@ -24,7 +24,7 @@ From the component directory (for example `evaluations/`):
 task install
 ```
 
-## Step 2 — Pick a benchmark
+## Step 2&mdash;Pick a benchmark
 
 Each run uses exactly one benchmark, selected by a pipeline YAML in `user_pipelines/`. Start with one of these:
 
@@ -36,7 +36,7 @@ Each run uses exactly one benchmark, selected by a pipeline YAML in `user_pipeli
 
 See [Benchmarks](./benchmarks.md) for the full menu and [Pipelines](./pipelines.md) for YAML details.
 
-## Step 3 — Prepare a dataset
+## Step 3&mdash;Prepare a dataset
 
 Copy the sample dataset that matches your pipeline:
 
@@ -56,7 +56,7 @@ task generate -- \
 
 Review generated cases before using them in evaluations. See [Datasets](./datasets.md) for the full schema.
 
-## Step 4 — Validate inputs
+## Step 4&mdash;Validate inputs
 
 Run a dry-run to confirm the endpoint, pipeline, and dataset without scoring any cases:
 
@@ -70,7 +70,7 @@ task eval -- \
 
 Exit code `0` means validation passed. No `output/eval_results.json` is written.
 
-## Step 5 — Run the evaluation
+## Step 5&mdash;Run the evaluation
 
 Remove `--dry-run` to execute the full run:
 
@@ -92,7 +92,7 @@ dr task run evaluations:eval -- \
 
 Replace `evaluations` with your component namespace if you renamed the folder during setup.
 
-## Step 6 — Read results
+## Step 6&mdash;Read results
 
 Poll progress in `output/eval_status.json`. On success, read `output/eval_results.json`:
 

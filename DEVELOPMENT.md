@@ -9,7 +9,7 @@ documentation instead. It ships in [`template/docs/evaluation/`](template/docs/e
 and is rendered to `docs/evaluation/` in your project. Start at
 [`template/docs/evaluation/README.md`](template/docs/evaluation/README.md).
 
-**Why a separate component?** NeMo Evaluator has a large transitive dependency tree that should not be imposed on the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess — no imports, no shared dependencies.
+**Why a separate component?** NeMo Evaluator has a large transitive dependency tree that should not be imposed on the core CLI repo. This component runs in its own isolated `uv` environment. The core CLI detects it via `[tool.af-component]` in `pyproject.toml` and invokes it as a subprocess&mdash;no imports, no shared dependencies.
 
 ## Running the test suite
 
@@ -27,11 +27,11 @@ uvx pre-commit install
 
 ---
 
-## How it actually runs (BYOB, in-process — no Docker)
+## How it actually runs (BYOB, in-process&mdash;no Docker)
 
-A note on what this is **not**: it does *not* use `nemo-evaluator-launcher`. The launcher runs every task inside an `nvcr.io` Docker container (`--gpus all`) and only exposes fixed benchmarks (MMLU, GSM8K, MTBench, …) — there is no generic "custom Q&A + judge" task, and the Docker path won't run on a laptop.
+A note on what this is **not**: it does *not* use `nemo-evaluator-launcher`. The launcher runs every task inside an `nvcr.io` Docker container (`--gpus all`) and only exposes fixed benchmarks (MMLU, GSM8K, MTBench, …)&mdash;there is no generic "custom Q&A + judge" task, and the Docker path does not run on a laptop.
 
-Instead we use NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a custom benchmark defined in plain Python, run **in-process** via the BYOB runner. Both the agent (target) and the judge are reached over plain OpenAI-compatible HTTP — there is **no LiteLLM layer** (see [Troubleshooting](template/docs/evaluation/troubleshooting.md) for why that matters for model names).
+This component uses NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a custom benchmark defined in plain Python, run **in-process** via the BYOB runner. Both the agent (target) and the judge are reached over plain OpenAI-compatible HTTP&mdash;there is **no LiteLLM layer** (see [Troubleshooting](template/docs/evaluation/troubleshooting.md) for why that matters for model names).
 
 ```
 run.py
@@ -47,11 +47,11 @@ run.py
 
 ---
 
-## User Workflow
+## User workflow
 
-1. **Add the component** — the core CLI detects it automatically via `[tool.af-component]` in `pyproject.toml`.
+1. **Add the component**&mdash;the core CLI detects it automatically via `[tool.af-component]` in `pyproject.toml`.
 
-2. **Pick a pipeline** — choose one of the 8 defaults in `user_pipelines/` (you usually don't edit it; just point `--dataset` at your data). Judge-based pipelines carry a `judge:` block; judge-free ones omit it:
+2. **Pick a pipeline**&mdash;choose one of the 8 defaults in `user_pipelines/` (you usually do not edit it; point `--dataset` at your data). Judge-based pipelines carry a `judge:` block; judge-free ones omit it:
    ```yaml
    benchmark:
      module: datarobot_genai/eval/benchmarks/answer_quality.py   # the BYOB benchmark
@@ -70,17 +70,17 @@ run.py
      temperature: 0.0
      timeout_per_sample: 180
    ```
-   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that's the gateway catalog name (no `datarobot/` prefix) — e.g. `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models can't be used as the stock judge — see [Troubleshooting](template/docs/evaluation/troubleshooting.md).
+   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that is the gateway catalog name (no `datarobot/` prefix)&mdash;for example `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models cannot be used as the stock judge&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md).
 
-3. **Add or select a dataset** — copy `user_datasets/sample_<benchmark>.json`, or generate cases with `generate.py`.
+3. **Add or select a dataset**&mdash;copy `user_datasets/sample_<benchmark>.json`, or generate cases with `generate.py`.
 
-4. **Launch from the external CLI** — it presents pipelines/datasets, prompts for the agent endpoint, then invokes this component.
+4. **Launch from the external CLI**&mdash;it presents pipelines/datasets, prompts for the agent endpoint, then invokes this component.
 
-5. **View results** — read `output/eval_status.json` for status and `output/eval_results.json` for results.
+5. **View results**&mdash;read `output/eval_status.json` for status and `output/eval_results.json` for results.
 
 ---
 
-## CLI Interface
+## CLI interface
 
 ```bash
 uv run python run.py \
@@ -98,31 +98,31 @@ uv run python run.py --endpoint ... --pipeline ... --dry-run
 |---|---|---|
 | `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `generate.py`). Set in `.env`. |
 | `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (e.g. `https://app.datarobot.com`). Set in `.env`. |
-| `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set — a local DRUM agent needs none. |
+| `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set&mdash;a local DRUM agent needs none. |
 
 The judge `url`/`model_id`/`api_key_name` come from the pipeline YAML; `run.py` exports them to the benchmark as `JUDGE_URL` / `JUDGE_MODEL_ID` / `JUDGE_API_KEY_NAME`.
 
 ---
 
-## Run Lifecycle
+## Run lifecycle
 
-1. **Validate** — health-check the agent endpoint (any HTTP response = reachable), verify pipeline YAML + benchmark module + dataset exist. Exit 1 on failure.
-2. **Status: running** — writes `output/eval_status.json`.
-3. **Execute** — converts dataset to BYOB JSONL, runs the BYOB runner in-process.
-4. **Normalize** — reads `byob_results.json` (aggregate) + `byob_predictions.jsonl` (per-sample) from `output/raw/<run_id>/<benchmark_name>/`.
-5. **Status: complete** — writes `output/eval_results.json`, updates `output/eval_status.json`.
+1. **Validate**&mdash;health-check the agent endpoint (any HTTP response = reachable), verify pipeline YAML + benchmark module + dataset exist. Exit 1 on failure.
+2. **Status: running**&mdash;writes `output/eval_status.json`.
+3. **Execute**&mdash;converts dataset to BYOB JSONL, runs the BYOB runner in-process.
+4. **Normalize**&mdash;reads `byob_results.json` (aggregate) + `byob_predictions.jsonl` (per-sample) from `output/raw/<run_id>/<benchmark_name>/`.
+5. **Status: complete**&mdash;writes `output/eval_results.json`, updates `output/eval_status.json`.
 
 If any step fails, `eval_status.json` is set to `"failed"` with an error message. Exit codes: `0` success, `1` validation, `2` runner failed, `3` normalization failed.
 
 ### Inconclusive cases
 
-If the agent answers but the **judge call itself fails** (e.g. the judge endpoint applies input content filtering to an adversarial prompt — see [Troubleshooting](template/docs/evaluation/troubleshooting.md)), that case is marked **inconclusive**: `quality_score: null`, `passed: null`, and it is **excluded** from rates rather than counted as a `0.0` failure. The summary reports `scored_cases` and `inconclusive_cases`.
+If the agent answers but the **judge call itself fails** (for example the judge endpoint applies input content filtering to an adversarial prompt&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md)), that case is marked **inconclusive**: `quality_score: null`, `passed: null`, and it is **excluded** from rates rather than counted as a `0.0` failure. The summary reports `scored_cases` and `inconclusive_cases`.
 
 ---
 
-## Fixed Output Contract
+## Fixed output contract
 
-These paths never change — the external CLI always reads from here:
+These paths never change&mdash;the external CLI always reads from here:
 
 ```
 output/
@@ -133,7 +133,7 @@ output/
     └── byob_predictions.jsonl  # raw BYOB per-sample
 ```
 
-### `output/eval_status.json` — schema: `docs/evaluation/schemas/status_schema.json`
+### `output/eval_status.json`&mdash;schema: `docs/evaluation/schemas/status_schema.json`
 
 ```json
 {
@@ -148,7 +148,7 @@ output/
 
 `status` values: `running` → `complete` | `failed`
 
-### `output/eval_results.json` — schema: `docs/evaluation/schemas/output_schema.json`
+### `output/eval_results.json`&mdash;schema: `docs/evaluation/schemas/output_schema.json`
 
 ```json
 {
@@ -190,7 +190,7 @@ Rates (`mean_quality_score`, `pass_rate`, …) are computed over **scored** case
 
 ---
 
-## Core CLI Detection Pattern
+## Core CLI detection pattern
 
 The core CLI discovers this component by scanning for `pyproject.toml` files with `[tool.af-component]`:
 
@@ -215,7 +215,7 @@ for pyproject in Path(".").rglob("pyproject.toml"):
 
 ---
 
-## Directory Structure
+## Directory structure
 
 This is the layout a user gets **after** rendering, not the layout of this
 repository. In the repo these files live under
@@ -267,7 +267,7 @@ ship in the `datarobot-genai[eval]` package under
 
 ---
 
-## Adding a New Benchmark / Pipeline
+## Adding a new benchmark / pipeline
 
 A benchmark is a Python module using `nemo_evaluator.contrib.byob` (`@benchmark` + `@scorer`). The scorer can use NeMo's built-in judge templates (`binary_qa`, `binary_qa_partial`, `likert_5`, `safety`) via `judge_score`, or score deterministically with no judge at all. The 8 built-ins live in the `datarobot-genai[eval]` package (`datarobot_genai/eval/benchmarks/`) and make good references; to author your own, copy one of the annotated `user_example_benchmark_*.py` templates in `user_pipelines/`.
 
@@ -278,7 +278,7 @@ cp user_pipelines/answer_quality.yaml user_pipelines/my_pipeline.yaml
 uv run python run.py --endpoint ... --pipeline my_pipeline.yaml --dataset ...
 ```
 
-## Generating Test Cases
+## Generating test cases
 
 ```bash
 uv run python generate.py \
@@ -288,7 +288,7 @@ uv run python generate.py \
 # Review and edit, then commit as ground truth
 ```
 
-## Viewing Results
+## Viewing results
 
 ```bash
 uv run python summarize.py output/

@@ -1,6 +1,6 @@
 # Writing your own benchmark
 
-The 8 built-in benchmarks cover common cases, but you will often want to score something specific to your agent. A benchmark is a Python module using NeMo BYOB decorators&mdash;copy a template, rename it, and adapt the scoring logic.
+The 8 built-in benchmarks cover common cases, but you often want to score something specific to your agent. A benchmark is a Python module using NeMo BYOB decorators&mdash;copy a template, rename it, and adapt the scoring logic.
 
 Two annotated starter templates live in `user_pipelines/`:
 
@@ -27,7 +27,7 @@ Declares the file as a NeMo BYOB benchmark.
 ```python
 @benchmark(
     name="keyword_presence",   # MUST match benchmark.name in your pipeline YAML.
-    dataset="cases.jsonl",     # Placeholder — the real file comes from --dataset at runtime.
+    dataset="cases.jsonl",     # Placeholder&mdash;the real file comes from --dataset at runtime.
     prompt="{input}",          # The string SENT to the agent, rendered per case from dataset fields.
     endpoint_type="chat",      # "chat" for chat-completion agents (the common case).
 )
