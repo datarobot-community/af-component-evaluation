@@ -12,13 +12,13 @@ Confirm the following prerequisites:
 - **A running agent endpoint**&mdash;typically `http://localhost:8842/v1` when the agent runs locally with `dr run dev`.
 - **Credentials in the project-root `.env`** (one level above the component folder):
   - `DATAROBOT_API_TOKEN`&mdash;required for judge-based benchmarks and dataset generation.
-  - `DATAROBOT_ENDPOINT`&mdash;for example, `https://app.datarobot.com`.
+  - `DATAROBOT_ENDPOINT`&mdash;for example `https://app.datarobot.com`.
 
 Judge-free benchmarks (`answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`) run without judge credentials.
 
 ## Step 1&mdash;Install dependencies
 
-From the component directory (for example, `evaluations/`):
+From the component directory (for example `evaluations/`):
 
 ```bash
 task install

@@ -54,7 +54,7 @@ See [Benchmarks](./benchmarks.md) for the full meaning of each field.
 
 **Important**: Review and edit the output before using it in evaluations. Generated cases are a starting point, not ground truth.
 
-Pass `--pipeline` to tailor the prompt to the specific benchmark being evaluated: what "good" vs "bad" means, and which extra fields (for example, `canary`, `constraints`, `context`) are required for that benchmark.
+Pass `--pipeline` to tailor the prompt to the specific benchmark being evaluated: what "good" vs "bad" means, and which extra fields (for example `canary`, `constraints`, `context`) are required for that benchmark.
 
 ```bash
 task generate -- \

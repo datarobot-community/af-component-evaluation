@@ -6,7 +6,7 @@ User-facing gotchas when running evaluations.
 
 NeMo makes plain OpenAI-compatible HTTP calls. There is **no LiteLLM layer** on the judge path. The `datarobot/...` prefix is a LiteLLM routing convention and only works behind a LiteLLM proxy. Whatever endpoint you name in the pipeline receives the `model` string verbatim.
 
-Against the DR LLM gateway directly, use the **gateway catalog name** with no `datarobot/` prefix&mdash;for example, `azure/gpt-5-5-2026-04-23`. List available models:
+Against the DR LLM gateway directly, use the **gateway catalog name** with no `datarobot/` prefix&mdash;for example `azure/gpt-5-5-2026-04-23`. List available models:
 
 ```bash
 curl -s -H "Authorization: Bearer $DATAROBOT_API_TOKEN" \

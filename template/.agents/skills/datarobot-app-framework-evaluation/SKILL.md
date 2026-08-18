@@ -142,10 +142,10 @@ Skip entirely for judge-free benchmarks. For judge-based ones, set in the projec
 | Variable | Required | Purpose |
 |---|:---:|---|
 | `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `dr task run evaluations:generate`). |
-| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example, `https://app.datarobot.com`). |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example `https://app.datarobot.com`). |
 | `AGENT_API_KEY` | no | Bearer token for the agent endpoint; only sent if set. |
 
-> ⚠️ **Judge model gotcha**: Use an **Azure** GPT judge (for example, `azure/gpt-5-5-2026-04-23`),
+> ⚠️ **Judge model gotcha**: Use an **Azure** GPT judge (for example `azure/gpt-5-5-2026-04-23`),
 > a gateway **catalog** name with **no `datarobot/` prefix**. Bedrock/Claude models
 > reject NeMo's judge call (it sends both `temperature` and `top_p`). See
 > `docs/evaluation/troubleshooting.md`.

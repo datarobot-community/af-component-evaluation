@@ -16,7 +16,7 @@ Each run uses exactly **one** benchmark. Benchmarks fall into two families:
 
 ## Scoring convention
 
-Every benchmark emits a normalized `score` in `[0, 1]`. A case **passes** at `score >= 0.5`. Judge-based benchmarks map a grade to that score (for example, Likert 3/5 → 0.6). Judge-free benchmarks compute it deterministically.
+Every benchmark emits a normalized `score` in `[0, 1]`. A case **passes** at `score >= 0.5`. Judge-based benchmarks map a grade to that score (for example Likert 3/5 → 0.6). Judge-free benchmarks compute it deterministically.
 
 A case that **cannot** be scored&mdash;a judge call that errored or a required field missing&mdash;is marked **inconclusive** (`score: null`, `passed: null`) and **excluded** from rates rather than counted as a failure. See [Outputs](./outputs.md).
 
@@ -59,7 +59,7 @@ The regression-testing workhorse. When you have ground-truth answers, check the 
 
 ### `instruction_following`
 
-Checks structural constraints the prompt asked for: length limits, valid JSON, required/forbidden phrases, regex shape. Semantic constraints (for example, "use a professional tone") are out of scope&mdash;use `answer_quality` for those.
+Checks structural constraints the prompt asked for: length limits, valid JSON, required/forbidden phrases, regex shape. Semantic constraints (for example "use a professional tone") are out of scope&mdash;use `answer_quality` for those.
 
 - **Scoring**&mdash;fraction of specified constraints satisfied, in `[0, 1]` (each `must_include` / `must_exclude` item counts individually).
 - **Dataset**&mdash;`input` (required), `constraints` (**required** object). Keys:

@@ -70,7 +70,7 @@ run.py
      temperature: 0.0
      timeout_per_sample: 180
    ```
-   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that is the gateway catalog name (no `datarobot/` prefix)&mdash;for example, `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models cannot be used as the stock judge&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md).
+   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that is the gateway catalog name (no `datarobot/` prefix)&mdash;for example `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models cannot be used as the stock judge&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md).
 
 3. **Add or select a dataset**&mdash;copy `user_datasets/sample_<benchmark>.json`, or generate cases with `generate.py`.
 
@@ -97,7 +97,7 @@ uv run python run.py --endpoint ... --pipeline ... --dry-run
 | Variable | Required | Description |
 |---|---|---|
 | `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `generate.py`). Set in `.env`. |
-| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example, `https://app.datarobot.com`). Set in `.env`. |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example `https://app.datarobot.com`). Set in `.env`. |
 | `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set&mdash;a local DRUM agent needs none. |
 
 The judge `url`/`model_id`/`api_key_name` come from the pipeline YAML; `run.py` exports them to the benchmark as `JUDGE_URL` / `JUDGE_MODEL_ID` / `JUDGE_API_KEY_NAME`.

@@ -57,7 +57,7 @@ run:
 ## Key conventions
 
 - **Judge-free pipelines omit the `judge:` block entirely.** `run.py` exports judge credentials only when the block is present; the benchmark never makes a judge call. The UI also reads this to show whether a run needs a judge model.
-- **Model names are endpoint-catalog names, not LiteLLM names.** NeMo makes plain OpenAI-compatible HTTP calls with no LiteLLM layer. Against the DR LLM gateway, use the catalog name with no `datarobot/` prefix (for example, `azure/gpt-5-5-2026-04-23`). List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`.
+- **Model names are endpoint-catalog names, not LiteLLM names.** NeMo makes plain OpenAI-compatible HTTP calls with no LiteLLM layer. Against the DR LLM gateway, use the catalog name with no `datarobot/` prefix (for example `azure/gpt-5-5-2026-04-23`). List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`.
 - **`api_key_name` is an env var NAME**, not the key value. Use `DATAROBOT_API_TOKEN` for the judge and `AGENT_API_KEY` for the agent (optional&mdash;only sent if set).
 - **`target.model_id: unknown`** is the agent placeholder sentinel. The agent uses its own configured default LLM. Set a real model only if the agent `get_llm()` method understands it.
 - **Note**: Bedrock/Claude cannot be the stock judge. NeMo judge client sends both `temperature` and `top_p`, which DR-gateway Bedrock models reject. Use an Azure GPT model. See [Troubleshooting](./troubleshooting.md).

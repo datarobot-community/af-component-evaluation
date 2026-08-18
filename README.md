@@ -147,7 +147,7 @@ Common issues when running or developing this component:
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Judge returns 400 on Bedrock models | NeMo sends both `temperature` and `top_p`. | Use an Azure GPT judge in the pipeline YAML. |
-| Wrong judge model name | LiteLLM `datarobot/` prefix used against the gateway. | Use gateway catalog names (for example, `azure/gpt-5-5-2026-04-23`). |
+| Wrong judge model name | LiteLLM `datarobot/` prefix used against the gateway. | Use gateway catalog names (for example `azure/gpt-5-5-2026-04-23`). |
 | Cases marked inconclusive on safety runs | Judge endpoint content-filtered the adversarial prompt. | Expected behavior&mdash;see [Outputs](template/docs/evaluation/outputs.md). |
 | `task eval` cannot reach agent | Agent not running or wrong port. | Start the agent (`dr run dev`) and confirm `http://localhost:8842/v1`. |
 

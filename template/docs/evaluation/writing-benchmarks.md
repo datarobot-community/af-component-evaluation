@@ -33,7 +33,7 @@ Declares the file as a NeMo BYOB benchmark.
 )
 ```
 
-`prompt` is a Python format-string filled from each dataset row. Add fields if the agent needs more context&mdash;for example, `prompt="{input}\n\nContext:\n{context}"`.
+`prompt` is a Python format-string filled from each dataset row. Add fields if the agent needs more context&mdash;for example `prompt="{input}\n\nContext:\n{context}"`.
 
 > **Note**: Anything the judge needs to *see* must be in the **agent prompt**, not only in the judge criteria. This is a black-box eval, so the agent only knows what the prompt carries. (This is why `faithfulness` injects `context` into the prompt.)
 
