@@ -7,7 +7,7 @@ Each run uses exactly **one** benchmark. Benchmarks fall into two families:
 - **Judge-based**&mdash;an LLM judge grades the response. Requires a `judge:` block in the pipeline and judge credentials.
 - **Judge-free**&mdash;deterministic checks (string match, regex, parsing). No judge, no credentials, and identical scores on every run.
 
-> **Scope.** These benchmarks are development-time testing aids for catching
+> **Scope**: These benchmarks are development-time testing aids for catching
 > regressions in an agent before release. They are not security, privacy, or
 > compliance controls, and a passing score is not evidence of compliance with any
 > standard. For runtime enforcement, see
@@ -16,7 +16,7 @@ Each run uses exactly **one** benchmark. Benchmarks fall into two families:
 
 ## Scoring convention
 
-Every benchmark emits a normalized `score` in `[0, 1]`. A case **passes** at `score >= 0.5`. Judge-based benchmarks map a grade to that score (for example Likert 3/5 → 0.6). Judge-free benchmarks compute it deterministically.
+Every benchmark emits a normalized `score` in `[0, 1]`. A case **passes** at `score >= 0.5`. Judge-based benchmarks map a grade to that score (for example, Likert 3/5 → 0.6). Judge-free benchmarks compute it deterministically.
 
 A case that **cannot** be scored&mdash;a judge call that errored or a required field missing&mdash;is marked **inconclusive** (`score: null`, `passed: null`) and **excluded** from rates rather than counted as a failure. See [Outputs](./outputs.md).
 
@@ -35,7 +35,7 @@ Feed adversarial or harmful prompts. A safety judge grades each response SAFE (r
 
 - **Scoring**&mdash;`safety` maps SAFE = 1.0 and UNSAFE = 0.0; any SAFE passes.
 - **Dataset**&mdash;`input` (required adversarial prompt), `notes` (optional definition of what "unsafe" means for this case).
-- **Note:** Some judge endpoints apply input content filtering and can return 400 on adversarial prompts. That is a judge-side failure, not an agent failure, so the case is marked inconclusive rather than scored 0. See [Troubleshooting](./troubleshooting.md).
+- **Note**: Some judge endpoints apply input content filtering and can return 400 on adversarial prompts. That is a judge-side failure, not an agent failure, so the case is marked inconclusive rather than scored 0. See [Troubleshooting](./troubleshooting.md).
 
 ### `faithfulness`
 
@@ -43,7 +43,7 @@ For agents that answer from provided context. Each case supplies a `context` pas
 
 - **Scoring**&mdash;built-in `binary_qa` with the context injected into the grading criteria. GRADE C (grounded) → 1.0, GRADE I (hallucinated) → 0.0.
 - **Dataset**&mdash;`input` (required), `context` (**required** source passage, sent to the agent AND used as the grounding reference), `notes` (optional).
-- **Note:** Because the check is "supported by THIS context," a correct-but-ungrounded answer (true in the world but absent from the context) is intentionally scored as a hallucination. That is the RAG failure mode this benchmark exists to catch.
+- **Note**: Because the check is "supported by THIS context," a correct-but-ungrounded answer (true in the world but absent from the context) is intentionally scored as a hallucination. That is the RAG failure mode this benchmark exists to catch.
 
 ## Judge-free benchmarks
 
@@ -59,7 +59,7 @@ The regression-testing workhorse. When you have ground-truth answers, check the 
 
 ### `instruction_following`
 
-Checks structural constraints the prompt asked for: length limits, valid JSON, required/forbidden phrases, regex shape. Semantic constraints (for example "use a professional tone") are out of scope&mdash;use `answer_quality` for those.
+Checks structural constraints the prompt asked for: length limits, valid JSON, required/forbidden phrases, regex shape. Semantic constraints (for example, "use a professional tone") are out of scope&mdash;use `answer_quality` for those.
 
 - **Scoring**&mdash;fraction of specified constraints satisfied, in `[0, 1]` (each `must_include` / `must_exclude` item counts individually).
 - **Dataset**&mdash;`input` (required), `constraints` (**required** object). Keys:
@@ -90,7 +90,7 @@ Scans the response for personally identifiable information using regex detectors
 
 ### `tool_grounding`
 
-The mirror image of `prompt_injection` (present = good). Tool calls are not visible in this black-box eval (that is NAT `/evaluate` job&mdash;see [NAT vs. NeMo](./nat-vs-nemo.md)), but you can verify *evidence* of tool use: seed the tool data source with a unique value reachable only by querying it, ask a question whose answer is that value, and check the response for it. The agent cannot produce a value it was never given without using the tool.
+The mirror image of `prompt_injection` (present = good). Tool calls are not visible in this black-box eval (that is the NAT `/evaluate` job&mdash;see [NAT vs. NeMo](./nat-vs-nemo.md)), but you can verify *evidence* of tool use: seed the tool data source with a unique value reachable only by querying it, ask a question whose answer is that value, and check the response for it. The agent cannot produce a value it was never given without using the tool.
 
 - **Scoring**&mdash;1.0 if every canary value is **present** (tool data surfaced), 0.0 if any is missing (agent guessed, refused, or skipped the tool).
 - **Dataset**&mdash;`input` (required), `canary` (**required** string or list; ALL must be present for full credit). Missing `canary` → inconclusive.

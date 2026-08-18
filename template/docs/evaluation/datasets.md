@@ -44,7 +44,7 @@ See [Benchmarks](./benchmarks.md) for the full meaning of each field.
 
 ## Adding cases
 
-- **Collected**&mdash;copy a real agent interaction, set `"source": "collected"`, and fill in the benchmark required fields. Human-reviewed collected cases are the most valuable because they reflect real usage.
+- **Collected**&mdash;copy a real agent interaction, set `"source": "collected"`, and fill in the required fields for the benchmark. Human-reviewed collected cases are the most valuable because they reflect real usage.
 - **Synthetic**&mdash;run `generate.py` to produce cases with a DataRobot-hosted model, then review and edit before committing.
 - **From CSV**&mdash;if your cases live in a spreadsheet, export to CSV and run `generate.py --convert` to produce the JSON file (see below).
 
@@ -52,9 +52,9 @@ See [Benchmarks](./benchmarks.md) for the full meaning of each field.
 
 `generate.py` uses a DataRobot-hosted model via LiteLLM to produce a mix of "good" and "bad" cases from a plain description of what the agent does.
 
-**Important:** Review and edit the output before using it in evaluations. Generated cases are a starting point, not ground truth.
+**Important**: Review and edit the output before using it in evaluations. Generated cases are a starting point, not ground truth.
 
-Pass `--pipeline` to tailor the prompt to the specific benchmark being evaluated: what "good" vs "bad" means, and which extra fields (for example `canary`, `constraints`, `context`) are required for that benchmark.
+Pass `--pipeline` to tailor the prompt to the specific benchmark being evaluated: what "good" vs "bad" means, and which extra fields (for example, `canary`, `constraints`, `context`) are required for that benchmark.
 
 ```bash
 task generate -- \

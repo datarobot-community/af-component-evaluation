@@ -70,7 +70,7 @@ run.py
      temperature: 0.0
      timeout_per_sample: 180
    ```
-   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that is the gateway catalog name (no `datarobot/` prefix)&mdash;for example `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models cannot be used as the stock judge&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md).
+   **Judge model names** are whatever the named endpoint expects. Against the DR LLM gateway directly that is the gateway catalog name (no `datarobot/` prefix)&mdash;for example, `azure/gpt-5-5-2026-04-23`. List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`. ⚠️ Bedrock/Claude models cannot be used as the stock judge&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md).
 
 3. **Add or select a dataset**&mdash;copy `user_datasets/sample_<benchmark>.json`, or generate cases with `generate.py`.
 
@@ -92,12 +92,12 @@ uv run python run.py \
 uv run python run.py --endpoint ... --pipeline ... --dry-run
 ```
 
-**Environment variables:**
+**Environment variables**:
 
 | Variable | Required | Description |
 |---|---|---|
 | `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `generate.py`). Set in `.env`. |
-| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example `https://app.datarobot.com`). Set in `.env`. |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example, `https://app.datarobot.com`). Set in `.env`. |
 | `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set&mdash;a local DRUM agent needs none. |
 
 The judge `url`/`model_id`/`api_key_name` come from the pipeline YAML; `run.py` exports them to the benchmark as `JUDGE_URL` / `JUDGE_MODEL_ID` / `JUDGE_API_KEY_NAME`.
@@ -107,16 +107,16 @@ The judge `url`/`model_id`/`api_key_name` come from the pipeline YAML; `run.py` 
 ## Run lifecycle
 
 1. **Validate**&mdash;health-check the agent endpoint (any HTTP response = reachable), verify pipeline YAML + benchmark module + dataset exist. Exit 1 on failure.
-2. **Status: running**&mdash;writes `output/eval_status.json`.
+2. **Status**: running&mdash;writes `output/eval_status.json`.
 3. **Execute**&mdash;converts dataset to BYOB JSONL, runs the BYOB runner in-process.
 4. **Normalize**&mdash;reads `byob_results.json` (aggregate) + `byob_predictions.jsonl` (per-sample) from `output/raw/<run_id>/<benchmark_name>/`.
-5. **Status: complete**&mdash;writes `output/eval_results.json`, updates `output/eval_status.json`.
+5. **Status**: complete&mdash;writes `output/eval_results.json`, updates `output/eval_status.json`.
 
 If any step fails, `eval_status.json` is set to `"failed"` with an error message. Exit codes: `0` success, `1` validation, `2` runner failed, `3` normalization failed.
 
 ### Inconclusive cases
 
-If the agent answers but the **judge call itself fails** (for example the judge endpoint applies input content filtering to an adversarial prompt&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md)), that case is marked **inconclusive**: `quality_score: null`, `passed: null`, and it is **excluded** from rates rather than counted as a `0.0` failure. The summary reports `scored_cases` and `inconclusive_cases`.
+If the agent answers but the **judge call itself fails** (for example, the judge endpoint applies input content filtering to an adversarial prompt&mdash;see [Troubleshooting](template/docs/evaluation/troubleshooting.md)), that case is marked **inconclusive**: `score: null`, `passed: null`, and it is **excluded** from rates rather than counted as a `0.0` failure. The summary reports `scored_cases` and `inconclusive_cases`.
 
 ---
 
@@ -160,7 +160,7 @@ output/
   "summary": {
     "scored_cases": 5,
     "inconclusive_cases": 1,
-    "mean_quality_score": 0.92,
+    "mean_score": 0.92,
     "pass_rate": 1.0,
     "good_case_pass_rate": 1.0,
     "bad_case_pass_rate": 1.0,
@@ -175,10 +175,12 @@ output/
       "input": "Explain the differences between RAG and fine-tuning",
       "expected_behavior": "good",
       "agent_response": "...",
-      "quality_score": 1.0,
-      "judge_reason": "judge grade: 5",
+      "benchmark": "answer_quality",
+      "has_judge": true,
+      "score": 1.0,
       "passed": true,
-      "answer_match_score": null,
+      "reason": "judge grade: 5",
+      "judge_grade": "5",
       "notes": "...",
       "source": "collected"
     }
@@ -186,7 +188,7 @@ output/
 }
 ```
 
-Rates (`mean_quality_score`, `pass_rate`, …) are computed over **scored** cases only.
+Rates (`mean_score`, `pass_rate`, …) are computed over **scored** cases only.
 
 ---
 

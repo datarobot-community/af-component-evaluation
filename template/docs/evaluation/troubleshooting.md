@@ -6,7 +6,7 @@ User-facing gotchas when running evaluations.
 
 NeMo makes plain OpenAI-compatible HTTP calls. There is **no LiteLLM layer** on the judge path. The `datarobot/...` prefix is a LiteLLM routing convention and only works behind a LiteLLM proxy. Whatever endpoint you name in the pipeline receives the `model` string verbatim.
 
-Against the DR LLM gateway directly, use the **gateway catalog name** with no `datarobot/` prefix&mdash;for example `azure/gpt-5-5-2026-04-23`. List available models:
+Against the DR LLM gateway directly, use the **gateway catalog name** with no `datarobot/` prefix&mdash;for example, `azure/gpt-5-5-2026-04-23`. List available models:
 
 ```bash
 curl -s -H "Authorization: Bearer $DATAROBOT_API_TOKEN" \
@@ -22,7 +22,7 @@ NeMo's built-in judge client sends a fixed sampling parameter set that always in
      Please use only one."
 ```
 
-**Workaround:** use an **Azure** GPT judge model (`azure/gpt-5-5-2026-04-23`). Azure and OpenAI models accept both parameters, so the stock judge works unmodified. Set `judge.model_id` in the pipeline YAML or use the `JUDGE_MODEL_ID` environment variable.
+**Workaround**: Use an **Azure** GPT judge model (`azure/gpt-5-5-2026-04-23`). Azure and OpenAI models accept both parameters, so the stock judge works unmodified. Set `judge.model_id` in the pipeline YAML or use the `JUDGE_MODEL_ID` environment variable.
 
 If you specifically need Claude as judge, write a custom judge call in your scorer that sends only `temperature`. BYOB scorers are arbitrary Python and can reuse NeMo's judge templates.
 

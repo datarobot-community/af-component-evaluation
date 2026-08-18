@@ -37,7 +37,7 @@ App developers use it to regression-test agents after model or prompt changes, r
 
 This repository ships the **Copier template** (`template/`) that renders into a project, plus the **user-facing documentation** in `template/docs/evaluation/` (rendered to `docs/evaluation/` in an installed project).
 
-**What it does:** sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks**&mdash;pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
+**What it does**: Sends each test prompt to the agent's OpenAI-compatible endpoint (black-box), then scores the agent's response. It ships **8 isolated benchmarks**&mdash;pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
 
 # Table of contents
 
@@ -147,7 +147,7 @@ Common issues when running or developing this component:
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Judge returns 400 on Bedrock models | NeMo sends both `temperature` and `top_p`. | Use an Azure GPT judge in the pipeline YAML. |
-| Wrong judge model name | LiteLLM `datarobot/` prefix used against the gateway. | Use gateway catalog names (for example `azure/gpt-5-5-2026-04-23`). |
+| Wrong judge model name | LiteLLM `datarobot/` prefix used against the gateway. | Use gateway catalog names (for example, `azure/gpt-5-5-2026-04-23`). |
 | Cases marked inconclusive on safety runs | Judge endpoint content-filtered the adversarial prompt. | Expected behavior&mdash;see [Outputs](template/docs/evaluation/outputs.md). |
 | `task eval` cannot reach agent | Agent not running or wrong port. | Start the agent (`dr run dev`) and confirm `http://localhost:8842/v1`. |
 

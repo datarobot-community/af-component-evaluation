@@ -4,7 +4,7 @@ The evaluation component runs **batch, black-box evaluations** of a DataRobot ag
 
 It runs in its own isolated `uv` environment and is discovered by the core CLI via `[tool.af-component]` in `pyproject.toml`. The core CLI invokes it as a subprocess&mdash;no shared imports and no shared dependencies.
 
-> All docs for this component live in `docs/evaluation/` regardless of the component folder name. Commands below run from inside the component directory (for example `evaluations/`).
+> All docs for this component live in `docs/evaluation/` regardless of the component folder name. Commands below run from inside the component directory (for example, `evaluations/`).
 
 ## Documentation map
 
@@ -107,12 +107,12 @@ uv run python run.py \
 | `--dataset` | no | Path to a test-case JSON file (defaults to `user_datasets/sample_answer_quality.json`). |
 | `--dry-run` | no | Validate inputs and print what would run, without executing. |
 
-**Environment variables:**
+**Environment variables**:
 
 | Variable | Required | Description |
 |---|:---:|---|
 | `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `task generate`). Set in `.env`. |
-| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example `https://app.datarobot.com`). Set in `.env`. |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example, `https://app.datarobot.com`). Set in `.env`. |
 | `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set&mdash;a local DRUM agent needs none. |
 
 The judge `url`, `model_id`, and `api_key_name` come from the pipeline YAML. `run.py` exports them to the benchmark as `JUDGE_URL`, `JUDGE_MODEL_ID`, and `JUDGE_API_KEY_NAME`. Judge-free pipelines need no judge credentials.

@@ -8,8 +8,8 @@ It is a batch evaluation component for DataRobot agents. A user picks a **pipeli
 
 ## Scope
 
-- **In scope:** the three CLI entry points (`run.py`, `generate.py`, `summarize.py`), the fixed output contract (`output/eval_status.json`, `output/eval_results.json`), validation/error handling, and both judge-based and judge-free benchmarks.
-- **Out of scope:** the NeMo BYOB internals, the `datarobot-genai[eval]` engine itself, and benchmark scoring accuracy (covered by unit tests). QA verifies the *flows and outputs*, not the scoring math.
+- **In scope**&mdash;the three CLI entry points (`run.py`, `generate.py`, `summarize.py`), the fixed output contract (`output/eval_status.json`, `output/eval_results.json`), validation/error handling, and both judge-based and judge-free benchmarks.
+- **Out of scope**&mdash;the NeMo BYOB internals, the `datarobot-genai[eval]` engine itself, and benchmark scoring accuracy (covered by unit tests). QA verifies the *flows and outputs*, not the scoring math.
 
 ## Prerequisites for the tester
 
@@ -29,17 +29,17 @@ Run commands from the component directory (`template/[[ evaluation_app_name ]]/`
 Each test: run the steps, record **PASS/FAIL** and any notes. Aim for ~30–45 min total.
 
 ### QA-1&mdash;Install and environment sanity
-**Objective:** A fresh setup installs cleanly and credentials are wired.
+**Objective**: A fresh setup installs cleanly and credentials are wired.
 1. From the project root run `task install`.
 2. Confirm it completes with no errors.
 3. Confirm `.env` contains `DATAROBOT_API_TOKEN` and `DATAROBOT_ENDPOINT`.
 
-**Expected:** Install succeeds; both env vars resolve (for example `echo DATAROBOT_ENDPOINT` after sourcing `.env`).
+**Expected**: Install succeeds; both env vars resolve (for example, `echo DATAROBOT_ENDPOINT` after sourcing `.env`).
 
 ---
 
 ### QA-2&mdash;Dry-run validation (no judge cost)
-**Objective:** Input validation works before any agent/judge calls are made.
+**Objective**: Input validation works before any agent/judge calls are made.
 ```bash
 uv run python run.py \
   --endpoint http://localhost:8842/v1 \
@@ -47,20 +47,20 @@ uv run python run.py \
   --dataset user_datasets/sample_answer_quality.json \
   --dry-run
 ```
-**Expected:** Exits **0**. Reports that endpoint, pipeline YAML, benchmark module, and dataset all validated. **No** `output/eval_results.json` is written.
+**Expected**: Exits **0**. Reports that endpoint, pipeline YAML, benchmark module, and dataset all validated. **No** `output/eval_results.json` is written.
 
 ---
 
 ### QA-3&mdash;Happy path: judge-based benchmark (answer_quality)
-**Objective:** Full end-to-end LLM-as-judge run produces a valid result file.
-*Precondition:* agent endpoint reachable; DR credentials set.
+**Objective**: Full end-to-end LLM-as-judge run produces a valid result file.
+*Precondition*: Agent endpoint is reachable; DR credentials set.
 ```bash
 uv run python run.py \
   --endpoint http://localhost:8842/v1 \
   --pipeline answer_quality.yaml \
   --dataset user_datasets/sample_answer_quality.json
 ```
-**Expected:**
+**Expected**:
 - Exit code **0**.
 - `output/eval_status.json` ends at `"status": "complete"` with a `run_id`, the pipeline name, and `error: null`.
 - `output/eval_results.json` exists and contains: `total_cases`, a `summary` block (`scored_cases`, `inconclusive_cases`, `mean_score`, `pass_rate`), and a `cases` array where each case has `agent_response`, `score`, `passed`, and `reason`.
@@ -69,7 +69,7 @@ uv run python run.py \
 ---
 
 ### QA-4&mdash;Judge-free benchmark (answer_correctness) with no judge creds
-**Objective:** A deterministic benchmark runs without any judge model / credentials and is reproducible.
+**Objective**: A deterministic benchmark runs without any judge model / credentials and is reproducible.
 1. Confirm `user_pipelines/answer_correctness.yaml` has **no** `judge:` block.
 2. Run:
 ```bash
@@ -80,33 +80,33 @@ uv run python run.py \
 ```
 3. Run it a **second** time and compare summaries.
 
-**Expected:** Exit **0**; `eval_results.json` written; `inconclusive_cases` is 0 (no judge involved); results are identical across both runs (deterministic). Cases show `score` and `reason`, not judge grades.
+**Expected**: Exit **0**; `eval_results.json` written; `inconclusive_cases` is 0 (no judge involved); results are identical across both runs (deterministic). Cases show `score` and `reason`, not judge grades.
 
 ---
 
 ### QA-5&mdash;Generate synthetic test cases
-**Objective:** `generate.py` produces a reviewable dataset.
+**Objective**: `generate.py` produces a reviewable dataset.
 ```bash
 uv run python generate.py \
   --agent-description "A research assistant that answers questions concisely" \
   --n 10 \
   --output user_datasets/qa_generated.json
 ```
-**Expected:** File is written with ~10 cases. Open it: each case has an `id`, `input`, and `expected_behavior` (`good`/`bad`). The prompts are relevant to the described agent. (This is a human judgment call&mdash;do the cases look usable?)
+**Expected**: File is written with ~10 cases. Open it: each case has an `id`, `input`, and `expected_behavior` (`good`/`bad`). The prompts are relevant to the described agent. (This is a human judgment call&mdash;do the cases look usable?)
 
 ---
 
 ### QA-6&mdash;View results
-**Objective:** `summarize.py` renders a readable summary of a completed run.
+**Objective**: `summarize.py` renders a readable summary of a completed run.
 ```bash
 uv run python summarize.py output/
 ```
-**Expected:** A formatted summary prints&mdash;per-case table with IDs, scores (2 decimals), and pass/fail markers (✓/✗), plus the aggregate rates. Numbers match what's in `output/eval_results.json` from QA-3 or QA-4.
+**Expected**: A formatted summary prints&mdash;per-case table with IDs, scores (2 decimals), and pass/fail markers (✓/✗), plus the aggregate rates. Numbers match what's in `output/eval_results.json` from QA-3 or QA-4.
 
 ---
 
 ### QA-7&mdash;Error handling: unreachable / invalid inputs
-**Objective:** Failures are reported cleanly, not as a stack-trace crash.
+**Objective**: Failures are reported cleanly, not as a stack trace crash.
 
 Run each and check the exit code + status file:
 
@@ -116,17 +116,16 @@ Run each and check the exit code + status file:
 | 7b Missing pipeline | `--pipeline does_not_exist.yaml` | **1** | `status: failed`, error names the missing pipeline |
 | 7c Missing dataset | `--dataset user_datasets/nope.json` | **1** | `status: failed`, error names the missing dataset |
 
-**Expected overall:** No uncaught Python traceback dumped to the user; each failure leaves `eval_status.json` at `"failed"` with a human-readable `error`.
+**Expected overall**: No uncaught Python traceback dumped to the user; each failure leaves `eval_status.json` at `"failed"` with a human-readable `error`.
 
 ---
 
 ### QA-8&mdash;(Optional / advanced) Inconclusive case handling
-**Objective:** A case where the agent answers but the **judge call fails** (for example the judge endpoint applies input content filtering to an adversarial prompt) is marked *inconclusive*, not a 0.0 failure.
+**Objective**: A case where the agent answers but the **judge call fails** (for example, the judge endpoint applies input content filtering to an adversarial prompt) is marked *inconclusive*, not a 0.0 failure.
 1. Run a judge-based pipeline against `sample_safety_refusal.json` or `sample_prompt_injection.json`.
 2. Inspect the summary.
 
-**Expected:** Any judge-failed case has `score: null` and `passed: null`, is counted in `inconclusive_cases`, and is **excluded** from `pass_rate`/`mean_score`. Rates are computed over scored cases only. (See
-[`outputs.md`](template/docs/evaluation/outputs.md).)
+**Expected**: Any judge-failed case has `score: null` and `passed: null`, is counted in `inconclusive_cases`, and is **excluded** from `pass_rate`/`mean_score`. Rates are computed over scored cases only. (See [`outputs.md`](template/docs/evaluation/outputs.md).)
 
 ---
 

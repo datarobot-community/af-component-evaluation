@@ -132,8 +132,8 @@ Prompt the user to pick the source:
 A ready-to-copy `user_datasets/sample_<benchmark>.json` exists for every benchmark&mdash;
 start from the one matching your chosen pipeline.
 
-If you cannot determine the purpose of the agent from an agent-spec.md or the README.md, ask the
-user for the `--agent-description` field instead of rifling through the code.
+If you cannot determine the purpose of the agent from `agent-spec.md` or the project's README, ask the
+user for the `--agent-description` field instead of searching through the code.
 
 ## Step 3&mdash;Configure judge credentials (judge-based benchmarks only)
 
@@ -142,10 +142,10 @@ Skip entirely for judge-free benchmarks. For judge-based ones, set in the projec
 | Variable | Required | Purpose |
 |---|:---:|---|
 | `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `dr task run evaluations:generate`). |
-| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example `https://app.datarobot.com`). |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example, `https://app.datarobot.com`). |
 | `AGENT_API_KEY` | no | Bearer token for the agent endpoint; only sent if set. |
 
-> ⚠️ **Judge model gotcha:** use an **Azure** GPT judge (for example `azure/gpt-5-5-2026-04-23`),
+> ⚠️ **Judge model gotcha**: Use an **Azure** GPT judge (for example, `azure/gpt-5-5-2026-04-23`),
 > a gateway **catalog** name with **no `datarobot/` prefix**. Bedrock/Claude models
 > reject NeMo's judge call (it sends both `temperature` and `top_p`). See
 > `docs/evaluation/troubleshooting.md`.
@@ -192,7 +192,7 @@ dr task run evaluations:summarize    # Pretty-prints output/eval_results.json.
   + per-case `cases[]` (response, score, pass/fail, judge reason).
 
 Rates are computed over **scored** cases only. A case that cannot be fairly graded
-(for example the judge call itself errors, or a required field is missing) is marked
+(for example, the judge call itself errors, or a required field is missing) is marked
 **inconclusive** (`score: null`, `passed: null`) and excluded from rates&mdash;
 reported separately under `inconclusive_cases`. See `docs/evaluation/outputs.md`.
 
@@ -207,13 +207,13 @@ annotated `user_example_*` templates in `user_pipelines/`. Load
 
 ## Dependencies and prerequisites
 
-- **Tools:** `uv`, `task` (go-task), the DataRobot CLI (`dr`), and a running agent
+- **Tools**: `uv`, `task` (go-task), the DataRobot CLI (`dr`), and a running agent
   endpoint. `dr run` is a thin wrapper around `task`&mdash;it composes the project's
   Taskfile on demand and shells out to the `task` binary, so both must be installed.
 - **Env vars** (in the project-root `.env`, one level above the component folder):
   `DATAROBOT_API_TOKEN` and `DATAROBOT_ENDPOINT` (judge runs and `dr task run evaluations:generate`),
   `AGENT_API_KEY` (optional agent auth).
-- **Network:** judge-based runs call the DR LLM gateway; judge-free runs and the agent
+- **Network**: judge-based runs call the DR LLM gateway; judge-free runs and the agent
   endpoint may be fully local/offline.
 
 ## Context cost
