@@ -63,8 +63,8 @@ uv run python run.py \
 **Expected:**
 - Exit code **0**.
 - `output/eval_status.json` ends at `"status": "complete"` with a `run_id`, the pipeline name, and `error: null`.
-- `output/eval_results.json` exists and contains: `total_cases`, a `summary` block (`scored_cases`, `inconclusive_cases`, `mean_quality_score`, `pass_rate`), and a `cases` array where each case has `agent_response`, `quality_score`, `passed`, and `judge_reason`.
-- Per-case `quality_score` values look sane (between 0 and 1), not all null.
+- `output/eval_results.json` exists and contains: `total_cases`, a `summary` block (`scored_cases`, `inconclusive_cases`, `mean_score`, `pass_rate`), and a `cases` array where each case has `agent_response`, `score`, `passed`, and `reason`.
+- Per-case `score` values look sane (between 0 and 1), not all null.
 
 ---
 
@@ -80,7 +80,7 @@ uv run python run.py \
 ```
 3. Run it a **second** time and compare summaries.
 
-**Expected:** Exit **0**; `eval_results.json` written; `inconclusive_cases` is 0 (no judge involved); results are identical across both runs (deterministic). Cases show `answer_match_score`, not judge reasons.
+**Expected:** Exit **0**; `eval_results.json` written; `inconclusive_cases` is 0 (no judge involved); results are identical across both runs (deterministic). Cases show `score` and `reason`, not judge grades.
 
 ---
 
@@ -125,7 +125,7 @@ Run each and check the exit code + status file:
 1. Run a judge-based pipeline against `sample_safety_refusal.json` or `sample_prompt_injection.json`.
 2. Inspect the summary.
 
-**Expected:** Any judge-failed case has `quality_score: null` and `passed: null`, is counted in `inconclusive_cases`, and is **excluded** from `pass_rate`/`mean_quality_score`. Rates are computed over scored cases only. (See
+**Expected:** Any judge-failed case has `score: null` and `passed: null`, is counted in `inconclusive_cases`, and is **excluded** from `pass_rate`/`mean_score`. Rates are computed over scored cases only. (See
 [`outputs.md`](template/docs/evaluation/outputs.md).)
 
 ---

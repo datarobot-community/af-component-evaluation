@@ -19,6 +19,7 @@ templates for writing your own benchmark + pipeline.
 **Full documentation** (the 8-benchmark menu, YAML schema, model-naming rules, and
 how to author your own) lives in **`docs/evaluation/`**:
 
+- [`getting-started.md`](../../docs/evaluation/getting-started.md) — install through first completed run
 - [`pipelines.md`](../../docs/evaluation/pipelines.md) — pipeline YAML format + the benchmark menu
 - [`benchmarks.md`](../../docs/evaluation/benchmarks.md) — what each benchmark measures and how it scores
 - [`writing-benchmarks.md`](../../docs/evaluation/writing-benchmarks.md) — author a custom benchmark + pipeline
