@@ -34,7 +34,7 @@ Each test: run the steps, record **PASS/FAIL** and any notes. Aim for ~30–45 m
 2. Confirm it completes with no errors.
 3. Confirm `.env` contains `DATAROBOT_API_TOKEN` and `DATAROBOT_ENDPOINT`.
 
-**Expected:** Install succeeds; both env vars resolve (e.g. `echo $DATAROBOT_ENDPOINT` after sourcing `.env`).
+**Expected:** Install succeeds; both env vars resolve (for example `echo DATAROBOT_ENDPOINT` after sourcing `.env`).
 
 ---
 
@@ -121,7 +121,7 @@ Run each and check the exit code + status file:
 ---
 
 ### QA-8&mdash;(Optional / advanced) Inconclusive case handling
-**Objective:** A case where the agent answers but the **judge call fails** (e.g. the judge endpoint applies input content filtering to an adversarial prompt) is marked *inconclusive*, not a 0.0 failure.
+**Objective:** A case where the agent answers but the **judge call fails** (for example the judge endpoint applies input content filtering to an adversarial prompt) is marked *inconclusive*, not a 0.0 failure.
 1. Run a judge-based pipeline against `sample_safety_refusal.json` or `sample_prompt_injection.json`.
 2. Inspect the summary.
 

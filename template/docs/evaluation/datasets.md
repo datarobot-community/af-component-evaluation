@@ -111,7 +111,7 @@ The converter raises an error if any of these columns are missing from the heade
 
 Any benchmark-specific columns (`context`, `ideal_response`, `canary`, and so on) are also carried over automatically&mdash;include them in the spreadsheet.
 
-### Example CSV
+### CSV example
 
 `user_datasets/sample_answer_quality.csv` is a ready-to-open example that produces exactly the same cases as `sample_answer_quality.json`:
 

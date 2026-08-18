@@ -66,7 +66,7 @@ namespace in this order:
    ```bash
    ls .datarobot/answers/evaluation-*.yml
    ```
-   The filename's `<name>` is the namespace (`evaluation_app_name:` inside confirms it).
+   The `<name>` in the filename is the namespace (`evaluation_app_name:` inside confirms it).
 
 The agent under test must be serving an OpenAI-compatible endpoint. For local dev,
 the agent component is typically started with `dr run dev` (default
