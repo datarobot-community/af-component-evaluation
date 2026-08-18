@@ -22,7 +22,7 @@ NeMo's built-in judge client sends a fixed sampling parameter set that always in
      Please use only one."
 ```
 
-**Workaround:** use an **Azure** GPT judge model (`azure/gpt-5-5-2026-04-23`). Azure and OpenAI models accept both parameters, so the stock judge works unmodified. Set it via the pipeline's `judge.model_id` or the `JUDGE_MODEL_ID` environment variable.
+**Workaround:** use an **Azure** GPT judge model (`azure/gpt-5-5-2026-04-23`). Azure and OpenAI models accept both parameters, so the stock judge works unmodified. Set `judge.model_id` in the pipeline YAML or use the `JUDGE_MODEL_ID` environment variable.
 
 If you specifically need Claude as judge, write a custom judge call in your scorer that sends only `temperature`. BYOB scorers are arbitrary Python and can reuse NeMo's judge templates.
 
