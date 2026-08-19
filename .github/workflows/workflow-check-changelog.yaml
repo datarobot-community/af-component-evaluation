@@ -1,0 +1,50 @@
+name: Changelog
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Check Changelog
+# Fails a pull request that did not update CHANGELOG.md. Waivable per pull
+# request with the `skip-changelog` label.
+# ─────────────────────────────────────────────────────────────────────────────
+# REQUIRED LABELS
+# - None. `skip-changelog` only has to exist once someone wants to use it, and
+#   `workflow-ensure-labels.yaml` does not create it.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Triggered by: every pull request. `labeled` and `unlabeled` are on the list
+# because naming any type replaces the defaults, and without them applying the
+# skip label could not re-run the check that told you to apply it.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  # Require a changelog entry on every pull request. The explicit `name` keeps
+  # the status check readable: it reports as `Changelog / Changelog updated`
+  # rather than `changelog / Changelog updated`. If you make this a required
+  # check in branch protection, that is the string to point it at.
+  changelog:
+    name: Changelog
+    uses: datarobot-oss/github-actions/.github/workflows/check-changelog.yaml@0.0.24
+    permissions:
+      contents: read
+    # Every input below is optional and shown at its default. Delete the whole
+    # `with:` block to take the defaults.
+    with:
+      # Path to your changelog, if it is not CHANGELOG.md at the repo root.
+      changelog_path: CHANGELOG.md
+      # The label that waives the check.
+      skip_label: skip-changelog
+      # Waive the check for bot-authored pull requests (any login ending in
+      # `[bot]`). Dependabot cannot edit a changelog, so leaving this off means
+      # every dependency bump needs a label before it can merge.
+      skip_bot_authors: true
+      # `version` is deliberately left unset. This repo's version lives only in
+      # its git tags: workflow-create-release-on-merge.yaml computes the next
+      # patch at merge time, so while a pull request is open nobody yet knows
+      # which number the entry will land under. Bullets go under "Unreleased"
+      # and get a version heading when the release is cut. The versioned variant
+      # of this check is for repos whose version lives in the tree; see
+      # https://github.com/datarobot-oss/github-actions/blob/main/docs/RELEASE.md

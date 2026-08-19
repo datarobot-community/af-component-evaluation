@@ -5,10 +5,18 @@ name: PR Automation
 # Reviewer-facing helpers: marks approved PRs reviewed, pings Slack when a PR is
 # ready for review, links Jira tickets, and posts a 30-min digest of open PRs.
 # ─────────────────────────────────────────────────────────────────────────────
-# REQUIRED LABELS  (run examples/workflow-ensure-labels.yaml once to create them)
+# REQUIRED LABELS  (run workflow-ensure-labels.yaml once to create them)
 # - `00 - Ready for Review` — dev applies by hand; triggers the Slack ping + digest.
 # - `00 - Reviewed`         — applied on approval; excludes the PR from the digest.
 # Missing labels hard-fail the job (a red X = a real setup problem, not hidden).
+# ─────────────────────────────────────────────────────────────────────────────
+# INPUTS
+# Every `with:` entry below is shown at its default, so this file works copied
+# as-is. Edit the values marked in the comments to suit your own workspace.
+# One rule if you ever LOWER a `@version` ref: an input the pinned release does
+# not declare is a hard error, not a warning, so remove any input newer than the
+# release you pin. `slack_mention`, `jira_base_url`, and the `status_icon_*` set
+# all require `>= 0.0.20`.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Triggered by: an approving review, PR label/open/edit events, a 30-min cron, or manual dispatch.
@@ -25,7 +33,7 @@ jobs:
   # On an approving review: label the PR "00 - Reviewed".
   mark-reviewed:
     if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
-    uses: datarobot-oss/github-actions/.github/workflows/mark-pr-reviewed.yaml@0.0.18
+    uses: datarobot-oss/github-actions/.github/workflows/mark-pr-reviewed.yaml@0.0.24
     with:
       pr_number: ${{ github.event.pull_request.number }}
     permissions:
@@ -34,8 +42,13 @@ jobs:
   # When a "ready for review" label is added: Slack the PR (title, author, diff, URL) to reviewers.
   notify-ready-for-review:
     if: github.event_name == 'pull_request' && contains(github.event.label.name, 'ready for review')
-    uses: datarobot-oss/github-actions/.github/workflows/mark-pr-to-review.yaml@0.0.18
+    uses: datarobot-oss/github-actions/.github/workflows/mark-pr-to-review.yaml@0.0.24
     with:
+      # Prefixes the Slack message with a mention, so reviewers get pinged rather
+      # than having to watch the channel. DataRobot-workspace specific: Slack
+      # renders a handle it cannot resolve as plain text, so this pings nobody
+      # from another workspace. Set it to '' to post without a mention.
+      slack_mention: '@buzok-team'
       pr_number: ${{ github.event.pull_request.number }}
       pr_url: ${{ github.event.pull_request.html_url }}
       pr_title: ${{ github.event.pull_request.title }}
@@ -51,8 +64,11 @@ jobs:
   # On PR open/edit: comment a link to any Jira ticket found in the title or branch name.
   add-jira-link:
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'edited')
-    uses: datarobot-oss/github-actions/.github/workflows/add-jira-link.yaml@0.0.18
+    uses: datarobot-oss/github-actions/.github/workflows/add-jira-link.yaml@0.0.24
     with:
+      # Your Jira tenant. Change the host to your own, or set it to '' to turn
+      # the Jira comment off. Left as-is, the comment links to DataRobot's Jira.
+      jira_base_url: 'https://datarobot.atlassian.net/browse'
       pr_title: ${{ github.event.pull_request.title }}
       pr_number: ${{ github.event.pull_request.number }}
       pr_branch: ${{ github.head_ref }}
@@ -64,7 +80,17 @@ jobs:
   # event-driven mark-reviewed run was never dispatched.
   notify-slack-scheduled:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    uses: datarobot-oss/github-actions/.github/workflows/notify-slack.yaml@0.0.18
+    uses: datarobot-oss/github-actions/.github/workflows/notify-slack.yaml@0.0.24
+    with:
+      # Per-PR CI status icons in the digest. Custom emoji installed in
+      # DataRobot's Slack workspace, which is what this repo's channel expects.
+      # They render as literal ':name:' text in any other workspace, so the
+      # reusable workflow defaults to Slack's built-ins and these are opted into
+      # here. `header_icon` is a built-in and is shown at its default.
+      status_icon_success: ':green_with_check:'
+      status_icon_failure: ':red_with_cross:'
+      status_icon_pending: ':yellow_pending:'
+      header_icon: 'clipboard'
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     permissions:
