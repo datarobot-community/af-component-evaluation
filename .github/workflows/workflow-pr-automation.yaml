@@ -51,7 +51,7 @@ jobs:
   # On PR open/edit: comment a link to any Jira ticket found in the title or branch name.
   add-jira-link:
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'edited')
-    uses: datarobot-oss/github-actions/.github/workflows/add-jira-link.yaml@0.0.18
+    uses: datarobot-oss/github-actions/.github/workflows/add-jira-link.yaml@0.0.20
     with:
       pr_title: ${{ github.event.pull_request.title }}
       pr_number: ${{ github.event.pull_request.number }}
