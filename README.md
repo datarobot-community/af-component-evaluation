@@ -112,6 +112,6 @@ See [AUTHORS](AUTHORS) and [LICENSE](LICENSE) for authorship and licensing infor
 
 To contribute, fork the repository, make your changes on a branch, and open a pull request. Ensure `task test` passes before submitting. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for additional guidelines, and [DEVELOPMENT.md](DEVELOPMENT.md) for the component internals.
 
-Release-by-release changes are recorded in [CHANGELOG.md](CHANGELOG.md). Every pull request is expected to add an entry under "Unreleased"; CI enforces this, and the `skip-changelog` label waives it for changes with no user-visible effect.
+Release-by-release changes are recorded in [CHANGELOG.md](CHANGELOG.md). The version in the root `pyproject.toml` is what gets tagged on merge, so a change that should ship bumps that version, runs `uv lock`, and files its changelog entry under the new number. CI enforces the entry, and the `skip-changelog` label waives it for changes with no user-visible effect.
 
 For support, see the [troubleshooting guide](template/docs/evaluation/troubleshooting.md) or [contact DataRobot](https://docs.datarobot.com/en/docs/get-started/troubleshooting/general-help.html).

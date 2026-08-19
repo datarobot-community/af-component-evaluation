@@ -1,0 +1,74 @@
+name: Changelog
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Check Changelog (versioned)
+# Fails a pull request unless CHANGELOG.md changed AND carries a heading for the
+# version pyproject.toml declares. Waivable per pull request with the
+# `skip-changelog` label.
+#
+# Paired with workflow-create-release-from-pyproject.yaml in this repo. The
+# version bump in a pull request diff IS the release decision here, so the entry
+# is filed under its number while the pull request is still open, and the bump
+# and the entry are reviewable in the diff like any other line.
+#
+# WHAT THIS DOES NOT CATCH. A pull request that leaves the version alone still
+# passes, because the heading for the current version is already in the file from
+# the release before it. That merge then publishes nothing: the tag exists, so
+# the release job exits with a notice. If a change was supposed to ship, bump
+# `[project].version` in pyproject.toml and add a heading for the new number.
+# ─────────────────────────────────────────────────────────────────────────────
+# REQUIRED LABELS
+# - None. `skip-changelog` only has to exist once someone wants to use it.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Triggered by: every pull request. `labeled` and `unlabeled` are on the list
+# because naming any type replaces the defaults, and without them applying the
+# skip label could not re-run the check that told you to apply it.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  # Read the version this pull request would release.
+  version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      # Pinned by SHA with the version in a comment. Once this file is in your
+      # repo, your own Dependabot config keeps the pin fresh.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - id: version
+        uses: datarobot-oss/github-actions/actions/read-pyproject-version@0.0.24
+
+  # Require an entry filed under that version. The explicit `name` keeps the
+  # status check readable: it reports as `Changelog / Changelog updated` rather
+  # than `changelog / Changelog updated`. If you make this a required check in
+  # branch protection, that is the string to point it at.
+  changelog:
+    name: Changelog
+    needs: version
+    uses: datarobot-oss/github-actions/.github/workflows/check-changelog.yaml@0.0.24
+    permissions:
+      contents: read
+    with:
+      # The version read above. Passing it is what turns the naive "the file
+      # moved" check into "the file moved AND names this release".
+      version: ${{ needs.version.outputs.version }}
+      # The three below are optional and shown at their defaults.
+      #
+      # Path to the changelog, if it is not CHANGELOG.md at the repo root.
+      changelog_path: CHANGELOG.md
+      # The label that waives the check, for a change with no user-visible
+      # effect. It has to be created by hand; ensure-labels does not make it.
+      skip_label: skip-changelog
+      # Waive the check for bot-authored pull requests (any login ending in
+      # `[bot]`). This repo runs Dependabot, which cannot edit a changelog or
+      # bump the version, so without this every dependency bump would need a
+      # label before it could merge.
+      skip_bot_authors: true
