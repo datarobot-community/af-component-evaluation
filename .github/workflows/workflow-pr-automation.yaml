@@ -25,7 +25,7 @@ jobs:
   # On an approving review: label the PR "00 - Reviewed".
   mark-reviewed:
     if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
-    uses: datarobot-oss/github-actions/.github/workflows/mark-pr-reviewed.yaml@0.0.18
+    uses: datarobot-oss/github-actions/.github/workflows/mark-pr-reviewed.yaml@0.0.20
     with:
       pr_number: ${{ github.event.pull_request.number }}
     permissions:
