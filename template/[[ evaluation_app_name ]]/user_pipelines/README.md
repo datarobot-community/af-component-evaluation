@@ -2,7 +2,7 @@
 
 A **pipeline** is a small YAML that wires a benchmark to the agent under test
 (and, for judge-based benchmarks, to a judge model). The files here are
-**defaults, not examples**: pick the one that measures what you want, point
+**defaults, not examples**&mdash;pick the one that measures what you want, point
 `--dataset` at your data, and run.
 
 ```bash
@@ -19,7 +19,8 @@ templates for writing your own benchmark + pipeline.
 **Full documentation** (the 8-benchmark menu, YAML schema, model-naming rules, and
 how to author your own) lives in **`docs/evaluation/`**:
 
-- [`pipelines.md`](../../docs/evaluation/pipelines.md) — pipeline YAML format + the benchmark menu
-- [`benchmarks.md`](../../docs/evaluation/benchmarks.md) — what each benchmark measures and how it scores
-- [`writing-benchmarks.md`](../../docs/evaluation/writing-benchmarks.md) — author a custom benchmark + pipeline
-- [`datasets.md`](../../docs/evaluation/datasets.md) — dataset schema and per-benchmark fields
+- [`getting-started.md`](../../docs/evaluation/getting-started.md)&mdash;install through first completed run.
+- [`pipelines.md`](../../docs/evaluation/pipelines.md)&mdash;pipeline YAML format and the benchmark menu.
+- [`benchmarks.md`](../../docs/evaluation/benchmarks.md)&mdash;what each benchmark measures and how it scores.
+- [`writing-benchmarks.md`](../../docs/evaluation/writing-benchmarks.md)&mdash;author a custom benchmark and pipeline.
+- [`datasets.md`](../../docs/evaluation/datasets.md)&mdash;dataset schema and per-benchmark fields.

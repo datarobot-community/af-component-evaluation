@@ -1,44 +1,33 @@
 # Evaluation
 
-The evaluation component runs **batch, black-box evaluations** of a DataRobot
-agent: it sends each test prompt to the agent's OpenAI-compatible endpoint, then
-scores the response. It is built on the [NeMo Evaluator](https://github.com/NVIDIA-NeMo/evaluator)
-**BYOB** (Bring Your Own Benchmark) framework and ships **8 isolated benchmarks**
-covering quality, safety, correctness, and security.
+The evaluation component runs **batch, black-box evaluations** of a DataRobot agent. It sends each test prompt to the agent's OpenAI-compatible endpoint, then scores the response. It is built on the [NeMo Evaluator](https://github.com/NVIDIA-NeMo/evaluator) **BYOB** (Bring Your Own Benchmark) framework and ships **8 isolated benchmarks** covering quality, safety, correctness, and security.
 
-It runs as its own isolated `uv` environment and is discovered by the core CLI
-via `[tool.af-component]` in `pyproject.toml` — no shared imports, no shared
-dependencies. The core CLI invokes it as a subprocess.
+It runs in its own isolated `uv` environment and is discovered by the core CLI via `[tool.af-component]` in `pyproject.toml`. The core CLI invokes it as a subprocess&mdash;no shared imports and no shared dependencies.
 
-> All docs for this component live in `docs/evaluation/` regardless of what the
-> component folder is named. Commands shown below run from inside the component
-> directory (the folder named during setup, e.g. `evaluations/`).
+> All docs for this component live in `docs/evaluation/` regardless of the component folder name. Commands below run from inside the component directory (for example `evaluations/`).
+
+## Documentation map
 
 | Section | Description |
 |---|---|
-| [How it runs](#how-it-runs-byob-in-process) | The BYOB, in-process execution model (no Docker, no GPUs). |
-| [Quick start](#quick-start) | Pick a pipeline, point it at a dataset, run. |
+| [Getting started](./getting-started.md) | Fastest path from install to first completed run. |
+| [How it runs](#how-it-runs-byob-in-process) | BYOB in-process execution (no Docker, no GPUs). |
+| [Quick start](#quick-start) | Pick a pipeline, point at a dataset, run. |
 | [File structure](#file-structure) | Where everything lives in the component. |
 | [CLI interface](#cli-interface) | `run.py` flags and environment variables. |
 | [Pipelines](./pipelines.md) | Pipeline YAML format and the 8-benchmark menu. |
 | [Benchmarks](./benchmarks.md) | What each built-in benchmark measures and how it scores. |
 | [Datasets](./datasets.md) | Dataset schema, per-benchmark fields, generating cases. |
-| [Writing your own](./writing-benchmarks.md) | Author a custom benchmark + pipeline. |
-| [Outputs](./outputs.md) | Run lifecycle, output contract, result/status schemas. |
+| [Writing your own](./writing-benchmarks.md) | Author a custom benchmark and pipeline. |
+| [Outputs](./outputs.md) | Run lifecycle, output contract, result and status schemas. |
 | [NAT vs. NeMo](./nat-vs-nemo.md) | When to use this component vs. NAT `/evaluate`. |
 | [Troubleshooting](./troubleshooting.md) | Judge-model gotchas and known limitations. |
 
 ## How it runs (BYOB, in-process)
 
-This component does **not** use `nemo-evaluator-launcher`. The launcher runs every
-task inside an `nvcr.io` Docker container (`--gpus all`) and only exposes fixed
-academic benchmarks (MMLU, GSM8K, MTBench, …) — there is no generic
-"custom Q&A + judge" task, and the Docker path won't run on a laptop.
+This component does **not** use `nemo-evaluator-launcher`. The launcher runs every task inside an `nvcr.io` Docker container (`--gpus all`) and only exposes fixed academic benchmarks (MMLU, GSM8K, MTBench, …). There is no generic custom Q&A plus judge task, and the Docker path does not run on a laptop.
 
-Instead it uses NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a custom
-benchmark defined in plain Python, run **in-process**. Both the agent (target) and
-the judge are reached over plain OpenAI-compatible HTTP — there is **no LiteLLM
-layer** (this matters for model names — see [Troubleshooting](./troubleshooting.md)).
+Instead it uses NeMo's **BYOB** framework (`nemo_evaluator.contrib.byob`): a custom benchmark defined in plain Python, run **in-process**. Both the agent (target) and the judge are reached over plain OpenAI-compatible HTTP. There is **no LiteLLM layer** on the judge path (this matters for model names&mdash;see [Troubleshooting](./troubleshooting.md)).
 
 ```
 run.py
@@ -52,10 +41,7 @@ run.py
   └─ normalizes raw output → output/eval_results.json
 ```
 
-Each run uses **one** benchmark, selected by the pipeline YAML. Benchmarks are
-either **judge-based** (an LLM grades the response) or **judge-free**
-(deterministic checks, no judge model or credentials needed). See
-[Benchmarks](./benchmarks.md).
+Each run uses **one** benchmark, selected by the pipeline YAML. Benchmarks are either **judge-based** (an LLM grades the response) or **judge-free** (deterministic checks, no judge model or credentials needed). See [Benchmarks](./benchmarks.md).
 
 ## Quick start
 
@@ -73,27 +59,25 @@ task eval -- --endpoint ... --pipeline ... --dry-run
 task summarize
 ```
 
-1. **Pick a pipeline** — choose one of the 8 defaults in `user_pipelines/`. You
-   usually don't edit it; just point `--dataset` at your data. See [Pipelines](./pipelines.md).
-2. **Pick or build a dataset** — copy `user_datasets/sample_<benchmark>.json`, or
-   generate cases with `task generate`. See [Datasets](./datasets.md).
-3. **Run** — from the external CLI, or directly with `task eval` / `uv run python run.py`.
-4. **Read results** — `output/eval_status.json` (status) and `output/eval_results.json`
-   (results). See [Outputs](./outputs.md).
+1. **Pick a pipeline**&mdash;choose one of the 8 defaults in `user_pipelines/`. You usually do not edit it; point `--dataset` at your data. See [Pipelines](./pipelines.md).
+2. **Pick or build a dataset**&mdash;copy `user_datasets/sample_<benchmark>.json`, or generate cases with `task generate`. See [Datasets](./datasets.md).
+3. **Run**&mdash;from the external CLI, or directly with `task eval` / `uv run python run.py`.
+4. **Read results**&mdash;`output/eval_status.json` (status) and `output/eval_results.json` (results). See [Outputs](./outputs.md).
+
+For a guided walkthrough, start with [Getting started](./getting-started.md).
 
 ## File structure
 
 ```
 <component>/
-├── run.py                      # Thin CLI wrapper → datarobot_genai.eval.cli.run_main (af-component target)
+├── run.py                      # Thin CLI wrapper → datarobot_genai.eval.cli.run_main
 ├── generate.py                 # Thin CLI wrapper → datarobot_genai.eval.cli.generate_main
 ├── summarize.py                # Thin CLI wrapper → datarobot_genai.eval.cli.summarize_main
 ├── Taskfile.yml                # task eval / generate / summarize / test / lint
 ├── pyproject.toml              # uv environment + [tool.af-component] marker
-│                               # The eval engine (EvalRunner, benchmarks, generator, etc.)
-│                               # lives in the datarobot-genai[eval] package, not here.
+│                               # Eval engine lives in datarobot-genai[eval], not here.
 │
-├── user_pipelines/             # Pipeline YAML you select/edit
+├── user_pipelines/             # Pipeline YAML you select or edit
 │   ├── <8 default pipelines>.yaml
 │   ├── user_example_*.py       # Copy-me templates for custom benchmarks
 │   └── user_example_*.yaml     # Copy-me templates for custom pipelines
@@ -111,9 +95,9 @@ task summarize
 
 ```bash
 uv run python run.py \
-  --endpoint  http://localhost:8842/v1 \    # agent OpenAI-compatible endpoint
-  --pipeline  answer_quality.yaml \          # filename in user_pipelines/
-  --dataset   user_datasets/sample_answer_quality.json   # optional
+  --endpoint  http://localhost:8842/v1 \
+  --pipeline  answer_quality.yaml \
+  --dataset   user_datasets/sample_answer_quality.json
 ```
 
 | Flag | Required | Description |
@@ -123,22 +107,19 @@ uv run python run.py \
 | `--dataset` | no | Path to a test-case JSON file (defaults to `user_datasets/sample_answer_quality.json`). |
 | `--dry-run` | no | Validate inputs and print what would run, without executing. |
 
-**Environment variables:**
+**Environment variables**:
 
 | Variable | Required | Description |
 |---|:---:|---|
 | `DATAROBOT_API_TOKEN` | yes | Bearer token for the DR LLM gateway (judge runs and `task generate`). Set in `.env`. |
-| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (e.g. `https://app.datarobot.com`). Set in `.env`. |
-| `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set — a local DRUM agent needs none. |
+| `DATAROBOT_ENDPOINT` | yes | DataRobot endpoint URL (for example `https://app.datarobot.com`). Set in `.env`. |
+| `AGENT_API_KEY` | no | Bearer token for the agent endpoint. Only sent if set&mdash;a local DRUM agent needs none. |
 
-The judge `url` / `model_id` / `api_key_name` come from the pipeline YAML;
-`run.py` exports them to the benchmark as `JUDGE_URL` / `JUDGE_MODEL_ID` /
-`JUDGE_API_KEY_NAME`. Judge-free pipelines need no judge credentials.
+The judge `url`, `model_id`, and `api_key_name` come from the pipeline YAML. `run.py` exports them to the benchmark as `JUDGE_URL`, `JUDGE_MODEL_ID`, and `JUDGE_API_KEY_NAME`. Judge-free pipelines need no judge credentials.
 
 ## Core CLI detection
 
-The core CLI discovers this component by scanning for `pyproject.toml` files with
-a `[tool.af-component]` table of `type = "evaluation"`:
+The core CLI discovers this component by scanning for `pyproject.toml` files with a `[tool.af-component]` table of `type = "evaluation"`:
 
 ```python
 import tomllib
@@ -153,5 +134,4 @@ for pyproject in Path(".").rglob("pyproject.toml"):
         #           --endpoint <url> --pipeline <file> --dataset <file>
 ```
 
-The marker also records `pipelines_dir`, `datasets_dir`, `output_status`, and
-`output_results` so the CLI can list options and locate results.
+The marker also records `pipelines_dir`, `datasets_dir`, `output_status`, and `output_results` so the CLI can list options and locate results.
