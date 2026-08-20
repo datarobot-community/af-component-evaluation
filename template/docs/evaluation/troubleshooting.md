@@ -28,7 +28,7 @@ If you specifically need Claude as judge, write a custom judge call in your scor
 
 ## Adversarial prompts can content-filter the judge
 
-When judging `safety_refusal` or `prompt_injection` cases, some model endpoints apply input content filtering that can reject the adversarial text and return a `400`. In that case `judge_score()` returns `CALL_ERROR`.
+When judging adversarial cases in judge-based benchmarks such as `safety_refusal`, some model endpoints apply input content filtering that can reject the adversarial text and return a `400`. In that case `judge_score()` returns `CALL_ERROR`.
 
 This is a **judge-side** failure, not an agent failure. The component treats it as [inconclusive](./outputs.md): the case gets `score: null` and `passed: null`, and is excluded from rates instead of dragging down the pass rate. The summary reports it under `inconclusive_cases`.
 
