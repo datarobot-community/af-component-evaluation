@@ -8,6 +8,13 @@ on:
       - "copier.yml"
       - "Taskfile.yml"
       - ".github/workflows/afcomponentevaluation-test.yaml"
+      # The root project, which renders the template rather than being tested by
+      # this job. Listed anyway so a change confined to it cannot leave a pull
+      # request with three required checks pending forever. That is what an
+      # automated cve-sync resync looks like when the floor it moves happens not
+      # to appear in the template's constraint list.
+      - "pyproject.toml"
+      - "uv.lock"
   pull_request:
     branches: ["main"]
     paths:
@@ -15,6 +22,13 @@ on:
       - "copier.yml"
       - "Taskfile.yml"
       - ".github/workflows/afcomponentevaluation-test.yaml"
+      # The root project, which renders the template rather than being tested by
+      # this job. Listed anyway so a change confined to it cannot leave a pull
+      # request with three required checks pending forever. That is what an
+      # automated cve-sync resync looks like when the floor it moves happens not
+      # to appear in the template's constraint list.
+      - "pyproject.toml"
+      - "uv.lock"
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
