@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.32 - 2026-08-20
+- Add automated cve-sync monitoring policies
+
 ## 11.10.31 - 2026-08-19
 - Upgraded the shared `datarobot-oss/github-actions` workflows from `0.0.18` to `0.0.24`. The backport
   workflow now refuses a pull request whose head branch lives in a fork and stops inheriting the
