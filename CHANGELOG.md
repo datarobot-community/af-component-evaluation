@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.33 - 2026-08-20
+- Upgrade automation policies
+
 ## 11.10.32 - 2026-08-20
 - Add automated cve-sync monitoring policies
 
