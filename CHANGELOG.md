@@ -18,6 +18,11 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.34 - 2026-08-24
+- Raise the `pip` floor from `>=26.1.2` to `>=26.2`.
+- Regenerate `template/*/uv.lock` from the updated template so a rendered component picks the new
+  minimums up.
+
 ## 11.10.33 - 2026-08-20
 - Upgrade automation policies
 

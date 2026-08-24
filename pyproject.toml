@@ -1,6 +1,6 @@
 [project]
 name = "af-component-evaluation"
-version = "11.10.33"
+version = "11.10.34"
 description = "Batch evaluation framework for DataRobot agents using NeMo Evaluator"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -36,7 +36,7 @@ constraint-dependencies = [
     "openai>=2.30.0",
     "pdfminer.six>=20251230",
     "pillow>=12.3.0",
-    "pip>=26.1.2",
+    "pip>=26.2",
     "pyarrow>=23.0.1",
     "pyasn1>=0.6.4",
     "pygments>=2.20.0",
