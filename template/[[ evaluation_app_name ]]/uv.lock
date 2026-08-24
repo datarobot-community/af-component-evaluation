@@ -34,7 +34,7 @@ constraints = [
     { name = "openai", specifier = ">=2.30.0" },
     { name = "pdfminer-six", specifier = ">=20251230" },
     { name = "pillow", specifier = ">=12.3.0" },
-    { name = "pip", specifier = ">=26.1.2" },
+    { name = "pip", specifier = ">=26.2" },
     { name = "pyarrow", specifier = ">=23.0.1" },
     { name = "pyasn1", specifier = ">=0.6.4" },
     { name = "pygments", specifier = ">=2.20.0" },
@@ -456,7 +456,7 @@ wheels = [
 
 [[package]]
 name = "evaluations"
-version = "0.1.0"
+version = "11.10.0"
 source = { virtual = "." }
 dependencies = [
     { name = "datarobot-genai", extra = ["eval"] },
