@@ -19,7 +19,7 @@ Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
 ## 11.10.35 - 2026-08-28
-- Re-emit the cve-sync residue block. No dependency floor moved.
+- Re-sync cve-sync and remove dependencies that aren't used.
 
 ## 11.10.34 - 2026-08-24
 - Raise the `pip` floor from `>=26.1.2` to `>=26.2`.
