@@ -19,8 +19,6 @@ Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
 ## 11.10.36 - 2026-08-31
-- Narrow the cve-sync residue block to the packages this project actually resolves, dropping 41 that
-  could never affect its lock.
 - Raise the `nltk` floor from `>=3.10.0` to `>=3.10.2`.
 - Regenerate `template/*/uv.lock` from the updated template so a rendered component picks the new
   minimums up.
