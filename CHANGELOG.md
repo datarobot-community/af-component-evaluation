@@ -18,6 +18,11 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.36 - 2026-08-31
+- Raise the `nltk` floor from `>=3.10.0` to `>=3.10.2`.
+- Regenerate `template/*/uv.lock` from the updated template so a rendered component picks the new
+  minimums up.
+
 ## 11.10.35 - 2026-08-28
 - Re-sync cve-sync and remove dependencies that aren't used.
 
