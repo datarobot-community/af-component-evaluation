@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.38 - 2026-09-01
+- Raise the minimum `nltk` version from `>=3.10.2` to `>=3.10.3`.
+
 ## 11.10.37 - 2026-09-01
 - Move the cve-sync workflow onto the shared reusable workflows in
   `datarobot-oss/cve-sync`, so a fix to the automation reaches this repo on its next
