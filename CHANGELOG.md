@@ -18,6 +18,13 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.37 - 2026-09-01
+- Move the cve-sync workflow onto the shared reusable workflows in
+  `datarobot-oss/cve-sync`, so a fix to the automation reaches this repo on its next
+  scheduled run instead of needing a pull request here.
+- `.taskfiles/cve-sync.yml` is now generated from upstream and refreshed automatically,
+  so it can no longer drift. Do not edit it by hand.
+
 ## 11.10.36 - 2026-08-31
 - Raise the `nltk` floor from `>=3.10.0` to `>=3.10.2`.
 - Regenerate `template/*/uv.lock` from the updated template so a rendered component picks the new
