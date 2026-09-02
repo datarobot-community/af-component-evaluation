@@ -18,6 +18,11 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.40 - 2026-09-02
+- Raise the minimum `pypdf` version from `>=6.15.0` to `>=6.16.1`.
+- Raise the minimum `tornado` version from `>=6.5.7` to `>=6.5.8`.
+- Raise the minimum `transformers` version from `>=5.5.0` to `>=5.10.0`.
+
 ## 11.10.39 - 2026-09-02
 - Add a minimum version for `hydra-core`: `>=1.3.4`.
 
