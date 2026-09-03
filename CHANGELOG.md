@@ -18,6 +18,16 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.41 - 2026-09-03
+- Raise the minimum `banks` version from `>=2.4.2` to `>=2.4.5`.
+- Add a minimum version for `datasets`: `>=5.0.1`.
+- Add a minimum version for `gitpython`: `>=3.1.59`.
+- Add a minimum version for `langchain-core`: `>=1.3.3`.
+- Add a minimum version for `litellm`: `>=1.84.0`.
+- Add a minimum version for `mako`: `>=1.3.12`.
+- Raise the minimum `mistune` version from `>=3.3.0` to `>=3.3.3`.
+- Add a minimum version for `ujson`: `>=5.13.0`.
+
 ## 11.10.40 - 2026-09-02
 - Raise the minimum `pypdf` version from `>=6.15.0` to `>=6.16.1`.
 - Raise the minimum `tornado` version from `>=6.5.7` to `>=6.5.8`.
