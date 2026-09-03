@@ -69,7 +69,7 @@ jobs:
   # Tag that version and cut the release. Skips quietly if the tag exists.
   release:
     needs: version
-    uses: datarobot-oss/github-actions/.github/workflows/create-release-on-merge.yaml@0.0.24
+    uses: datarobot-oss/github-actions/.github/workflows/create-release-on-merge.yaml@0.0.25
     with:
       version: ${{ needs.version.outputs.version }}
     permissions:
