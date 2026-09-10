@@ -64,7 +64,7 @@ jobs:
   # On PR open/edit: comment a link to any Jira ticket found in the title or branch name.
   add-jira-link:
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'edited')
-    uses: datarobot-oss/github-actions/.github/workflows/add-jira-link.yaml@0.0.24
+    uses: datarobot-oss/github-actions/.github/workflows/add-jira-link.yaml@0.0.25
     with:
       # Your Jira tenant. Change the host to your own, or set it to '' to turn
       # the Jira comment off. Left as-is, the comment links to DataRobot's Jira.
