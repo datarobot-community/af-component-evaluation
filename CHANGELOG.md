@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.42
+- Enable Github Application for opening PRs
+
 ## 11.10.41 - 2026-09-03
 - Raise the minimum `banks` version from `>=2.4.2` to `>=2.4.5`.
 - Add a minimum version for `datasets`: `>=5.0.1`.
