@@ -14,7 +14,23 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 5
+    # Everything lands in ONE pull request. Without a group, Dependabot opens a
+    # separate PR per action, which for this repo means up to eight PRs for a
+    # single `datarobot-oss/github-actions` release. The wildcard pattern plus
+    # all three update-types keeps majors in that same PR instead of splitting
+    # them out on their own.
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+          - "major"
+    open-pull-requests-limit: 1
     labels:
       - "dependencies"
       - "github-actions"
+    commit-message:
+      prefix: "ci"
