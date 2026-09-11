@@ -71,3 +71,20 @@ allowed_paths:
 
 # `main review` allows squash only; any other method is refused by GitHub.
 merge_method: squash
+
+# ─────────────────────────────────────────────────────────────────────────────
+# What happens when automerge gives up.
+#
+# Transient refusals (checks still running, settling, branch behind base) just
+# wait for the next poll. Terminal ones do not: a red check never goes green on
+# its own, and a PR touching files outside `allowed_paths` never will.
+#
+# On a terminal refusal the bot drops the `automerge` label, applies the label
+# below, and posts a new comment explaining why. Dropping `automerge` is what
+# makes that happen exactly once — the PR stops being a candidate.
+#
+# `00 - Ready for Review` puts the PR into the normal review queue. Because the
+# label is applied with the App token rather than GITHUB_TOKEN, it also triggers
+# workflow-pr-automation.yaml's Slack ping, so somebody actually hears about it.
+# ─────────────────────────────────────────────────────────────────────────────
+escalate_label: "00 - Ready for Review"

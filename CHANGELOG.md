@@ -18,6 +18,13 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.45 - 2026-09-11
+- Hand a failing automerge PR to a human instead of letting it stall. When a check has actually
+  failed, or the PR falls outside the policy's file limits, `dr-auto-merge` now removes the
+  `automerge` label, applies `00 - Ready for Review`, and comments explaining what went wrong.
+  Transient states (checks still running, a settle window, a branch behind base) still just wait
+  for the next poll. Requires `0.0.28` of the shared workflow.
+
 ## 11.10.44 - 2026-09-11
 - Replace the Dependabot self-merge workflow with the shared `automerge` workflow, driven by
   the `dr-auto-merge` GitHub App. Dependabot's grouped github-actions bump is now approved and
