@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.43 - 2026-09-11
+- Add a minimum version for `crewai-tools`: `>=1.15.21`.
+
 ## 11.10.42
 - Enable Github Application for opening PRs
 
