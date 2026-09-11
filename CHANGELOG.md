@@ -19,7 +19,13 @@ Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
 ## 11.10.44 - 2026-09-11
-- Optimize dependabot
+- Replace the Dependabot self-merge workflow with the shared `automerge` workflow, driven by
+  the `dr-auto-merge` GitHub App. Dependabot's grouped github-actions bump is now approved and
+  merged unattended once every check named in `.github/automerge.yaml` has reported green.
+  Starts in `report` mode, which merges nothing.
+- Bump the `ensure-labels` caller to `0.0.27` so the `automerge` and Dependabot ecosystem
+  labels are created. Dependabot silently ignores a label that does not exist in the repo, so
+  this has to land before the label is useful.
 
 ## 11.10.43 - 2026-09-11
 - Add a minimum version for `crewai-tools`: `>=1.15.21`.
