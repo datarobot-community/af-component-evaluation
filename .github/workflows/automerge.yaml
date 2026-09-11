@@ -19,8 +19,10 @@ name: Automerge
 #             to validate the policy against live PRs; it caught a real bug
 #             (every genuine Dependabot commit is committed by `web-flow`, not
 #             by Dependabot) before that bug could do anything.
-#   approve - also approves. The merge is still a human click.
-#   merge   - also merges.
+#   approve - also approves. The merge is still a human click. SKIPPED here:
+#             it exercises nothing that `report` had not already proven, and
+#             the untested path was always the merge itself.
+#   merge   - also approves AND merges. Adopted 2026-09-11.
 #
 # Even in `merge` the approval and the merge happen on DIFFERENT polls, so
 # there is always a window of roughly one poll interval to intervene.
@@ -44,7 +46,7 @@ jobs:
     with:
       # Public metadata, not a secret: `dr-auto-merge`.
       app_id: '4912188'
-      mode: 'approve'
+      mode: 'merge'
     secrets:
       app_private_key: ${{ secrets.DR_AUTO_MERGE_PRIVATE_KEY }}
     permissions:

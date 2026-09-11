@@ -19,7 +19,11 @@ Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
 ## 11.10.46 - 2026-09-11
-- Enable auto-merge in af-component-evaluation
+- Enable auto-merge in af-component-evaluation. `dr-auto-merge` now approves and merges
+  Dependabot's grouped github-actions bump without a human, once every check named in
+  `.github/automerge.yaml` has reported green. The approval and the merge happen on separate
+  polls, so there is always a window to intervene, and the `main` ruleset still requires every
+  status check with no bypass, so a failing PR cannot be merged by this or any other route.
 
 ## 11.10.45 - 2026-09-11
 - Hand a failing automerge PR to a human instead of letting it stall. When a check has actually
