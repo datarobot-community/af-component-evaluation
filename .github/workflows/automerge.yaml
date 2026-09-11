@@ -14,10 +14,20 @@ name: Automerge
 # may refuse. This merges as the `dr-auto-merge` App instead, which does hold
 # the bypass on the `main review` ruleset.
 # ─────────────────────────────────────────────────────────────────────────────
-# MODE: start at `report`. It approves and merges NOTHING, and comments its
-# verdict on each candidate PR, so the policy can be checked against real
-# traffic before it is given the ability to act. Move to `approve`, then
-# `merge`, one step at a time.
+# MODE, in the order they were adopted:
+#   report  - comments a verdict, approves and merges nothing. Used 2026-09-11
+#             to validate the policy against live PRs; it caught a real bug
+#             (every genuine Dependabot commit is committed by `web-flow`, not
+#             by Dependabot) before that bug could do anything.
+#   approve - also approves. The merge is still a human click. SKIPPED here:
+#             it exercises nothing that `report` had not already proven, and
+#             the untested path was always the merge itself.
+#   merge   - also approves AND merges. Adopted 2026-09-11.
+#
+# Even in `merge` the approval and the merge happen on DIFFERENT polls, so
+# there is always a window of roughly one poll interval to intervene.
+#
+# Dropping back to `report` is a one-word revert if anything looks wrong.
 # ─────────────────────────────────────────────────────────────────────────────
 # A cron, not `pull_request`: a Dependabot `pull_request` event cannot read this
 # repo's Actions secrets, so the App key would arrive empty. Polling also
@@ -36,7 +46,7 @@ jobs:
     with:
       # Public metadata, not a secret: `dr-auto-merge`.
       app_id: '4912188'
-      mode: 'report'
+      mode: 'merge'
     secrets:
       app_private_key: ${{ secrets.DR_AUTO_MERGE_PRIVATE_KEY }}
     permissions:
