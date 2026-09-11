@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.46 - 2026-09-11
+- Enable auto-merge in af-component-evaluation
+
 ## 11.10.45 - 2026-09-11
 - Hand a failing automerge PR to a human instead of letting it stall. When a check has actually
   failed, or the PR falls outside the policy's file limits, `dr-auto-merge` now removes the
