@@ -1,0 +1,43 @@
+name: Automerge
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Automerge
+# Approves and merges Dependabot's grouped github-actions bump once every check
+# in `.github/automerge.yaml` has reported green. Replaces the older
+# dependabot-automerge.yml, which asked Dependabot to merge its own PRs.
+#
+# Why that was replaced: ruleset bypass resolves against whoever PERFORMS the
+# merge. `gh pr merge --auto` merges as `github-actions[bot]`, which holds no
+# bypass and cannot be given one, so the PR would sit waiting on a code-owner
+# review forever. The `@dependabot squash and merge` comment was a workaround
+# whose command was itself authored by `github-actions[bot]`, which Dependabot
+# may refuse. This merges as the `dr-auto-merge` App instead, which does hold
+# the bypass on the `main review` ruleset.
+# ─────────────────────────────────────────────────────────────────────────────
+# MODE: start at `report`. It approves and merges NOTHING, and comments its
+# verdict on each candidate PR, so the policy can be checked against real
+# traffic before it is given the ability to act. Move to `approve`, then
+# `merge`, one step at a time.
+# ─────────────────────────────────────────────────────────────────────────────
+# A cron, not `pull_request`: a Dependabot `pull_request` event cannot read this
+# repo's Actions secrets, so the App key would arrive empty. Polling also
+# self-heals when GitHub drops a workflow dispatch, and makes "wait for the
+# checks to finish" free.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  automerge:
+    uses: datarobot-oss/github-actions/.github/workflows/automerge.yaml@0.0.27
+    with:
+      # Public metadata, not a secret: `dr-auto-merge`.
+      app_id: '4912188'
+      mode: 'report'
+    secrets:
+      app_private_key: ${{ secrets.DR_AUTO_MERGE_PRIVATE_KEY }}
+    permissions:
+      contents: read

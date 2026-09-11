@@ -1,0 +1,73 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Automerge policy.
+#
+# The presence of this file is what enrols the repo. Delete it and automerge
+# stops, with no workflow edit needed.
+#
+# It is always read from the DEFAULT BRANCH, never from a PR head, so a pull
+# request cannot ship a policy that grants itself permission to be merged.
+#
+# See docs/AUTOMERGE.md in datarobot-oss/github-actions for the full picture,
+# and note the one rule that matters: the ruleset is the enforcer, this file is
+# an EXTRA gate on top of it. `main` carries required_status_checks with an
+# empty bypass list, so nothing here can cause a failing PR to merge.
+# ─────────────────────────────────────────────────────────────────────────────
+
+version: 1
+
+# Only Dependabot for now. cve-sync opens its PRs as the `cve-sync` App, and it
+# will be added here once this has run unattended for a while — one bot at a
+# time, so a surprise has an obvious source.
+allowed_authors:
+  - dependabot[bot]
+
+label: automerge
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Each of these must be PRESENT and green. Not "not failing": present. A PR
+# where a suite never ran at all is refused.
+#
+# The contexts `main`'s rulesets already require are added automatically from
+# the branch rules API, so this list does not have to repeat them. The three
+# `Test` legs and `gate / cve-sync gate` ARE repeated anyway, deliberately: if
+# someone edits the ruleset and drops one, this file still holds the line.
+#
+# `Changelog / Changelog updated` is not required by the ruleset and is always
+# skipped on a bot PR (`skip_bot_authors: true`), so listing it asserts one
+# thing only: that the workflow was dispatched at all. Given how often GitHub
+# silently fails to dispatch a run, that is worth asserting.
+#
+# DELIBERATELY ABSENT:
+# - `Eval smoke`   — eval-smoke.yml is filtered to `template/**` and has no
+#                    always-reporting gate job, so it never reports on a
+#                    Dependabot PR. Listing it would wedge every PR forever.
+# - `version`      — workflow-create-release-from-pyproject.yaml runs on push to
+#                    main, not on pull_request.
+# - `backport`     — runs on closed PRs.
+# ─────────────────────────────────────────────────────────────────────────────
+expected_checks:
+  - "Test (python3.11)"
+  - "Test (python3.12)"
+  - "Test (python3.13)"
+  - "gate / cve-sync gate"
+  - "Changelog / Changelog updated"
+
+# Refuse when ANY check is failing, including ones neither required nor listed.
+# `skipped` and `neutral` count as a pass.
+block_on_any_failure: true
+
+settle_seconds: 300
+
+# A grouped github-actions bump touches one file per workflow. Nine workflows
+# plus the changelog leaves room; anything much larger is not the PR we think
+# it is and deserves a human.
+max_changed_files: 15
+
+# Dependabot here is scoped to the github-actions ecosystem, so a PR touching
+# anything outside .github/ is by definition not the PR this policy is for.
+allowed_paths:
+  - ".github/workflows/**"
+  - ".github/dependabot.yml"
+
+# `main review` allows squash only; any other method is refused by GitHub.
+merge_method: squash
