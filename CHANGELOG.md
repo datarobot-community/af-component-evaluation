@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.47 - 2026-09-14
+- Add docs as co-codeowner for documentation
+
 ## 11.10.46 - 2026-09-11
 - Enable auto-merge in af-component-evaluation. `dr-auto-merge` now approves and merges
   Dependabot's grouped github-actions bump without a human, once every check named in
