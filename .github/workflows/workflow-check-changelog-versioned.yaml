@@ -42,9 +42,9 @@ jobs:
     steps:
       # Pinned by SHA with the version in a comment. Once this file is in your
       # repo, your own Dependabot config keeps the pin fresh.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: version
-        uses: datarobot-oss/github-actions/actions/read-pyproject-version@0.0.24
+        uses: datarobot-oss/github-actions/actions/read-pyproject-version@0.0.26
 
   # Require an entry filed under that version. The explicit `name` keeps the
   # status check readable: it reports as `Changelog / Changelog updated` rather
@@ -53,7 +53,7 @@ jobs:
   changelog:
     name: Changelog
     needs: version
-    uses: datarobot-oss/github-actions/.github/workflows/check-changelog.yaml@0.0.24
+    uses: datarobot-oss/github-actions/.github/workflows/check-changelog.yaml@0.0.26
     permissions:
       contents: read
     with:

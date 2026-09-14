@@ -19,7 +19,7 @@ jobs:
       image: ghcr.io/astral-sh/uv:python3.11-bookworm
     steps:
       - name: Checkout
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
       - name: Render copier instance
         shell: sh
         run: |

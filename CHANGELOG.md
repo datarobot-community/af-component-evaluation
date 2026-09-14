@@ -18,6 +18,71 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.46 - 2026-09-11
+- Enable auto-merge in af-component-evaluation. `dr-auto-merge` now approves and merges
+  Dependabot's grouped github-actions bump without a human, once every check named in
+  `.github/automerge.yaml` has reported green. The approval and the merge happen on separate
+  polls, so there is always a window to intervene, and the `main` ruleset still requires every
+  status check with no bypass, so a failing PR cannot be merged by this or any other route.
+
+## 11.10.45 - 2026-09-11
+- Hand a failing automerge PR to a human instead of letting it stall. When a check has actually
+  failed, or the PR falls outside the policy's file limits, `dr-auto-merge` now removes the
+  `automerge` label, applies `00 - Ready for Review`, and comments explaining what went wrong.
+  Transient states (checks still running, a settle window, a branch behind base) still just wait
+  for the next poll. Requires `0.0.28` of the shared workflow.
+
+## 11.10.44 - 2026-09-11
+- Replace the Dependabot self-merge workflow with the shared `automerge` workflow, driven by
+  the `dr-auto-merge` GitHub App. Dependabot's grouped github-actions bump is now approved and
+  merged unattended once every check named in `.github/automerge.yaml` has reported green.
+  Starts in `report` mode, which merges nothing.
+- Bump the `ensure-labels` caller to `0.0.27` so the `automerge` and Dependabot ecosystem
+  labels are created. Dependabot silently ignores a label that does not exist in the repo, so
+  this has to land before the label is useful.
+
+## 11.10.43 - 2026-09-11
+- Add a minimum version for `crewai-tools`: `>=1.15.21`.
+
+## 11.10.42
+- Enable Github Application for opening PRs
+
+## 11.10.41 - 2026-09-03
+- Raise the minimum `banks` version from `>=2.4.2` to `>=2.4.5`.
+- Add a minimum version for `datasets`: `>=5.0.1`.
+- Add a minimum version for `gitpython`: `>=3.1.59`.
+- Add a minimum version for `langchain-core`: `>=1.3.3`.
+- Add a minimum version for `litellm`: `>=1.84.0`.
+- Add a minimum version for `mako`: `>=1.3.12`.
+- Raise the minimum `mistune` version from `>=3.3.0` to `>=3.3.3`.
+- Add a minimum version for `ujson`: `>=5.13.0`.
+
+## 11.10.40 - 2026-09-02
+- Raise the minimum `pypdf` version from `>=6.15.0` to `>=6.16.1`.
+- Raise the minimum `tornado` version from `>=6.5.7` to `>=6.5.8`.
+- Raise the minimum `transformers` version from `>=5.5.0` to `>=5.10.0`.
+
+## 11.10.39 - 2026-09-02
+- Add a minimum version for `hydra-core`: `>=1.3.4`.
+
+## 11.10.38 - 2026-09-01
+- Raise the minimum `nltk` version from `>=3.10.2` to `>=3.10.3`.
+
+## 11.10.37 - 2026-09-01
+- Move the cve-sync workflow onto the shared reusable workflows in
+  `datarobot-oss/cve-sync`, so a fix to the automation reaches this repo on its next
+  scheduled run instead of needing a pull request here.
+- `.taskfiles/cve-sync.yml` is now generated from upstream and refreshed automatically,
+  so it can no longer drift. Do not edit it by hand.
+
+## 11.10.36 - 2026-08-31
+- Raise the `nltk` floor from `>=3.10.0` to `>=3.10.2`.
+- Regenerate `template/*/uv.lock` from the updated template so a rendered component picks the new
+  minimums up.
+
+## 11.10.35 - 2026-08-28
+- Re-sync cve-sync and remove dependencies that aren't used.
+
 ## 11.10.34 - 2026-08-24
 - Raise the `pip` floor from `>=26.1.2` to `>=26.2`.
 - Regenerate `template/*/uv.lock` from the updated template so a rendered component picks the new
