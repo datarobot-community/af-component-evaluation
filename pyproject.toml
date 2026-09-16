@@ -1,6 +1,6 @@
 [project]
 name = "af-component-evaluation"
-version = "11.10.47"
+version = "11.10.48"
 description = "Batch evaluation framework for DataRobot agents using NeMo Evaluator"
 readme = "README.md"
 requires-python = ">=3.11"
