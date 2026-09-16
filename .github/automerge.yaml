@@ -15,11 +15,25 @@
 
 version: 1
 
-# Only Dependabot for now. cve-sync opens its PRs as the `cve-sync` App, and it
-# will be added here once this has run unattended for a while — one bot at a
-# time, so a surprise has an obvious source.
+# ─────────────────────────────────────────────────────────────────────────────
+# Two bots now, added one at a time so a surprise has an obvious source.
+#
+# Dependabot since 2026-09-11. `cve-sync[bot]` added 2026-09-16, after the
+# Dependabot path had run unattended for a work week.
+#
+# The spelling matters: dr-auto-merge compares authors with no normalization, so
+# `cve-sync` without the `[bot]` suffix matches nothing. It also matches nothing
+# LOUDLY on the PR itself. A PR whose author is not on this list is not a
+# candidate at all, so it gets no comment and no hand-over; the only trace is one
+# row in a job summary in another repo.
+#
+# cve-sync decides per PR whether to apply the `automerge` label below, and it
+# reads this file to decide whether applying it would accomplish anything. See
+# docs/automerge.md in datarobot-oss/cve-sync.
+# ─────────────────────────────────────────────────────────────────────────────
 allowed_authors:
   - dependabot[bot]
+  - cve-sync[bot]
 
 label: automerge
 
@@ -37,13 +51,24 @@ label: automerge
 # thing only: that the workflow was dispatched at all. Given how often GitHub
 # silently fails to dispatch a run, that is worth asserting.
 #
+# One list, both authors. There is no per-author scoping here, so a context has
+# to be one that BOTH bots' PRs fire, which is what keeps the smoke test off the
+# list below.
+#
 # DELIBERATELY ABSENT:
-# - `Eval smoke`   — eval-smoke.yml is filtered to `template/**` and has no
-#                    always-reporting gate job, so it never reports on a
-#                    Dependabot PR. Listing it would wedge every PR forever.
-# - `version`      — workflow-create-release-from-pyproject.yaml runs on push to
-#                    main, not on pull_request.
-# - `backport`     — runs on closed PRs.
+#
+# - `Integration smoke test`: eval-smoke.yml is path-filtered to `template/**`
+#   and has no always-reporting gate job. A cve-sync PR does touch the template
+#   and fires it; a Dependabot PR never does, so listing it would wedge every
+#   Dependabot PR forever. It is not unguarded: `block_on_any_failure` below
+#   refuses on a red smoke test whether or not it is listed here. What is
+#   unguarded is the smoke test silently never being dispatched on a cve-sync
+#   PR. Closing that means giving eval-smoke.yml an `if: always()` gate job and
+#   dropping the workflow-level path filter, which is a change to that file, not
+#   to this one.
+# - `version`: workflow-create-release-from-pyproject.yaml runs on push to main,
+#   not on pull_request.
+# - `backport`: runs on closed PRs.
 # ─────────────────────────────────────────────────────────────────────────────
 expected_checks:
   - "Test (python3.11)"
@@ -56,18 +81,60 @@ expected_checks:
 # `skipped` and `neutral` count as a pass.
 block_on_any_failure: true
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Cursor Bugbot runs on this repo, and it reports through a review comment
+# rather than a check, so without this flag its findings are decorative: a PR
+# can carry a high-severity finding and still merge itself with everything
+# green.
+#
+# On a dependency PR that is the specific thing worth catching. Bugbot was the
+# only thing that noticed af-component-agent#692 letting generated agents
+# resolve MCP 2.x against adapters written for 1.x, on a PR where every check
+# passed.
+#
+# Only OPEN threads block. Resolving the conversation, or changing the code so
+# the thread goes outdated, clears it, which is what makes the escalation
+# recoverable rather than final.
+# ─────────────────────────────────────────────────────────────────────────────
+block_on_cursor_comments: true
+
 settle_seconds: 300
 
 # A grouped github-actions bump touches one file per workflow. Nine workflows
 # plus the changelog leaves room; anything much larger is not the PR we think
-# it is and deserves a human.
+# it is and deserves a human. A cve-sync resync here is six files at most, so
+# this bound is Dependabot's, not cve-sync's.
 max_changed_files: 15
 
-# Dependabot here is scoped to the github-actions ecosystem, so a PR touching
-# anything outside .github/ is by definition not the PR this policy is for.
+# ─────────────────────────────────────────────────────────────────────────────
+# Every changed file must match one of these. The two bots touch disjoint sets,
+# and the union is still narrow enough that a PR carrying a source change is
+# refused no matter which bot is somehow holding the label.
+#
+# Dependabot here is scoped to the github-actions ecosystem, so it stays inside
+# `.github/`.
+#
+# cve-sync takes the rest: the root manifest and lock, the changelog it stamps
+# because `stamps-release: true`, the template's jinja manifest, and the lock
+# artifact rebuilt from that jinja by `regenerate-task: install`. The template
+# entries are spelled file-by-file rather than as `template/**` on purpose: a
+# resync has no business editing template source, and if one ever does, this is
+# what hands the PR to a person instead of merging it.
+#
+# `.taskfiles/cve-sync.yml` is the vendored command file the resync rewrites
+# from the upstream definition so the local `task cve-sync:*` targets cannot
+# drift. It usually does not move; when it does, the PR should not escalate
+# over it.
+# ─────────────────────────────────────────────────────────────────────────────
 allowed_paths:
   - ".github/workflows/**"
   - ".github/dependabot.yml"
+  - ".taskfiles/cve-sync.yml"
+  - "CHANGELOG.md"
+  - "pyproject.toml"
+  - "uv.lock"
+  - "template/**/pyproject.toml.jinja"
+  - "template/**/uv.lock"
 
 # `main review` allows squash only; any other method is refused by GitHub.
 merge_method: squash
@@ -81,10 +148,16 @@ merge_method: squash
 #
 # On a terminal refusal the bot drops the `automerge` label, applies the label
 # below, and posts a new comment explaining why. Dropping `automerge` is what
-# makes that happen exactly once — the PR stops being a candidate.
+# makes that happen exactly once: the PR stops being a candidate.
 #
 # `00 - Ready for Review` puts the PR into the normal review queue. Because the
 # label is applied with the App token rather than GITHUB_TOKEN, it also triggers
 # workflow-pr-automation.yaml's Slack ping, so somebody actually hears about it.
+#
+# cve-sync applies this same label itself, before anything has run, when it
+# decides the change is not one a green check run settles. Same destination, two
+# different routes, and a reviewer can tell which by where the reason is: in the
+# PR body means cve-sync refused up front, in a comment means dr-auto-merge gave
+# up after the fact.
 # ─────────────────────────────────────────────────────────────────────────────
 escalate_label: "00 - Ready for Review"
