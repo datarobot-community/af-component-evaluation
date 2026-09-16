@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.48 - 2026-09-14
+- Enable dr-auto-merge for cve-sync PRs
+
 ## 11.10.47 - 2026-09-14
 - Add docs as co-codeowner for documentation
 
