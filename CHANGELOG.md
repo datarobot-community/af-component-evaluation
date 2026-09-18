@@ -18,6 +18,12 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.49 - 2026-09-18
+- Raise the minimum `gitpython` version from `>=3.1.59` to `>=3.1.60`.
+- Raise the minimum `jupyter-server` version from `>=2.20.0` to `>=2.21.0`.
+- Add a minimum version for `pydantic-settings`: `>=2.14.2`.
+- Raise the minimum `soupsieve` version from `>=2.8.4` to `>=2.9.0`.
+
 ## 11.10.48 - 2026-09-14
 - Enable dr-auto-merge for cve-sync PRs
 
