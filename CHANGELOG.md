@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.50 - 2026-09-21
+- Add a minimum version for `mkdocs-material`: `>=9.7.7`.
+
 ## 11.10.49 - 2026-09-18
 - Raise the minimum `gitpython` version from `>=3.1.59` to `>=3.1.60`.
 - Raise the minimum `jupyter-server` version from `>=2.20.0` to `>=2.21.0`.
