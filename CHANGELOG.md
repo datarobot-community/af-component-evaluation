@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.51 - 2026-09-26
+- Add a minimum version for `anyio`: `>=4.14.2`.
+
 ## 11.10.50 - 2026-09-21
 - Add a minimum version for `mkdocs-material`: `>=9.7.7`.
 
