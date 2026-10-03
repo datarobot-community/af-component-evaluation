@@ -18,6 +18,17 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.51 - 2026-10-03
+- Add a minimum version for `anyio`: `>=4.14.2`.
+- Raise the minimum `jupyterlab` version from `>=4.5.10` to `>=4.6.4`.
+- Add a minimum version for `langchain-nvidia-ai-endpoints`: `>=1.4.2`.
+- Raise the minimum `litellm` version from `>=1.84.0` to `>=1.96.2`.
+- Raise the minimum `notebook` version from `>=7.5.6` to `>=7.6.3`.
+- Raise the minimum `pyjwt` version from `>=2.13.0` to `>=2.15.0`.
+- Raise the minimum `pypdf` version from `>=6.16.1` to `>=6.19.0`.
+- Raise the minimum `tornado` version from `>=6.5.8` to `>=6.5.9`.
+- Raise the minimum `urllib3` version from `>=2.7.0` to `>=2.8.0`.
+
 ## 11.10.50 - 2026-09-21
 - Add a minimum version for `mkdocs-material`: `>=9.7.7`.
 
