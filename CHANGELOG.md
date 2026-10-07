@@ -18,6 +18,14 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.53 - 2026-10-07
+- Add a minimum version for `fsspec`: `>=2026.6.0`.
+- Add a minimum version for `langgraph-sdk`: `>=0.4.4`.
+- Add a minimum version for `multidict`: `>=6.9.1`.
+- Add a minimum version for `pymongo`: `>=4.18.2`.
+- Add a minimum version for `virtualenv`: `>=21.7.13`.
+- Add a minimum version for `werkzeug`: `>=3.1.9`.
+
 ## 11.10.52 - 2026-10-07
 - Local overrides config
 
