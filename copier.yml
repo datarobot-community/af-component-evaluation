@@ -33,6 +33,11 @@ _answers_file: ".datarobot/answers/evaluation-[[ evaluation_app_name ]].yml"
 _exclude:
     - "*.j2"
     - "*_templates"
+    # cve-sync's per-template overrides file. It is input for cve-sync's resync,
+    # which splices its entries into pyproject.toml.jinja and the pre-built lock.
+    # A rendered project never runs cve-sync, so the file would be noise there.
+    # cve-sync refuses a template overrides file that copier would copy.
+    - ".cve-sync-overrides.toml"
 
 _envops:
   block_start_string: "[%"
