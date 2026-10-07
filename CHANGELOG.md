@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.52 - 2026-10-07
+- Local overrides config
+
 ## 11.10.51 - 2026-10-05
 - Add a minimum version for `anyio`: `>=4.14.2`.
 - Raise the minimum `jupyterlab` version from `>=4.5.10` to `>=4.6.4`.
