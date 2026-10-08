@@ -19,6 +19,7 @@ Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
 ## 11.10.53 - 2026-10-07
+- Replace the legacy team with `agent-lifecycle` in CODEOWNERS (ALIFE-14).
 - Add a minimum version for `fsspec`: `>=2026.6.0`.
 - Add a minimum version for `langgraph-sdk`: `>=0.4.4`.
 - Add a minimum version for `multidict`: `>=6.9.1`.
