@@ -18,6 +18,10 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.54 - 2026-10-09
+- Raise the minimum `banks` version from `>=2.4.5` to `>=2.5.1`.
+- Raise the minimum `hydra-core` version from `>=1.3.4` to `>=1.3.7`.
+
 ## 11.10.53 - 2026-10-07
 - Replace the legacy team with `agent-lifecycle` in CODEOWNERS (ALIFE-14).
 - Add a minimum version for `fsspec`: `>=2026.6.0`.
