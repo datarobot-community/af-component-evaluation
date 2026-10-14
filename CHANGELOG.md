@@ -18,6 +18,12 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.55 - 2026-10-14
+- Add a minimum version for `hpack`: `>=4.2.0`.
+- Add a minimum version for `oauthlib`: `>=4.0.0`.
+- Add a minimum version for `sentence-transformers`: `>=5.6.0`.
+- Add a minimum version for `uv`: `>=0.12.18`.
+
 ## 11.10.54 - 2026-10-09
 - Raise the minimum `banks` version from `>=2.4.5` to `>=2.5.1`.
 - Raise the minimum `hydra-core` version from `>=1.3.4` to `>=1.3.7`.
