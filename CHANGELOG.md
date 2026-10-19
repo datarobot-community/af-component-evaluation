@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.57 - 2026-10-19
+- No minimum version changed; the generated dependency block was rewritten.
+
 ## 11.10.56 - 2026-10-15
 - Raise the minimum `gitpython` version from `>=3.1.60` to `>=3.1.62`.
 - Raise the minimum `mako` version from `>=1.3.12` to `>=1.4.2`.
