@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.59 - 2026-10-20
+- Raise the minimum `aiohttp` version from `>=3.14.3` to `>=3.14.4`.
+
 ## 11.10.58 - 2026-10-20
 - Add the `response_similarity.yaml` (judge-free) and `response_acceptability.yaml` (judge) pipelines, each with its own sample dataset. Each case lists `acceptable_responses`; similarity reports a 0-1 range and the judge rates 1-5. Raises the `datarobot-genai[eval]` pin from `>=0.27.6,<0.28.0` to `>=0.30.3,<0.31.0`, the first release with these benchmarks.
 - Document `benchmark.params` (pick the similarity metric) and `run.pass_threshold` (where `passed` flips), and add a "Choosing how to score a response" guide to the benchmarks docs and the agent skill.
