@@ -19,7 +19,7 @@ Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
 ## 11.10.58 - 2026-10-20
-- Add the `response_similarity.yaml` (judge-free) and `response_acceptability.yaml` (judge) pipelines, sharing `user_datasets/sample_response_similarity.json`. Each case lists `acceptable_responses`; similarity reports a 0-1 range and the judge rates 1-5. Raises the `datarobot-genai[eval]` pin from `>=0.27.6,<0.28.0` to `>=0.30.3,<0.31.0`, the first release with these benchmarks.
+- Add the `response_similarity.yaml` (judge-free) and `response_acceptability.yaml` (judge) pipelines, each with its own sample dataset. Each case lists `acceptable_responses`; similarity reports a 0-1 range and the judge rates 1-5. Raises the `datarobot-genai[eval]` pin from `>=0.27.6,<0.28.0` to `>=0.30.3,<0.31.0`, the first release with these benchmarks.
 - Document `benchmark.params` (pick the similarity metric) and `run.pass_threshold` (where `passed` flips), and add a "Choosing how to score a response" guide to the benchmarks docs and the agent skill.
 
 ## 11.10.57 - 2026-10-19

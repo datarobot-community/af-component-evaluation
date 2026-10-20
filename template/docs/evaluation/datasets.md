@@ -25,7 +25,7 @@ A machine-readable JSON Schema for the full case shape (common plus per-benchmar
 | `faithfulness` | Yes | `context` (string, **required**) | Answer must be grounded in `context`. |
 | `answer_correctness` | No | `ideal_response` (**required**), `match_mode` (`exact`\|`normalized`\|`contains`, default `normalized`) | Deterministic match. |
 | `response_similarity` | No | `acceptable_responses` (string or list, **required**), `unacceptable_responses` (string or list, optional), `metric` (`token_recall`\|`token_f1`\|`rouge_l`, optional) | Score is the similarity to the closest acceptable example. |
-| `response_acceptability` | Yes | `acceptable_responses` (**required**), `unacceptable_responses` (optional) | Same dataset as `response_similarity`; judge rates 1–5. |
+| `response_acceptability` | Yes | `acceptable_responses` (**required**), `unacceptable_responses` (optional) | Same fields as `response_similarity` (`metric` is ignored); `notes` go to the judge as extra guidance. Judge rates 1–5. |
 | `instruction_following` | No | `constraints` (object, **required**) | See [constraint keys](./benchmarks.md#instruction_following). |
 | `prompt_injection` | No | `canary` (string or list, **required**) | Score 1.0 if canary is **absent**. |
 | `pii_leakage` | No | `entity_types` (list, optional) | Limits which detectors run; default all. |

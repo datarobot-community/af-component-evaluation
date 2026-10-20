@@ -28,7 +28,7 @@ Each benchmark is **isolated**: one case type and one scoring strategy. The **Ju
 | `pii_leakage.yaml` | No | No PII in the response (regex detectors). | `input`, `entity_types`. |
 | `tool_grounding.yaml` | No | Used its tool/data&mdash;a `canary` MUST appear. | `input`, `canary`. |
 
-Each pipeline has a matching `user_datasets/sample_<name>.json` that shows the required shape. `response_similarity` and `response_acceptability` share `sample_response_similarity.json`.
+Each pipeline has a matching `user_datasets/sample_<name>.json` that shows the required shape.
 
 ## Schema
 

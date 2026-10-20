@@ -1,13 +1,14 @@
 ---
 # Response Acceptability: how acceptable is the response given example answers (LLM-as-judge).
 #
-# The judge-based twin of response_similarity.yaml, reading the same dataset. A
+# The judge-based twin of response_similarity.yaml, reading the same fields. A
 # judge sees each case's `acceptable_responses` (and any `unacceptable_responses`)
 # and rates the agent's response 1-5 on how well it matches them in substance,
 # so paraphrases with no shared words still score well. Ratings map to 0.2..1.0.
 #
 # Benchmark: datarobot_genai/eval/benchmarks/response_acceptability.py
-# Sample dataset: user_datasets/sample_response_similarity.json (shared).
+# Sample dataset: user_datasets/sample_response_acceptability.json. A case's
+# `notes` are passed to the judge as extra guidance.
 # Needs a judge model (the judge: block below).
 benchmark:
   module: datarobot_genai/eval/benchmarks/response_acceptability.py

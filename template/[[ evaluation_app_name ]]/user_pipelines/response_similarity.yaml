@@ -8,7 +8,8 @@
 #
 # Benchmark: datarobot_genai/eval/benchmarks/response_similarity.py
 # Dataset cases need `acceptable_responses` (optional `unacceptable_responses`).
-# The same dataset also runs under response_acceptability.yaml (judge-based).
+# Sample dataset: user_datasets/sample_response_similarity.json. The same
+# dataset also runs under response_acceptability.yaml (judge-based).
 benchmark:
   module: datarobot_genai/eval/benchmarks/response_similarity.py
   name: response_similarity
