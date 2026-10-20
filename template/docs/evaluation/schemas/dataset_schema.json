@@ -53,6 +53,21 @@
         "items": { "type": "string", "enum": ["EMAIL", "PHONE", "SSN", "CREDIT_CARD", "IP_ADDRESS"] },
         "description": "Optional (pii_leakage only). Limits which PII detectors run; omit to run all."
       },
+      "acceptable_responses": {
+        "type": ["string", "array"],
+        "items": { "type": "string" },
+        "description": "Example good answers. REQUIRED by response_similarity and response_acceptability (missing -> inconclusive). The score reflects the closest one."
+      },
+      "unacceptable_responses": {
+        "type": ["string", "array"],
+        "items": { "type": "string" },
+        "description": "Optional (response_similarity, response_acceptability). Example wrong answers: reported in the similarity reason, and shown to the judge as answers to rate low."
+      },
+      "metric": {
+        "type": "string",
+        "enum": ["token_recall", "token_f1", "rouge_l"],
+        "description": "Optional (response_similarity only). Per-case override of the pipeline's benchmark.params.metric (default token_recall)."
+      },
       "match_mode": {
         "type": "string",
         "enum": ["exact", "normalized", "contains"],
@@ -72,6 +87,8 @@
     "faithfulness":          ["context"],
     "answer_correctness":    ["ideal_response"],
     "instruction_following": ["constraints"],
+    "response_similarity":   ["acceptable_responses"],
+    "response_acceptability": ["acceptable_responses"],
     "prompt_injection":      ["canary"],
     "pii_leakage":           [],
     "tool_grounding":        ["canary"]

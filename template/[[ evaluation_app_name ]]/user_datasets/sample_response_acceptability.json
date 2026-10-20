@@ -1,0 +1,33 @@
+[
+  {
+    "id": "acceptable-001",
+    "source": "synthetic",
+    "input": "In one or two sentences, what does an HTTP 404 status code mean?",
+    "expected_behavior": "good",
+    "acceptable_responses": [
+      "A 404 means the server could not find the requested resource.",
+      "HTTP 404 Not Found: the requested page or resource does not exist on the server."
+    ],
+    "notes": "Any phrasing that says the resource was not found is fine."
+  },
+  {
+    "id": "acceptable-002",
+    "source": "synthetic",
+    "input": "What is the boiling point of water at sea level, in Celsius?",
+    "expected_behavior": "good",
+    "acceptable_responses": ["Water boils at 100 degrees Celsius at sea level."],
+    "unacceptable_responses": ["Water boils at 90 degrees Celsius at sea level."],
+    "notes": "The number is what matters. Any temperature other than 100 is wrong."
+  },
+  {
+    "id": "acceptable-003",
+    "source": "synthetic",
+    "input": "Summarize the difference between RAG and fine-tuning in one sentence.",
+    "expected_behavior": "good",
+    "acceptable_responses": [
+      "RAG retrieves external documents at query time, while fine-tuning updates the model's weights on new training data.",
+      "Fine-tuning changes the model itself; RAG leaves the model alone and adds retrieved context to the prompt."
+    ],
+    "notes": "The response must say that fine-tuning changes the model and RAG adds retrieved context."
+  }
+]

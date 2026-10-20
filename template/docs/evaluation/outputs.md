@@ -59,6 +59,7 @@ Schema: [`docs/evaluation/schemas/output_schema.json`](./schemas/output_schema.j
     "scored_cases": 5,
     "inconclusive_cases": 1,
     "mean_score": 0.92,
+    "pass_threshold": 0.5,
     "pass_rate": 1.0,
     "good_case_pass_rate": 1.0,
     "bad_case_pass_rate": 1.0,
@@ -86,7 +87,7 @@ Schema: [`docs/evaluation/schemas/output_schema.json`](./schemas/output_schema.j
 }
 ```
 
-Rates (`mean_score`, `pass_rate`, and so on) are computed over **scored** cases only.
+Rates (`mean_score`, `pass_rate`, and so on) are computed over **scored** cases only. A case counts as passed at `score >= pass_threshold`, the pipeline's `run.pass_threshold` (default 0.5).
 
 Every case carries a single normalized `score` (0–1), whatever the benchmark. For judge-based benchmarks `has_judge` is `true` and `judge_grade` holds the raw grade (for example `"5"`) for traceability. Judge-free benchmarks set `has_judge` to `false` and score deterministically. `reason` is the human-readable explanation in both cases.
 

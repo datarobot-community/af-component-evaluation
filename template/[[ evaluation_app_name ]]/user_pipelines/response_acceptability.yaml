@@ -1,0 +1,33 @@
+---
+# Response Acceptability: how acceptable is the response given example answers (LLM-as-judge).
+#
+# The judge-based twin of response_similarity.yaml, reading the same fields. A
+# judge sees each case's `acceptable_responses` (and any `unacceptable_responses`)
+# and rates the agent's response 1-5 on how well it matches them in substance,
+# so paraphrases with no shared words still score well. Ratings map to 0.2..1.0.
+#
+# Benchmark: datarobot_genai/eval/benchmarks/response_acceptability.py
+# Sample dataset: user_datasets/sample_response_acceptability.json. A case's
+# `notes` are passed to the judge as extra guidance.
+# Needs a judge model (the judge: block below).
+benchmark:
+  module: datarobot_genai/eval/benchmarks/response_acceptability.py
+  name: response_acceptability
+target:
+  model_type: chat
+  model_id: unknown
+  api_key_name: AGENT_API_KEY
+judge:
+  # OpenAI-compatible base URL; NeMo appends /chat/completions. model_id is the
+  # gateway CATALOG name (NOT a litellm datarobot/ prefix).
+  url: https://app.datarobot.com/api/v2/genai/llmgw
+  model_id: azure/gpt-5-5-2026-04-23
+  api_key_name: DATAROBOT_API_TOKEN
+run:
+  # A case passes at score >= pass_threshold. 0.5 passes ratings of 3 and up;
+  # 0.7 passes 4 and up.
+  pass_threshold: 0.5
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180

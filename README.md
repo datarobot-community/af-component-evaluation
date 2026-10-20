@@ -36,7 +36,7 @@ Batch-tests agent responses at scale for DataRobot App Framework projects using 
 
 This repository ships the **Copier template** (`template/`) that renders into a project, plus user-facing documentation in `template/docs/evaluation/` (rendered to `docs/evaluation/` in an installed project). The component runs in an isolated `uv` environment; the core CLI invokes it as a subprocess with no shared dependencies.
 
-**What it does**: Sends each test prompt to the agent's OpenAI-compatible endpoint, then scores the response. It ships **8 isolated benchmarks**&mdash;pick one per run via a pipeline YAML. Three are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`) and five are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
+**What it does**: Sends each test prompt to the agent's OpenAI-compatible endpoint, then scores the response. It ships **10 isolated benchmarks**&mdash;pick one per run via a pipeline YAML. Four are **judge-based** (LLM-as-judge: `answer_quality`, `safety_refusal`, `faithfulness`, `response_acceptability`) and six are **judge-free** (deterministic, no judge model needed: `answer_correctness`, `response_similarity`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`). Output is normalized to a stable JSON schema.
 
 # Table of contents
 
