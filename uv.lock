@@ -4,7 +4,7 @@ requires-python = ">=3.11"
 
 [[package]]
 name = "af-component-evaluation"
-version = "11.10.58"
+version = "11.10.59"
 source = { virtual = "." }
 dependencies = [
     { name = "jinja-cli" },
