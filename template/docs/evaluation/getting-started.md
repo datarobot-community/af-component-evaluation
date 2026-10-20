@@ -14,7 +14,7 @@ Confirm the following prerequisites:
   - `DATAROBOT_API_TOKEN`&mdash;required for judge-based benchmarks and dataset generation.
   - `DATAROBOT_ENDPOINT`&mdash;for example `https://app.datarobot.com`.
 
-Judge-free benchmarks (`answer_correctness`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`) run without judge credentials.
+Judge-free benchmarks (`answer_correctness`, `response_similarity`, `instruction_following`, `prompt_injection`, `pii_leakage`, `tool_grounding`) run without judge credentials.
 
 ## Step 1&mdash;Install dependencies
 
@@ -32,6 +32,7 @@ Each run uses exactly one benchmark, selected by a pipeline YAML in `user_pipeli
 |---|---|---|
 | `answer_quality.yaml` | Yes | General response quality (Likert 1–5). |
 | `answer_correctness.yaml` | No | Regression testing against known answers. |
+| `response_similarity.yaml` | No | Answers that can be phrased several ways, scored against examples. |
 | `safety_refusal.yaml` | Yes | Harmful-request refusal (SAFE/UNSAFE). |
 
 See [Benchmarks](./benchmarks.md) for the full menu and [Pipelines](./pipelines.md) for YAML details.

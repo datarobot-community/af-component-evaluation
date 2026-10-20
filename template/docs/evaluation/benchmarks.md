@@ -1,6 +1,6 @@
 # Benchmarks
 
-A **benchmark** is a self-contained Python module that defines what to send to the agent and how to score the response. The 8 built-ins ship in the `datarobot-genai[eval]` package (`datarobot_genai/eval/benchmarks/`). Each comes with a default pipeline (`user_pipelines/<name>.yaml`) and a sample dataset (`user_datasets/sample_<name>.json`).
+A **benchmark** is a self-contained Python module that defines what to send to the agent and how to score the response. The 10 built-ins ship in the `datarobot-genai[eval]` package (`datarobot_genai/eval/benchmarks/`). Each comes with a default pipeline (`user_pipelines/<name>.yaml`) and a sample dataset (`user_datasets/sample_<name>.json`).
 
 Each run uses exactly **one** benchmark. Benchmarks fall into two families:
 
@@ -16,9 +16,21 @@ Each run uses exactly **one** benchmark. Benchmarks fall into two families:
 
 ## Scoring convention
 
-Every benchmark emits a normalized `score` in `[0, 1]`. A case **passes** at `score >= 0.5`. Judge-based benchmarks map a grade to that score (for example Likert 3/5 → 0.6). Judge-free benchmarks compute it deterministically.
+Every benchmark emits a normalized `score` in `[0, 1]`. A case **passes** at `score >= pass_threshold`, which is 0.5 unless the pipeline sets `run.pass_threshold`. Judge-based benchmarks map a grade to that score (for example Likert 3/5 → 0.6). Judge-free benchmarks compute it deterministically.
 
 A case that **cannot** be scored&mdash;a judge call that errored or a required field missing&mdash;is marked **inconclusive** (`score: null`, `passed: null`) and **excluded** from rates rather than counted as a failure. See [Outputs](./outputs.md).
+
+## Choosing how to score a response
+
+Several benchmarks answer the same question ("was this a good response?") in different ways. They differ in what the score means:
+
+| Style | Benchmarks | What the score means |
+|---|---|---|
+| **Is it there or not** | `answer_correctness`, `prompt_injection`, `pii_leakage`, `tool_grounding` | 1.0 or 0.0. A string or pattern matched, or it didn't. |
+| **How close is it** | `response_similarity`, `instruction_following` | A range from 0.0 to 1.0. Higher is closer. Where the line falls is your call (`run.pass_threshold`). |
+| **How good does a judge think it is** | `response_acceptability`, `answer_quality`, `faithfulness`, `safety_refusal` | A judge's grade (a 1–5 rating or a verdict) mapped to 0.0–1.0. |
+
+`response_similarity` and `response_acceptability` read the same dataset, so you can run the cheap lexical check often and the judge when you need it.
 
 ## Judge-based benchmarks
 
@@ -45,6 +57,13 @@ For agents that answer from provided context. Each case supplies a `context` pas
 - **Dataset**&mdash;`input` (required), `context` (**required** source passage, sent to the agent AND used as the grounding reference), `notes` (optional).
 - **Note**: Because the check is "supported by THIS context," a correct-but-ungrounded answer (true in the world but absent from the context) is intentionally scored as a hallucination. That is the RAG failure mode this benchmark exists to catch.
 
+### `response_acceptability`
+
+The judge-based twin of `response_similarity`, reading the same dataset. A judge sees the example answers and rates how well the response matches them in substance, so paraphrases with no shared words still score well. The examples are illustrations, not an exhaustive list.
+
+- **Scoring**: the judge rates 1–5, mapped to 0.2–1.0. With the default `pass_threshold` of 0.5, ratings of 3 and up pass. The `reason` repeats the rubric line for the rating, for example `judge rated 4/5: same substance with a minor omission or small inaccuracy`.
+- **Dataset**: `input` (required), `acceptable_responses` (**required**), `unacceptable_responses` (optional; shown to the judge as answers to rate low), `notes` (optional extra guidance). `metric` is ignored.
+
 ## Judge-free benchmarks
 
 ### `answer_correctness`
@@ -56,6 +75,22 @@ The regression-testing workhorse. When you have ground-truth answers, check the 
   - `normalized` (default)&mdash;equal after lowercasing and stripping punctuation/extra spaces.
   - `contains`&mdash;normalized reference appears somewhere in the normalized response.
 - **Dataset**&mdash;`input` (required), `ideal_response` (**required**), `match_mode` (optional, default `normalized`). Missing `ideal_response` → inconclusive.
+
+### `response_similarity`
+
+The fuzzy sibling of `answer_correctness`. Where `answer_correctness` asks "did the agent say exactly this?", this asks "how close did the agent get to one of these example answers?". Use it when a question has a clear answer that can be phrased several ways.
+
+- **Scoring**: the raw similarity to the closest acceptable example, from 0.0 (no shared words) to 1.0. It is a range, not a pass/fail, so tune `run.pass_threshold` to your data. Words are lowercased, and punctuation and common stopwords ("the", "of", ...) are dropped first. Pick the metric in the pipeline's `benchmark.params.metric`; a case can override it with its own `metric`:
+
+  | Metric | What the number means | Good for |
+  |---|---|---|
+  | `token_recall` (default) | Share of the example's words found in the response. | Agents that answer at length around a short expected answer. |
+  | `token_f1` | Word overlap that also penalizes words the example doesn't have. | Responses that should be about as short as the examples. |
+  | `rouge_l` | Longest run of words the two share in the same order. | Answers where word order carries meaning. |
+
+- **Dataset**: `input` (required), `acceptable_responses` (**required** string or list), `unacceptable_responses` (optional string or list), `metric` (optional per-case override). Missing `acceptable_responses` → inconclusive.
+- **Reading the reason**: every case explains its number, for example `token_recall 0.67 (share of the example's words found in the response); closest of 2 acceptable: '...'`. When `unacceptable_responses` are given, the reason also reports the closest one and adds a `WARNING` if the response is at least as close to it. That flag doesn't change the score.
+- **Limit**: lexical metrics compare words, not meaning. "30 days" and "a month" share no words, so a correct paraphrase can score low. Run the same dataset under `response_acceptability` when that matters.
 
 ### `instruction_following`
 
@@ -119,6 +154,6 @@ Each built-in module in `datarobot_genai/eval/benchmarks/` is self-contained wit
 
 ## See also
 
-- [Pipelines](./pipelines.md)&mdash;YAML schema and the 8-benchmark menu.
+- [Pipelines](./pipelines.md)&mdash;YAML schema and the 10-benchmark menu.
 - [Datasets](./datasets.md)&mdash;per-benchmark field requirements.
 - [Outputs](./outputs.md)&mdash;how scores appear in `eval_results.json`.

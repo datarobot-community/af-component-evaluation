@@ -11,7 +11,7 @@ task eval -- \
   --dataset  user_datasets/sample_answer_quality.json
 ```
 
-## The 8 default benchmarks
+## The 10 default benchmarks
 
 Each benchmark is **isolated**: one case type and one scoring strategy. The **Judge?** column tells you whether the pipeline needs a judge model. Judge-free benchmarks are deterministic, reproducible, and run with no judge credentials. See [Benchmarks](./benchmarks.md) for full details on each.
 
@@ -20,13 +20,15 @@ Each benchmark is **isolated**: one case type and one scoring strategy. The **Ju
 | `answer_quality.yaml` | Yes | General response quality (Likert 1–5). | `input`, `notes`. |
 | `safety_refusal.yaml` | Yes | Refuses harmful requests (SAFE/UNSAFE). | `input`, `notes`. |
 | `faithfulness.yaml` | Yes | Answer grounded in a RAG `context` (no hallucination). | `input`, `context`, `notes`. |
+| `response_acceptability.yaml` | Yes | Acceptable given example answers (judge rating 1–5). | `input`, `acceptable_responses`, `unacceptable_responses`. |
 | `answer_correctness.yaml` | No | Matches a known answer (exact/normalized/contains). | `input`, `ideal_response`, `match_mode`. |
+| `response_similarity.yaml` | No | Lexical similarity to example answers (a 0–1 range). | `input`, `acceptable_responses`, `unacceptable_responses`, `metric`. |
 | `instruction_following.yaml` | No | Obeys structural constraints (length, JSON, phrases, regex). | `input`, `constraints`. |
 | `prompt_injection.yaml` | No | Resists hijack&mdash;a `canary` must NOT appear. | `input`, `canary`. |
 | `pii_leakage.yaml` | No | No PII in the response (regex detectors). | `input`, `entity_types`. |
 | `tool_grounding.yaml` | No | Used its tool/data&mdash;a `canary` MUST appear. | `input`, `canary`. |
 
-Each pipeline has a matching `user_datasets/sample_<name>.json` that shows the required shape.
+Each pipeline has a matching `user_datasets/sample_<name>.json` that shows the required shape. `response_similarity` and `response_acceptability` share `sample_response_similarity.json`.
 
 ## Schema
 
@@ -36,6 +38,7 @@ A pipeline YAML has four top-level blocks. Omit `judge` entirely for judge-free 
 benchmark:
   module: datarobot_genai/eval/benchmarks/answer_quality.py  # Built-in path from datarobot-genai[eval]; a local repo-relative path also works for custom benchmarks.
   name: answer_quality                            # Normalized benchmark name (matches @benchmark).
+  params: {}                                      # Optional benchmark settings (e.g. response_similarity's metric).
 
 target:                                           # The agent under test.
   model_type: chat                                # chat | completions | completions_logprob
@@ -48,6 +51,7 @@ judge:                                            # OMIT ENTIRELY for judge-free
   api_key_name: DATAROBOT_API_TOKEN               # Env var NAME holding the judge bearer token.
 
 run:
+  pass_threshold: 0.5                             # Optional. A case passes at score >= this.
   parallelism: 4
   max_tokens: 1024
   temperature: 0.0
@@ -56,6 +60,8 @@ run:
 
 ## Key conventions
 
+- **`benchmark.params` holds benchmark-specific settings.** It is exported to the benchmark as JSON, so one benchmark module can offer several scoring methods. Only `response_similarity` reads it today (`metric`).
+- **`run.pass_threshold` sets where `passed` flips** (default 0.5). Use it for benchmarks that report a range, such as `response_similarity`. The value used appears in the output summary.
 - **Judge-free pipelines omit the `judge:` block entirely.** `run.py` exports judge credentials only when the block is present; the benchmark never makes a judge call. The UI also reads this to show whether a run needs a judge model.
 - **Model names are endpoint-catalog names, not LiteLLM names.** NeMo makes plain OpenAI-compatible HTTP calls with no LiteLLM layer. Against the DR LLM gateway, use the catalog name with no `datarobot/` prefix (for example `azure/gpt-5-5-2026-04-23`). List models with `GET https://app.datarobot.com/api/v2/genai/llmgw/models`.
 - **`api_key_name` is an env var NAME**, not the key value. Use `DATAROBOT_API_TOKEN` for the judge and `AGENT_API_KEY` for the agent (optional&mdash;only sent if set).

@@ -1,0 +1,32 @@
+---
+# Response Similarity: lexical similarity to example answers (judge-free).
+#
+# Each case lists one or more `acceptable_responses`. The score is how close the
+# agent's response is to the closest one, from 0.0 (no shared words) to 1.0.
+# It is a range, not a pass/fail: tune run.pass_threshold to decide what counts
+# as passing for your data. No judge model is needed.
+#
+# Benchmark: datarobot_genai/eval/benchmarks/response_similarity.py
+# Dataset cases need `acceptable_responses` (optional `unacceptable_responses`).
+# The same dataset also runs under response_acceptability.yaml (judge-based).
+benchmark:
+  module: datarobot_genai/eval/benchmarks/response_similarity.py
+  name: response_similarity
+  params:
+    # How "similar" is measured; a case can override it with its own `metric`.
+    #   token_recall  share of the example's words found in the response (default;
+    #                 tolerant of long, chatty answers)
+    #   token_f1      word overlap that also penalizes extra words
+    #   rouge_l       longest run of words shared in the same order
+    metric: token_recall
+target:
+  model_type: chat
+  model_id: unknown
+  api_key_name: AGENT_API_KEY
+run:
+  # A case passes at score >= pass_threshold. Raise it to demand closer matches.
+  pass_threshold: 0.5
+  parallelism: 4
+  max_tokens: 1024
+  temperature: 0.0
+  timeout_per_sample: 180

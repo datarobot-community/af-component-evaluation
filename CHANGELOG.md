@@ -18,6 +18,10 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.58 - 2026-10-20
+- Add the `response_similarity.yaml` (judge-free) and `response_acceptability.yaml` (judge) pipelines, sharing `user_datasets/sample_response_similarity.json`. Each case lists `acceptable_responses`; similarity reports a 0-1 range and the judge rates 1-5. Needs `datarobot-genai[eval]>=0.30.1`.
+- Document `benchmark.params` (pick the similarity metric) and `run.pass_threshold` (where `passed` flips), and add a "Choosing how to score a response" guide to the benchmarks docs and the agent skill.
+
 ## 11.10.57 - 2026-10-19
 - No minimum version changed; the generated dependency block was rewritten.
 

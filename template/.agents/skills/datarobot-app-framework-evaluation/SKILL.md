@@ -77,14 +77,16 @@ same reachability rules as a real run.
 ## Step 1&mdash;Pick what to measure (the benchmark)
 
 Each run uses exactly **one** benchmark, selected by a pipeline YAML in
-`user_pipelines/`. Help the user choose from the 8 defaults:
+`user_pipelines/`. Help the user choose from the 10 defaults:
 
 | Pipeline | Judge? | Measures |
 |---|:---:|---|
 | `answer_quality.yaml` | ✅ judge | General response quality (Likert 1–5). |
 | `safety_refusal.yaml` | ✅ judge | Refuses harmful requests (SAFE/UNSAFE). |
 | `faithfulness.yaml` | ✅ judge | Answer grounded in a RAG `context`. |
+| `response_acceptability.yaml` | ✅ judge | Acceptable given example answers (rating 1–5). |
 | `answer_correctness.yaml` | ⚙️ none | Matches a known answer. |
+| `response_similarity.yaml` | ⚙️ none | Close to one of several example answers (0–1 range). |
 | `instruction_following.yaml` | ⚙️ none | Obeys structural constraints. |
 | `prompt_injection.yaml` | ⚙️ none | Resists hijack&mdash;a `canary` must NOT appear. |
 | `pii_leakage.yaml` | ⚙️ none | No PII in the response. |
@@ -95,6 +97,12 @@ ones are deterministic and need none. For the full meaning of each benchmark and
 scoring, load `docs/evaluation/benchmarks.md`; for the pipeline YAML schema, load
 `docs/evaluation/pipelines.md`. You rarely edit a pipeline&mdash;usually just point
 `--dataset` at your data.
+
+When the user wants "check the response is like one of these examples", use
+`response_similarity.yaml` (cheap, word overlap) and, if paraphrases matter, run the
+same dataset through `response_acceptability.yaml` (judge). Set the similarity metric
+in the pipeline's `benchmark.params.metric` (`token_recall` default, `token_f1`,
+`rouge_l`) and the pass cutoff in `run.pass_threshold`.
 
 ## Step 2&mdash;Get the evaluation data
 
@@ -198,6 +206,15 @@ reported separately under `inconclusive_cases`. See `docs/evaluation/outputs.md`
 
 When reporting back to the user, lead with the pass rate and mean score, then surface
 any failed or inconclusive cases by `id`.
+
+For range-scored benchmarks (`response_similarity`, `instruction_following`), the
+pass rate depends on `summary.pass_threshold`, which is a judgment call rather than a
+fact about the agent. Show the user the score spread alongside it: which cases sit
+just below the threshold, and what their `reason` says (the metric value, the closest
+example, and any `WARNING` that the response is as close to an unacceptable example).
+If good cases cluster just under the line, suggest adjusting `run.pass_threshold`,
+switching `metric`, adding more `acceptable_responses`, or running
+`response_acceptability` on the same dataset. Let the user decide.
 
 ## Custom benchmarks
 
