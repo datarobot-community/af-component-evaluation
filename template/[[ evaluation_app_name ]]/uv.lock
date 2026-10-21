@@ -20,6 +20,7 @@ constraints = [
     { name = "litellm", specifier = ">=1.96.2" },
     { name = "multidict", specifier = ">=6.9.1" },
     { name = "openai", specifier = ">=2.30.0" },
+    { name = "pillow", specifier = ">=12.3.0" },
     { name = "pydantic-settings", specifier = ">=2.14.2" },
     { name = "pygments", specifier = ">=2.20.0" },
     { name = "pytest", specifier = ">=9.0.3" },

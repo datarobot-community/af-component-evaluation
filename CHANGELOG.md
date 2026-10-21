@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.60 - 2026-10-21
+- Add a minimum version for `pillow`: `>=12.3.0`.
+
 ## 11.10.59 - 2026-10-20
 - Raise the minimum `aiohttp` version from `>=3.14.3` to `>=3.14.4`.
 
