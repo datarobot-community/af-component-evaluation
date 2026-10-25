@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.63 - 2026-10-25
+- Add a minimum version for `pillow`: `>=13.0.0`.
+
 ## 11.10.62 - 2026-10-22
 - Raise the minimum `virtualenv` version from `>=21.7.13` to `>=21.14.9`.
 
