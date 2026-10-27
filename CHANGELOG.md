@@ -18,6 +18,11 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.10.64 - 2026-10-27
+- Add a minimum version for `filelock`: `>=4.2.1`.
+- Raise the minimum `setuptools` version from `>=83.0.0` to `>=84.1.0`.
+- Raise the minimum `virtualenv` version from `>=21.14.9` to `>=21.14.13`.
+
 ## 11.10.63 - 2026-10-25
 - Add a minimum version for `pillow`: `>=13.0.0`.
 
