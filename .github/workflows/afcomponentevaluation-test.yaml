@@ -10,6 +10,11 @@ concurrency:
   cancel-in-progress: true
 permissions:
   contents: read
+env:
+  # Exact version, so arduino/setup-task skips its anonymous tag lookup on
+  # api.github.com (rate-limited per shared runner IP). Keep in step across repos.
+  TASK_VERSION: "3.50.0"
+
 jobs:
   test:
     name: "Test (python${{ matrix.python }})"
@@ -23,6 +28,11 @@ jobs:
     steps:
       - name: Checkout
         uses: "actions/checkout@v7"
+      - name: Install Task
+        uses: arduino/setup-task@v3
+        with:
+          version: ${{ env.TASK_VERSION }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       # CI tests the COPIED (rendered) instance — i.e. what a user actually gets —
       # rather than the source `template/` tree. Local development still runs
       # directly against `template/[[ evaluation_app_name ]]/` via the root
@@ -38,7 +48,7 @@ jobs:
       - name: Install dependencies
         shell: sh
         working-directory: ./.rendered/evaluations
-        run: uvx --from go-task-bin task install
+        run: task install
         env:
           UV_CACHE_DIR: /.uv_cache
       - name: License header check
@@ -54,12 +64,12 @@ jobs:
       - name: Lint check
         shell: sh
         working-directory: ./.rendered/evaluations
-        run: uvx --from go-task-bin task lint-check
+        run: task lint-check
         env:
           UV_CACHE_DIR: /.uv_cache
       - name: Run tests with coverage
         shell: sh
         working-directory: ./.rendered/evaluations
-        run: uvx --from go-task-bin task test-coverage
+        run: task test-coverage
         env:
           UV_CACHE_DIR: /.uv_cache

@@ -11,6 +11,11 @@ concurrency:
   cancel-in-progress: true
 permissions:
   contents: read
+env:
+  # Exact version, so arduino/setup-task skips its anonymous tag lookup on
+  # api.github.com (rate-limited per shared runner IP). Keep in step across repos.
+  TASK_VERSION: "3.50.0"
+
 jobs:
   smoke:
     name: "Integration smoke test"
@@ -20,6 +25,11 @@ jobs:
     steps:
       - name: Checkout
         uses: "actions/checkout@v7"
+      - name: Install Task
+        uses: arduino/setup-task@v3
+        with:
+          version: ${{ env.TASK_VERSION }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Render copier instance
         shell: sh
         run: |
@@ -31,13 +41,13 @@ jobs:
       - name: Install dependencies
         shell: sh
         working-directory: ./.rendered/evaluations
-        run: uvx --from go-task-bin task install
+        run: task install
         env:
           UV_CACHE_DIR: /.uv_cache
       - name: Run integration smoke test
         shell: sh
         working-directory: ./.rendered/evaluations
-        run: uvx --from go-task-bin task test-integration
+        run: task test-integration
         env:
           DATAROBOT_API_TOKEN: ${{ secrets.DATAROBOT_API_TOKEN }}
           DATAROBOT_ENDPOINT: ${{ secrets.DATAROBOT_ENDPOINT }}

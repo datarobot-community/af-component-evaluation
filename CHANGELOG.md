@@ -18,6 +18,9 @@ subsections. Say what changed and why someone consuming this component would car
 Releases before this file was added are described in the
 [GitHub releases](https://github.com/datarobot-community/af-component-evaluation/releases).
 
+## 11.13.0 - 2026-11-03
+- Fix go-task flakes
+
 ## 11.10.65 - 2026-10-28
 - Raise the minimum `hydra-core` version from `>=1.3.7` to `>=1.3.8`.
 - Raise the minimum `litellm` version from `>=1.96.2` to `>=1.100.4`.
